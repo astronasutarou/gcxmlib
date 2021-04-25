@@ -1,6 +1,6 @@
 /**
  * @file sample_point3.cc
- * @brief functional test of point3 class
+ * @brief functional test of the direction_cosine class
  * @author Ryou Ohsawa
  * @year 2021
  */

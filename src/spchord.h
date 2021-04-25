@@ -6,6 +6,7 @@
  */
 #ifndef __SPCHORD_H_INCLUDE
 #define __SPCHORD_H_INCLUDE
+#define _USE_MATH_DEFINES
 
 #include <cstdio>
 #include <cmath>
@@ -13,18 +14,148 @@
 #include <utility>
 #include <vector>
 #include <set>
+#include <stdexcept>
 
 
 namespace spchord {
   constexpr bool __debug__ = false;
-  constexpr double radian_to_arcsec = 3600./180./M_PI;
+  constexpr double radian_to_degree = 180./M_PI;
+  constexpr double degree_to_radian = M_PI/180.;
+  constexpr double radian_to_arcmin = 60.*180./M_PI;
+  constexpr double arcmin_to_radian = M_PI/180./60.;
+  constexpr double radian_to_arcsec = 3600.*180./M_PI;
   constexpr double arcsec_to_radian = M_PI/180./3600.;
 
   typedef std::chrono::duration<double> sec_t;
   typedef std::chrono::time_point
     <std::chrono::high_resolution_clock, sec_t> timestamp_t;
 
-  /** a vertex in a three-dimensional space. */
+  enum class angle_range
+  {
+    zero_to_twopi,       /** range [0,2pi]      (w/wrap)   */
+    minus_pi_to_pi,      /** range [-pi,pi]     (w/wrap)   */
+    zero_to_pi,          /** range [0, pi]      (w/o wrap) */
+    minus_pi_2_to_pi_2   /** range [-pi/2,pi/2] (w/o wrap) */
+  };
+
+  template<angle_range _range>
+  class base_angle {
+  public:
+    base_angle(double _r)
+      : radian(wrap(_r)),degree(to_degree()),
+        arcmin(to_arcmin()),arcsec(to_arcsec()) {}
+
+    const double radian;
+    const double degree;
+    const double arcmin;
+    const double arcsec;
+
+    friend const base_angle<_range>
+    operator+(const base_angle<_range> ang, const double val)
+    { return base_angle<_range>(ang.radian+val); }
+    friend const base_angle<_range>
+    operator+(const double val, const base_angle<_range> ang)
+    { return base_angle<_range>(val+ang.radian); }
+    friend const base_angle<_range>
+    operator-(const base_angle<_range> ang, const double val)
+    { return base_angle<_range>(ang.radian-val); }
+    friend const base_angle<_range>
+    operator-(const double val, const base_angle<_range> ang)
+    { return base_angle<_range>(val-ang.radian); }
+    friend const base_angle<_range>
+    operator*(const base_angle<_range> ang, const double val)
+    { return base_angle<_range>(ang.radian*val); }
+    friend const base_angle<_range>
+    operator*(const double val, const base_angle<_range> ang)
+    { return base_angle<_range>(ang.radian*val); }
+    friend const base_angle<_range>
+    operator/(const base_angle<_range> ang, const double val)
+    { return base_angle<_range>(ang.radian/val); }
+    friend const base_angle<_range>
+    operator/(const double val, const base_angle<_range> ang)
+    { return base_angle<_range>(val/ang.radian); }
+
+    template <angle_range __range>
+    const base_angle<_range>
+    operator+(const base_angle<__range> op) const
+    { return base_angle<_range>(radian+op.radian); }
+    template <angle_range __range>
+    const base_angle<_range>
+    operator-(const base_angle<__range> op) const
+    { return base_angle<_range>(radian-op.radian); }
+
+    template <angle_range __range>
+    const bool
+    operator==(const base_angle<__range> op) const
+    { return (radian == op.radian); }
+    template <angle_range __range>
+    const bool
+    operator!=(const base_angle<__range> op) const
+    { return (radian != op.radian); }
+    template <angle_range __range>
+    const bool
+    operator<(const base_angle<__range> op) const
+    { return (radian < op.radian); }
+    template <angle_range __range>
+    const bool
+    operator<=(const base_angle<__range> op) const
+    { return (radian <= op.radian); }
+    template <angle_range __range>
+    const bool
+    operator>(const base_angle<__range> op) const
+    { return (radian > op.radian); }
+    template <angle_range __range>
+    const bool
+    operator>=(const base_angle<__range> op) const
+    { return (radian >= op.radian); }
+
+  private:
+    const double
+    wrap(double arg) const
+    {
+      switch (_range) {
+      case angle_range::zero_to_twopi:
+        if (arg < 0)
+          arg += (2*M_PI)*(1-std::floor(arg/(2*M_PI)));
+        if (arg >= 2*M_PI)
+          arg -= (2*M_PI)*(std::floor(arg/(2*M_PI)));
+        return arg;
+        break;
+      case angle_range::minus_pi_to_pi:
+        arg += M_PI;
+        if (arg < 0)
+          arg += (2*M_PI)*(1-std::floor(arg/(2*M_PI)));
+        if (arg >= 2*M_PI)
+          arg -= (2*M_PI)*(std::floor(arg/(2*M_PI)));
+        return arg-M_PI;
+        break;
+      case angle_range::zero_to_pi:
+        if (arg < 0 || arg > M_PI)
+          throw std::range_error("value exceeds the range [0,pi].");
+        return arg;
+        break;
+      case angle_range::minus_pi_2_to_pi_2:
+        if (arg < -M_PI_2 || arg > M_PI_2)
+          throw std::range_error("value exceeds the range [-pi/2,pi/2].");
+        return arg;
+        break;
+      default:
+        throw std::invalid_argument("invalid range specified.");
+      }
+    }
+    const double
+    to_degree() const { return radian*radian_to_degree; }
+    const double
+    to_arcmin() const { return radian*radian_to_arcmin; }
+    const double
+    to_arcsec() const { return radian*radian_to_arcsec; }
+  };
+
+  typedef base_angle<angle_range::zero_to_twopi> angle;
+  typedef base_angle<angle_range::zero_to_twopi> longitude;
+  typedef base_angle<angle_range::minus_pi_2_to_pi_2> latitude;
+
+
   class vector3 {
   public:
     /**

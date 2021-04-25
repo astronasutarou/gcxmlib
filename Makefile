@@ -10,7 +10,10 @@ OBJECT := $(patsubst %.cc,%.o,$(SOURCE))
 
 .PHONY: clean build test build_pypi upload_test upload_pypi
 
-all: test/sample_vector3 \
+all: test/sample_angle \
+     test/sample_longitude \
+     test/sample_latitude \
+     test/sample_vector3 \
      test/sample_dcos
 
 test/sample_%: test/sample_%.cc $(OBJECT) $(HEADER)
