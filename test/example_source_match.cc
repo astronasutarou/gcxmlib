@@ -1,6 +1,6 @@
 /**
  * @file example_source_match.cc
- * @brief functional test of the source class
+ * @brief test of the source.match() function
  * @author Ryou Ohsawa
  * @year 2021
  */

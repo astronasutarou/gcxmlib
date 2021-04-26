@@ -367,6 +367,10 @@ namespace gcxmlib {
      */
     direction_cosine() : direction_cosine(1.0, 0.0, 0.0) {}
 
+    /** copy constructor */
+    direction_cosine(const direction_cosine& copy)
+      : direction_cosine(copy.x,copy.y,copy.z) {}
+
     /**
      * @brief construct a `direction_cosine` instance with (x,y,z).
      * @param[in] _l: x-coordinate.
@@ -391,7 +395,7 @@ namespace gcxmlib {
      * @param[in] lon: a `longitude` instance.
      * @param[in] lat: a `latitude` instance.
      */
-    direction_cosine(const latitude& _lon, const latitude& _lat)
+    direction_cosine(const longitude& _lon, const latitude& _lat)
       : direction_cosine(vx(_lon,_lat),vy(_lon,_lat),vz(_lon,_lat))
     {}
 
@@ -488,14 +492,9 @@ namespace gcxmlib {
      * @brief return `true` if another point is inside the range.
      * @param[in] p: another positional instance.
      * @param[in] range: an `angle` instance.
-     * @note acceptable positional classes are as follows:
-     *         - vector3
-     *         - dirction_cosine
-     *         - source
      */
-    template<class T>
     const bool
-    neighbor_to(const T& p, const angle& range) const
+    neighbor_to(const vector3& p, const angle& range) const
     {
       const double cosine = std::cos(range.radian);
       const double sepcos = separation_cosine(p);
@@ -503,34 +502,37 @@ namespace gcxmlib {
     }
 
     /**
-     * @brief return `true` if another point is inside the range.
+     * @brief return `true` if another point is inside the uncertainty.
      * @param[in] p: another positional instance.
-     * @param[in] range: an `angle` instance.
-     * @param[in] trange: a time duration.
-     * @note acceptable positional classes are as follows:
-     *         - vector3
-     *         - dirction_cosine
-     *         - source
      */
-    template<class T>
     const bool
-    match(const T& p, const angle& range, const sec_t& trange) const
-    {
-      const double cosine = std::cos(range.radian);
-      const double tsep = std::abs(static_cast<sec_t>(t-p.t).count());
-      const double sepcos = separation_cosine(p);
-      printf("tsep = %lf\n", tsep);
-      return (sepcos >= cosine) && (tsep < trange.count());
-    }
+    neighbor_to(const vector3& p) const
+    { return neighbor_to(p, s.radian); }
 
     /**
      * @brief return `true` if another point is inside the uncertainty.
      * @param[in] p: another positional instance.
+     * @note `range` is set the summation of the both uncertainties
+     *       if `p` is an instance of `source`. as `range`.
      */
-    template<class T>
     const bool
-    neighbor_to(const T& p) const
-    { return neighbor_to(p, s.radian); }
+    neighbor_to(const source& p) const
+    { return neighbor_to(p, s.radian+p.s.radian); }
+
+    /**
+     * @brief return `true` if another point is inside the range.
+     * @param[in] p: another positional instance.
+     * @param[in] range: an `angle` instance.
+     * @param[in] trange: a time duration.
+     */
+    const bool
+    match(const source& p, const angle& range, const sec_t& trange) const
+    {
+      const double cosine = std::cos(range.radian);
+      const double tsep = std::abs(static_cast<sec_t>(t-p.t).count());
+      const double sepcos = separation_cosine(p);
+      return (sepcos >= cosine) && (tsep < trange.count());
+    }
 
     const timestamp_t t; /** timestamp of the measurement. */
     const angle s;       /** uncertainty of the position. */
@@ -543,15 +545,184 @@ namespace gcxmlib {
     { return std::chrono::system_clock::now(); }
   };
 
+
   /**
-   * @brief return `true` if another point is inside the uncertainty.
-   * @param[in] p: another positional instance.
-   * @note `range` is set the summation of the both uncertainties
-   *       if `p` is an instance of `source`. as `range`.
+   * @brief calculate the outer product of two positional classes.
+   * @param[in] P: the first argument of the outer product.
+   * @param[in] Q: the second argument of the outer product.
    */
-  template<> const bool
-  source::neighbor_to<source>(const source& p) const
-  { return neighbor_to(p, s.radian+p.s.radian); }
+  const vector3
+  outer_product(const vector3& p1, const vector3& p2)
+  {
+    const double&& x = p1.y*p2.z - p1.z*p2.y;
+    const double&& y = p1.z*p2.x - p1.x*p2.z;
+    const double&& z = p1.x*p2.y - p1.y*p2.x;
+    return vector3(x,y,z);
+  }
+
+  /**
+   * @brief calculate the pole direction of two positional classes.
+   * @param[in] p1: the first argument of the outer product.
+   * @param[in] p2: the second argument of the outer product.
+   */
+  const direction_cosine
+  get_pole(const vector3& p1, const vector3& p2)
+  { return direction_cosine(outer_product(p1,p2)); }
+
+
+  /**
+   * @brief a helper function to calculate the deflected direction.
+   * @param[in] p1: the first anchor point.
+   * @param[in] p2: the second anchor point.
+   * @param[in] cost: `cos(d)` of `p1` and `p2`.
+   * @param[in] cosf1: `cos(f1)` value.
+   * @param[in] cosf2: `cos(f2)` value.
+   * @param[in] cosfp: `cos(f1+f2)` value.
+   * @param[in] cosfm: `cos(f1-f2)` value.
+   * @param[in] plus: returns the positive solution if `true`.
+   */
+  const direction_cosine
+  __deflect_cosine(const direction_cosine& p1,
+                   const direction_cosine& p2,
+                   const double cost,
+                   const double cosf1, const double cosf2,
+                   const double cosfp, const double cosfm,
+                   const bool plus)
+  {
+    const double w2 = (cost-cosfp)*(cosfm-cost);
+    if (cost >= 1)
+      throw std::invalid_argument("p1 and p2 are identical.");
+    if (w2 < 0)
+      throw std::range_error("cannot find the solution.");
+    const double w = (plus?1.0:-1.0)*std::sqrt(w2);
+    const double&& l =
+      (p1.l-p2.l*cost)*cosf1+(p2.l-p1.l*cost)*cosf2+(p1.m*p2.n-p1.n*p2.m)*w;
+    const double&& m =
+      (p1.m-p2.m*cost)*cosf1+(p2.m-p1.m*cost)*cosf2+(p1.n*p2.l-p1.l*p2.n)*w;
+    const double&& n =
+      (p1.n-p2.n*cost)*cosf1+(p2.n-p1.n*cost)*cosf2+(p1.l*p2.m-p1.m*p2.l)*w;
+    return direction_cosine(l,m,n);
+  }
+
+  /**
+   * @brief obtain the point at a distance of f1 from p1 and
+   *        a distance of f2 from p2, respectively.
+   * @param[in] p1: the first anchor point.
+   * @param[in] p2: the second anchor point.
+   * @param[in] f1: the angular distance from `p1`.
+   * @param[in] f2: the angular distance from `p2`.
+   * @param[in] plus: returns the positive solution if `true`.
+   */
+  const direction_cosine
+  deflect(const direction_cosine& p1,
+          const direction_cosine& p2,
+          const angle& f1,
+          const angle& f2,
+          const bool plus = true)
+  {
+    const double&& cost  = p1.separation_cosine(p2);
+    const double&& cosf1 = std::cos(f1.radian);
+    const double&& cosf2 = std::cos(f2.radian);
+    const double&& cosfp = std::cos((f1+f2).radian);
+    const double&& cosfm = std::cos((f1-f2).radian);
+    return __deflect_cosine(p1,p2,cost,cosf1,cosf2,cosfp,cosfm,plus);
+  }
+
+  /**
+   * @brief obtain the point at a distance of f1 from p1 and
+   *        a distance of f2 from p2, respectively.
+   * @param[in] p1: the first anchor point.
+   * @param[in] p2: the second anchor point.
+   * @param[in] f1: the angular distance from `p1`.
+   * @param[in] f2: the angular distance from `p2`.
+   * @param[in] plus: returns the positive solution if `true`.
+   */
+  const direction_cosine
+  interp(const direction_cosine& p1,
+         const direction_cosine& p2,
+         const angle& phi)
+  {
+    const double cost  = p1.separation_cosine(p2);
+    const double sint  = std::sqrt(1-cost);
+    const double cosf1 = std::cos(phi.radian);
+    const double sinf1 = std::sin(phi.radian);
+    const double&& cosf2  = cosf1*cost+sinf1*sint;
+    const double&  cosfp  = cost;
+    const double&& cos2f1 = cosf1*cosf1-sinf1*sinf1;
+    const double&& sin2f1 = 2*cosf1*sinf1;
+    const double&& cosfm  = cos2f1*cost+sin2f1*sint;
+    return __deflect_cosine(p1,p2,cost,cosf1,cosf2,cosfp,cosfm,true);
+  }
+
+  class great_circle {
+  public:
+    /**
+     * @brief generate a great circle on the xy-plane.
+     */
+    great_circle() : great_circle(0,0,1) {}
+
+    /**
+     * @brief generate a great circle with the pole.
+     * @param[in] p: a `direction_cosine` instance pointing the pole.
+     */
+    great_circle(const direction_cosine& p)
+      : pole(p) {}
+
+    /**
+     * @brief generate a great circle with the pole of (l,m,n).
+     * @param[in] l: the l-component of the pole.
+     * @param[in] m: the m-component of the pole.
+     * @param[in] n: the n-component of the pole.
+     */
+    great_circle(const double l, const double m, const double n)
+      : pole(l,m,n) {}
+
+    /**
+     * @brief generate a great circle with the pole of (lon,lat).
+     * @param[in] lon: the longitude of the pole.
+     * @param[in] lat: the latitude of the pole.
+     */
+    great_circle(const longitude& lon, const latitude& lat)
+      : pole(lon, lat) {}
+
+    /**
+     * @brief dump (x,y,z)-coordinates on the circle.
+     * @param[in] N: the number of points (default: 512).
+     */
+    void dump(const size_t N=64) const
+    {
+      const direction_cosine p(1,0,0), q(0,1,0);
+      const double&& dcosp = pole.separation_cosine(p);
+      const double&& dcosq = pole.separation_cosine(q);
+      const direction_cosine x = outer_product(pole,(dcosq>dcosp?p:q));
+      for (size_t i=0; i<N; i++) {
+        const double phi = M_PI/N*i;
+        const auto P = deflect(x, pole, phi, M_PI_2);
+        P.dump();
+      }
+      for (size_t i=0; i<N; i++) {
+        const double phi = M_PI-M_PI/N*i;
+        const auto P = deflect(x, pole, phi, M_PI_2, false);
+        P.dump();
+      }
+    }
+
+    const direction_cosine pole; /** the pole of the great circle. */
+  private:
+  };
+
+  class minor_arc : public great_circle {
+  public:
+    minor_arc()
+      : minor_arc(dcos{1,0,0},dcos{0,1,0}) {}
+
+    minor_arc(const direction_cosine& _s, const direction_cosine& _e)
+      : great_circle(get_pole(_s,_e)), s(_s), e(_e) {}
+
+    const direction_cosine s; /** the starting point of the arc. */
+    const direction_cosine e; /** the end point of the arc. */
+  private:
+  };
 }
 
 #endif  // __GCXMLIB_H_INCLUDE

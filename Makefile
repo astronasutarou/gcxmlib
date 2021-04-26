@@ -14,7 +14,10 @@ EXAMPLE := test/example_angle \
            test/example_vector3 \
            test/example_dcos \
            test/example_source_neighbor_to \
-           test/example_source_match
+           test/example_source_match \
+           test/example_outer_product \
+           test/example_great_circle_dump \
+           test/example_interp
 
 .PHONY: clean build test build_pypi upload_test upload_pypi
 

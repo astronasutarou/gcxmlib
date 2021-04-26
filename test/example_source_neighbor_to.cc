@@ -1,6 +1,6 @@
 /**
  * @file example_source_neighbor_to.cc
- * @brief functional test of the source class
+ * @brief test of the source.neighbor_to() function
  * @author Ryou Ohsawa
  * @year 2021
  */
