@@ -6,8 +6,10 @@
  */
 #include "spchord.h"
 #include <random>
+#include <unistd.h>
 
 using spchord::source;
+using std::chrono::seconds;
 
 int
 main(int argn, char** argv)
@@ -15,13 +17,20 @@ main(int argn, char** argv)
   int32_t seed = 42;
   std::mt19937 gen; gen.seed(seed);
   std::uniform_real_distribution<double> unif(-1,1);
-  double x(unif(gen)), y(unif(gen)), z(unif(gen));
-  source p, q(x,y,z);
-  double d = std::sqrt(x*x+y*y+z*z);
+  std::uniform_real_distribution<double> sleep(0,10000);
 
   auto s = std::chrono::system_clock::now();
 
-  p.dump();
+  for (size_t i=0; i<100; i++) {
+    {
+      const spchord::timestamp_t t0 = std::chrono::system_clock::now();
+      double wait(sleep(gen));
+      double x(unif(gen)), y(unif(gen)), z(unif(gen));
+      source p(x,y,z,t0+seconds(i));
+      p.dump();
+      usleep(wait);
+    }
+  }
 
   auto e = std::chrono::system_clock::now();
   std::chrono::duration<double> dt = e-s;

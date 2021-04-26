@@ -33,7 +33,7 @@ namespace spchord {
 
   typedef std::chrono::duration<double> sec_t;
   typedef std::chrono::time_point
-      <std::chrono::system_clock, sec_t> timestamp_t;
+      <std::chrono::system_clock> timestamp_t;
 
   enum class angle_range
   {
@@ -401,16 +401,22 @@ namespace spchord {
     void dump() const
     {
       const std::time_t tm = std::chrono::system_clock::to_time_t(t);
+      const auto dur = t.time_since_epoch();
+      const auto sub =
+        std::chrono::duration_cast<std::chrono::microseconds>(dur)
+        % std::chrono::seconds{1};
       std::stringstream ss;
-      ss << std::put_time(std::gmtime(&tm), "%Y-%m-%dT%X");
-      printf("%.5lf %.5lf %.5lf %lf\n", x, y, z, t.time_since_epoch().count());
+      ss << std::put_time(std::gmtime(&tm), "%FT%T") << "."
+         << std::setfill('0') << std::setw(6) << sub.count();
+      printf("%.5lf %.5lf %.5lf %s\n",
+             x, y, z, ss.str().c_str());
     }
 
     const timestamp_t t; /** timestamp of the measurement. */
     const double s;      /** uncertainty of the position in arcsecond. */
   private:
     const timestamp_t now() const
-    { return std::chrono::high_resolution_clock::now(); }
+    { return std::chrono::system_clock::now(); }
   };
 }
 

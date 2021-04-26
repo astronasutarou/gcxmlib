@@ -28,6 +28,7 @@ test/example_%: test/example_%.cc $(OBJECT) $(HEADER)
 build:
 	python setup.py build_ext --inplace
 
+test: $(EXAMPLE)
 # test: build
 # 	python -c 'import minimalKNN as m; m.simple_demo_box()'
 
