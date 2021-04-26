@@ -51,6 +51,8 @@ main(int argn, char** argv)
 
   printf("\n");
   printf("Arithmetic operations with the `angle` and float values.\n");
+  printf("# - angle(1.0)\n  ");
+  { auto x = -angle(1.0); display_angle(x); }
   printf("# 1.5 + angle(1.0)\n  ");
   { auto x = 1.5 + angle(1.0); display_angle(x); }
   printf("# angle(1.0) + 0.5\n  ");

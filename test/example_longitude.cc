@@ -51,6 +51,8 @@ main(int argn, char** argv)
 
   printf("\n");
   printf("Arithmetic operations with the `longitude` and float values.\n");
+  printf("# - longitude(1.0)\n  ");
+  { auto x = -longitude(1.0); display_angle(x); }
   printf("# 1.5 + longitude(1.0)\n  ");
   { auto x = 1.5 + longitude(1.0); display_angle(x); }
   printf("# longitude(1.0) + 0.5\n  ");
