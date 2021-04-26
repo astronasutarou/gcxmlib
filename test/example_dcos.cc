@@ -87,27 +87,13 @@ main(int argn, char** argv)
          "# Calculate the separation `d` between _q_ and _p_ in radian.\n"
          "# The result should be [%.5lf].\n"
          "# q.separation(p) = %.5lf\n",
-         std::acos(1.0*x/d), q.separation(p));
+         std::acos(1.0*x/d), q.separation(p).radian);
 
   printf("\n"
          "# Calculate the separation `d` between _q_ and [1,1,1] in radian.\n"
          "# The result should be [%.5lf].\n"
          "# q.separation(p) = %.5lf\n",
-         std::acos((x+y+z)/d/std::sqrt(3.0)), q.separation({1,1,1}));
-
-  printf("\n"
-         "# Calculate the separation `d` between _q_ and _p_ in arcsec.\n"
-         "# The result should be [%.5lf].\n"
-         "# q.separation(p) = %.5lf\n",
-         std::acos(1.0*x/d)*gcxmlib::radian_to_arcsec,
-         q.separation_arcsec(p));
-
-  printf("\n"
-         "# Calculate the separation `d` between _q_ and [1,1,1] in arcsec.\n"
-         "# The result should be [%.5lf].\n"
-         "# q.separation(p) = %.5lf\n",
-         std::acos((x+y+z)/d/std::sqrt(3.0))*gcxmlib::radian_to_arcsec,
-         q.separation_arcsec({1,1,1}));
+         std::acos((x+y+z)/d/std::sqrt(3.0)), q.separation({1,1,1}).radian);
 
   auto e = std::chrono::system_clock::now();
   std::chrono::duration<double> dt = e-s;

@@ -30,7 +30,7 @@ main(int argn, char** argv)
     arc.dump();
     printf("\n\n");
     for (size_t i=0; i<12; i++) {
-       const double phi = 2*M_PI/12*i;
+       const double phi = 2*M_PI/11*i;
        const auto p = interp(p1,p2,phi);
        p.dump();
     }
@@ -46,13 +46,11 @@ main(int argn, char** argv)
     arc.dump();
     printf("\n\n");
     for (size_t i=0; i<12; i++) {
-      const double phi = 2*M_PI/12*i;
+      const double phi = 2*M_PI/11*i;
       const auto p = interp(p1,p2,phi);
       p.dump();
     }
   }
-
-  // printf("\n\n");
 
   auto e = std::chrono::system_clock::now();
   std::chrono::duration<double> dt = e-s;

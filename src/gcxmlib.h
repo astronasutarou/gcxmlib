@@ -335,17 +335,9 @@ namespace gcxmlib {
      * @brief return the separation angle from `p` in radian.
      * @param[in] p: an instance of `vector3` class.
      */
-    const double
+    const angle
     separation(const vector3& p) const
     { return std::acos(separation_cosine(p)); }
-
-    /**
-     * @brief return the separation angle from `p` in arcsecond.
-     * @param[in] p: an instance of `vector3` class.
-     */
-    const double
-    separation_arcsec(const vector3& p) const
-    { return separation(p)*radian_to_arcsec; }
 
     /**
      * @brief dump all the elements to stdout.
@@ -684,6 +676,14 @@ namespace gcxmlib {
      */
     great_circle(const longitude& lon, const latitude& lat)
       : pole(lon, lat) {}
+
+    const angle
+    separation(const great_circle gc) const
+    { return pole.separation(gc.pole); }
+
+    const angle
+    separation_cosine(const great_circle gc) const
+    { return pole.separation_cosine(gc.pole); }
 
     /**
      * @brief dump (x,y,z)-coordinates on the circle.
