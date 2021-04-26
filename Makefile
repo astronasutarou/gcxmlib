@@ -13,7 +13,7 @@ EXAMPLE := test/example_angle \
            test/example_latitude \
            test/example_vector3 \
            test/example_dcos \
-           test/example_source
+           test/example_source_neighbor_to
 
 .PHONY: clean build test build_pypi upload_test upload_pypi
 
