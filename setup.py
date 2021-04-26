@@ -72,7 +72,7 @@ if __name__ == '__main__':
     description=description,
     long_description=long_description,
     long_description_content_type='text/markdown',
-    url='https://bitbucket.org/ryou_ohsawa/minimalKNN/src/master/',
+    url='https://bitbucket.org/ryou_ohsawa/spchord/src/master/',
     license=license,
     classifiers=classifiers,
     install_requires=['numpy','matplotlib',],
