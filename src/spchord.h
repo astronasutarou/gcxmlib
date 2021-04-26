@@ -60,10 +60,24 @@ namespace spchord {
       : radian(wrap(_r)),degree(to_degree()),
         arcmin(to_arcmin()),arcsec(to_arcsec()) {}
 
+    /**
+     * @brief construct an `base_angle` instance from another `base_angle`.
+     * @param[in] ang: a `base_angle` instance.
+     */
+    template<angle_range __range>
+    base_angle(const base_angle<__range>& ang)
+      : base_angle(ang.radian) {}
+
     const double radian; /** angle in radian */
     const double degree; /** angle in degree */
     const double arcmin; /** angle in arcmin */
     const double arcsec; /** angle in arcsec */
+
+
+    /**
+     * @brief implicit conversion to `double` returns `radian`.
+     */
+    operator double() const { return radian; }
 
     /**
      * @brief `unary minus` operator.
@@ -78,7 +92,7 @@ namespace spchord {
      * @param[in] val: a floating point value.
      */
     friend const base_angle<_range>
-    operator+(const base_angle<_range> ang, const double val)
+    operator+(const base_angle<_range>& ang, const double val)
     { return base_angle<_range>(ang.radian+val); }
     /**
      * @brief `add` operation with a floating point value.
@@ -86,7 +100,7 @@ namespace spchord {
      * @param[in] ang: a `base_angle` intance.
      */
     friend const base_angle<_range>
-    operator+(const double val, const base_angle<_range> ang)
+    operator+(const double val, const base_angle<_range>& ang)
     { return base_angle<_range>(val+ang.radian); }
     /**
      * @brief `subtract` operation with a floating point value.
@@ -94,7 +108,7 @@ namespace spchord {
      * @param[in] val: a floating point value.
      */
     friend const base_angle<_range>
-    operator-(const base_angle<_range> ang, const double val)
+    operator-(const base_angle<_range>& ang, const double val)
     { return base_angle<_range>(ang.radian-val); }
     /**
      * @brief `subtract` operation with a floating point value.
@@ -102,7 +116,7 @@ namespace spchord {
      * @param[in] ang: a `base_angle` intance.
      */
     friend const base_angle<_range>
-    operator-(const double val, const base_angle<_range> ang)
+    operator-(const double val, const base_angle<_range>& ang)
     { return base_angle<_range>(val-ang.radian); }
     /**
      * @brief `multiply` operation with a floating point value.
@@ -110,7 +124,7 @@ namespace spchord {
      * @param[in] val: a floating point value.
      */
     friend const base_angle<_range>
-    operator*(const base_angle<_range> ang, const double val)
+    operator*(const base_angle<_range>& ang, const double val)
     { return base_angle<_range>(ang.radian*val); }
     /**
      * @brief `multiply` operation with a floating point value.
@@ -118,7 +132,7 @@ namespace spchord {
      * @param[in] ang: a `base_angle` intance.
      */
     friend const base_angle<_range>
-    operator*(const double val, const base_angle<_range> ang)
+    operator*(const double val, const base_angle<_range>& ang)
     { return base_angle<_range>(ang.radian*val); }
     /**
      * @brief `divide` operation with a floating point value.
@@ -126,7 +140,7 @@ namespace spchord {
      * @param[in] val: a floating point value.
      */
     friend const base_angle<_range>
-    operator/(const base_angle<_range> ang, const double val)
+    operator/(const base_angle<_range>& ang, const double val)
     { return base_angle<_range>(ang.radian/val); }
     /**
      * @brief `divide` operation with a floating point value.
@@ -134,7 +148,7 @@ namespace spchord {
      * @param[in] ang: a `base_angle` intance.
      */
     friend const base_angle<_range>
-    operator/(const double val, const base_angle<_range> ang)
+    operator/(const double val, const base_angle<_range>& ang)
     { return base_angle<_range>(val/ang.radian); }
 
     /**
@@ -143,7 +157,7 @@ namespace spchord {
      */
     template <angle_range __range>
     const base_angle<_range>
-    operator+(const base_angle<__range> ang) const
+    operator+(const base_angle<__range>& ang) const
     { return base_angle<_range>(radian+ang.radian); }
     /**
      * @brief `subtract` operation with another `base_angle` instance.
@@ -151,7 +165,7 @@ namespace spchord {
      */
     template <angle_range __range>
     const base_angle<_range>
-    operator-(const base_angle<__range> ang) const
+    operator-(const base_angle<__range>& ang) const
     { return base_angle<_range>(radian-ang.radian); }
 
     /**
@@ -160,7 +174,7 @@ namespace spchord {
      */
     template <angle_range __range>
     const bool
-    operator==(const base_angle<__range> ang) const
+    operator==(const base_angle<__range>& ang) const
     { return (radian == ang.radian); }
     /**
      * @brief inequality operator to a `base_angle` instance.
@@ -168,7 +182,7 @@ namespace spchord {
      */
     template <angle_range __range>
     const bool
-    operator!=(const base_angle<__range> ang) const
+    operator!=(const base_angle<__range>& ang) const
     { return (radian != ang.radian); }
     /**
      * @brief lesser operator to a `base_angle` instance.
@@ -176,7 +190,7 @@ namespace spchord {
      */
     template <angle_range __range>
     const bool
-    operator<(const base_angle<__range> ang) const
+    operator<(const base_angle<__range>& ang) const
     { return (radian < ang.radian); }
     /**
      * @brief lesser-or-equal operator to a `base_angle` instance.
@@ -184,7 +198,7 @@ namespace spchord {
      */
     template <angle_range __range>
     const bool
-    operator<=(const base_angle<__range> ang) const
+    operator<=(const base_angle<__range>& ang) const
     { return (radian <= ang.radian); }
     /**
      * @brief greater operator to a `base_angle` instance.
@@ -192,7 +206,7 @@ namespace spchord {
      */
     template <angle_range __range>
     const bool
-    operator>(const base_angle<__range> ang) const
+    operator>(const base_angle<__range>& ang) const
     { return (radian > ang.radian); }
     /**
      * @brief greater-or-equal operator to a `base_angle` instance.
@@ -200,7 +214,7 @@ namespace spchord {
      */
     template <angle_range __range>
     const bool
-    operator>=(const base_angle<__range> ang) const
+    operator>=(const base_angle<__range>& ang) const
     { return (radian >= ang.radian); }
 
   private:
@@ -255,17 +269,32 @@ namespace spchord {
   /** general purpose angle class. */
   typedef base_angle<angle_range::zero_to_twopi> angle;
   /** `longitude` is an alias to `angle`. */
-  typedef angle longitude;
+  typedef base_angle<angle_range::zero_to_twopi> longitude;
   /** `latitude` is defined within [-pi/2,pi/2]. */
   typedef base_angle<angle_range::minus_pi_2_to_pi_2> latitude;
 
+  /** a helper function to make `angle` in radian. */
+  const angle radian(const double ang)
+  { return angle(ang); }
+  /** a helper function to make `angle` in degree. */
+  const angle degree(const double ang)
+  { return angle(ang*degree_to_radian); }
+  /** a helper function to make `angle` in arcmin. */
+  const angle arcmin(const double ang)
+  { return angle(ang*arcmin_to_radian); }
+  /** a helper function to make `angle` in arcsec. */
+  const angle arcsec(const double ang)
+  { return angle(ang*arcsec_to_radian); }
+
   namespace literals {
+    const angle operator"" rad(long double ang)
+    { return radian(ang); }
     const angle operator"" deg(long double ang)
-    { return angle(ang*degree_to_radian); }
+    { return degree(ang); }
     const angle operator"" amin(long double ang)
-    { return angle(ang*arcmin_to_radian); }
+    { return arcmin(ang); }
     const angle operator"" asec(long double ang)
-    { return angle(ang*arcsec_to_radian); }
+    { return arcsec(ang); }
   }
 
   class vector3 {
@@ -290,7 +319,7 @@ namespace spchord {
      * @param[in] p: an instance of `vector3` class.
      */
     const double
-    inner_product(const vector3 p) const
+    inner_product(const vector3& p) const
     { return p.x*x + p.y*y + p.z*z; }
 
 
@@ -299,7 +328,7 @@ namespace spchord {
      * @param[in] p: an instance of `vector3` class.
      */
     const double
-    separation_cosine(const vector3 p) const
+    separation_cosine(const vector3& p) const
     { return inner_product(p)/p.d/d; }
 
     /**
@@ -307,7 +336,7 @@ namespace spchord {
      * @param[in] p: an instance of `vector3` class.
      */
     const double
-    separation(const vector3 p) const
+    separation(const vector3& p) const
     { return std::acos(separation_cosine(p)); }
 
     /**
@@ -315,7 +344,7 @@ namespace spchord {
      * @param[in] p: an instance of `vector3` class.
      */
     const double
-    separation_arcsec(const vector3 p) const
+    separation_arcsec(const vector3& p) const
     { return separation(p)*radian_to_arcsec; }
 
     /**
@@ -340,39 +369,69 @@ namespace spchord {
 
     /**
      * @brief construct a `direction_cosine` instance with (x,y,z).
-     * @param[in] _x: x-coordinate.
-     * @param[in] _y: y-coordinate.
-     * @param[in] _z: z-coordinate.
+     * @param[in] _l: x-coordinate.
+     * @param[in] _m: y-coordinate.
+     * @param[in] _n: z-coordinate.
      */
-    direction_cosine(const double _x, const double _y, const double _z)
-      : vector3(nx(_x,_y,_z),ny(_x,_y,_z),nz(_x,_y,_z)), l(x), m(y), n(z)
+    direction_cosine(const double _l, const double _m, const double _n)
+      : vector3(nx(_l,_m,_n),ny(_l,_m,_n),nz(_l,_m,_n)), l(x), m(y), n(z),
+        lon(calc_longitude()), lat(calc_latitude())
     {}
 
     /**
      * @brief construct a `direction_cosine` instance with `vector3`.
      * @parma[in] p: an instance of `vector3` class.
      */
-    direction_cosine(const vector3 p)
+    direction_cosine(const vector3& p)
       : direction_cosine(p.x, p.y, p.z)
+    {}
+
+    /**
+     * @brief construct a `direction_cosine` instance with (lon,lat).
+     * @param[in] lon: a `longitude` instance.
+     * @param[in] lat: a `latitude` instance.
+     */
+    direction_cosine(const latitude& _lon, const latitude& _lat)
+      : direction_cosine(vx(_lon,_lat),vy(_lon,_lat),vz(_lon,_lat))
     {}
 
     const double& l; /** l-element of direction cosine (reference to x) */
     const double& m; /** m-element of direction cosine (reference to y) */
     const double& n; /** n-element of direction cosine (reference to z) */
+    const longitude lon;
+    const latitude lat;
 
   private:
-    /** @brief normalize x-coordinate in initialization. */
+    /** normalize x-coordinate in initialization. */
     const double
     nx(const double _x, const double _y, const double _z) const
     { return _x/std::sqrt(_x*_x+_y*_y+_z*_z); }
-    /** @brief normalize y-coordinate in initialization. */
+    /** normalize y-coordinate in initialization. */
     const double
     ny(const double _x, const double _y, const double _z) const
     { return _y/std::sqrt(_x*_x+_y*_y+_z*_z); }
-    /** @brief normalize z-coordinate in initialization. */
+    /** normalize z-coordinate in initialization. */
     const double
     nz(const double _x, const double _y, const double _z) const
     { return _z/std::sqrt(_x*_x+_y*_y+_z*_z); }
+    /** calculate x-coordinate from (lon,lat) */
+    const double
+    vx(const longitude& _lon, const latitude& _lat)
+    { return std::cos(_lon.radian)*std::cos(_lat.radian); }
+    /** calculate y-coordinate from (lon,lat) */
+    const double
+    vy(const longitude& _lon, const latitude& _lat)
+    { return std::sin(_lon.radian)*std::cos(_lat.radian); }
+    /** calculate z-coordinate from (lon,lat) */
+    const double
+    vz(const longitude& _lon, const latitude& _lat)
+    { return std::sin(_lat.radian); }
+    const longitude
+    calc_longitude()
+    { return longitude(std::atan2(m,l));}
+    const latitude
+    calc_latitude()
+    { return latitude(std::asin(n)); }
   };
   /** define _dcos_ as a shorthand of direction_cosine. */
   typedef direction_cosine dcos;
@@ -387,13 +446,26 @@ namespace spchord {
 
     /**
      * @brief construct a `source` instance with (x,y,z)
+     * @note set `t` and `s` the system time and 1 arcsec, respectivly.
      */
     source(const double _x, const double _y, const double _z)
-      : direction_cosine(_x, _y, _z), t(now()), s(1.0) {}
+      : direction_cosine(_x, _y, _z), t(now()), s(arcsec(1.0)) {}
 
+    /**
+     * @brief construct a `source` instance with (x,y,z,t)
+     * @note set `s` 1 arcsec if not assigned.
+     */
     source(const double _x, const double _y, const double _z,
-           const timestamp_t _t, const double _s = 1.0)
+           const timestamp_t _t, const angle& _s = arcsec(1.0))
       : direction_cosine(_x, _y, _z), t(_t), s(_s) {}
+
+    /**
+     * @brief construct a `source` instance with (lon,lat,t)
+     * @note set `s` 1 arcsec if not assigned.
+     */
+    source(const longitude& _lon, const latitude& _lat,
+           const timestamp_t _t, const angle& _s = arcsec(1.0))
+      : direction_cosine(_lon, _lat), t(_t), s(_s) {}
 
     /**
      * @brief dump all the elements to stdout.
@@ -408,16 +480,53 @@ namespace spchord {
       std::stringstream ss;
       ss << std::put_time(std::gmtime(&tm), "%FT%T") << "."
          << std::setfill('0') << std::setw(6) << sub.count();
-      printf("%.5lf %.5lf %.5lf %s\n",
-             x, y, z, ss.str().c_str());
+      printf("%.5lf %.5lf %.5lf %s\n", x, y, z, ss.str().c_str());
     }
 
+
+    /**
+     * @brief return `true` if another point is inside the range.
+     * @param[in] p: another positional instance.
+     * @param[in] range: an `angle` instance.
+     */
+    template<class T>
+    const bool
+    neighbor_to(const T& p, const angle& range) const
+    {
+      const double cosine = std::cos(range.radian);
+      const double sepcos = separation_cosine(p);
+      return sepcos >= cosine;
+    }
+
+    /**
+     * @brief return `true` if another point is inside the uncertainty.
+     * @param[in] p: another positional instance.
+     */
+    template<class T>
+    const bool
+    neighbor_to(const T& p) const
+    { return neighbor_to(p, s.radian); }
+
     const timestamp_t t; /** timestamp of the measurement. */
-    const double s;      /** uncertainty of the position in arcsecond. */
+    const angle s;       /** uncertainty of the position. */
+
+    friend bool
+    operator==(const source& lhs, const source& rhs)
+    { return true; }
   private:
     const timestamp_t now() const
     { return std::chrono::system_clock::now(); }
   };
+
+  /**
+   * @brief return `true` if another point is inside the uncertainty.
+   * @param[in] p: another positional instance.
+   * @note `range` is set the summation of the both uncertainties
+   *       if `p` is an instance of `source`. as `range`.
+   */
+  template<> const bool
+  source::neighbor_to<source>(const source& p) const
+  { return neighbor_to(p, s.radian+p.s.radian); }
 }
 
 #endif  // __SPCHORD_H_INCLUDE

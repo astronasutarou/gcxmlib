@@ -20,7 +20,7 @@ main(int argn, char** argv)
 
   auto s = std::chrono::system_clock::now();
 
-  printf("# Define vector3 _p_ without argument.\n"
+  printf("# Define `vector3` _p_ without argument.\n"
          "# The elements of _p_ should be [%.5lf %.5lf %.5lf].\n",
          1.0, 0.0, 0.0);
   p.dump();
@@ -30,7 +30,7 @@ main(int argn, char** argv)
          "# p.d = %.5lf\n", 1.0, p.d);
 
   printf("\n"
-         "# Define vector3 _q_ with random arguments.\n"
+         "# Define `vector3` _q_ with random arguments.\n"
          "# The elements of _q_ should be [%.5lf %.5lf %.5lf].\n", x, y, z);
   q.dump();
 

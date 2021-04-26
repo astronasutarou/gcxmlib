@@ -8,20 +8,23 @@
 #include <random>
 
 using spchord::dcos;
+using spchord::longitude;
+using spchord::latitude;
+
 
 int
 main(int argn, char** argv)
 {
   int32_t seed = 42;
   std::mt19937 gen; gen.seed(seed);
-  std::uniform_real_distribution<double> unif(-1,1);
+  std::uniform_real_distribution<double> unif(-M_PI,M_PI);
   double x(unif(gen)), y(unif(gen)), z(unif(gen));
   dcos p, q(x,y,z);
   double d = std::sqrt(x*x+y*y+z*z);
 
   auto s = std::chrono::system_clock::now();
 
-  printf("# Define point3 _p_ without argument.\n"
+  printf("# Define `direction_cosine` _p_ without argument.\n"
          "# The elements of _p_ should be\n"
          "#     [%.5lf %.5lf %.5lf].\n", 1.0, 0.0, 0.0);
   p.dump();
@@ -31,7 +34,7 @@ main(int argn, char** argv)
          "# p.d = %.5lf\n", 1.0, p.d);
 
   printf("\n"
-         "# Define point3 _q_ with random arguments.\n"
+         "# Define `direction_cosine` _q_ with random arguments.\n"
          "# The elements of _q_ should be\n"
          "#     [%.5lf %.5lf %.5lf].\n", x/d, y/d, z/d);
   q.dump();
@@ -39,6 +42,22 @@ main(int argn, char** argv)
   printf("\n"
          "# the distance to _q_ should be [%.5lf].\n"
          "# q.d = %.5lf\n", 1.0, q.d);
+
+  longitude lon(unif(gen));
+  latitude lat(unif(gen)/2.0);
+  dcos r(lon,lat);
+  printf("\n"
+         "# Define `direction_cosine` _r_ with (lon,lat) pair.\n"
+         "# The elements of _r_ should be\n"
+         "#     [%.5lf %.5lf %.5lf].\n",
+         std::cos(lon.radian)*std::cos(lat.radian),
+         std::sin(lon.radian)*std::cos(lat.radian),
+         std::sin(lat.radian));
+  r.dump();
+
+  printf("\n"
+         "# the distance to _r_ should be [%.5lf].\n"
+         "# r.d = %.5lf\n", 1.0, r.d);
 
   printf("\n"
          "# Calculate an inner product of _q_ and _p_.\n"

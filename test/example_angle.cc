@@ -51,6 +51,15 @@ main(int argn, char** argv)
   display_angle(angle(2*M_PI));
 
   printf("\n");
+  printf("Cast to (double) returns radian.\n");
+  printf("(double)angle(1.0) = %lf\n",
+         (double)angle(1.0));
+  printf("static_cast<double>(angle(1.0)) = %lf\n",
+         static_cast<double>(angle(1.0)));
+  double tmp = angle(1.0);
+  printf("double tmp = angle(1.0); tmp = %lf\n", tmp);
+
+  printf("\n");
   printf("Arithmetic operations with the `angle` and float values.\n");
   printf("# - angle(1.0)\n  ");
   { auto x = -angle(1.0); display_angle(x); }
