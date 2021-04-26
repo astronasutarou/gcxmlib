@@ -488,6 +488,10 @@ namespace spchord {
      * @brief return `true` if another point is inside the range.
      * @param[in] p: another positional instance.
      * @param[in] range: an `angle` instance.
+     * @note acceptable positional classes are as follows:
+     *         - vector3
+     *         - dirction_cosine
+     *         - source
      */
     template<class T>
     const bool
@@ -496,6 +500,27 @@ namespace spchord {
       const double cosine = std::cos(range.radian);
       const double sepcos = separation_cosine(p);
       return sepcos >= cosine;
+    }
+
+    /**
+     * @brief return `true` if another point is inside the range.
+     * @param[in] p: another positional instance.
+     * @param[in] range: an `angle` instance.
+     * @param[in] trange: a time duration.
+     * @note acceptable positional classes are as follows:
+     *         - vector3
+     *         - dirction_cosine
+     *         - source
+     */
+    template<class T>
+    const bool
+    match(const T& p, const angle& range, const sec_t& trange) const
+    {
+      const double cosine = std::cos(range.radian);
+      const double tsep = std::abs(static_cast<sec_t>(t-p.t).count());
+      const double sepcos = separation_cosine(p);
+      printf("tsep = %lf\n", tsep);
+      return (sepcos >= cosine) && (tsep < trange.count());
     }
 
     /**
