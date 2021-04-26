@@ -73,7 +73,10 @@ namespace gcxmlib {
     const double arcmin; /** angle in arcmin */
     const double arcsec; /** angle in arcsec */
 
-
+    /**
+     * @brief implicit conversion to `float` returns `radian`.
+     */
+    operator float() const { return radian; }
     /**
      * @brief implicit conversion to `double` returns `radian`.
      */
