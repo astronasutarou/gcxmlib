@@ -4,10 +4,10 @@
  * @author Ryou Ohsawa
  * @year 2021
  */
-#include "spchord.h"
+#include "gcxmlib.h"
 #include <random>
 
-using spchord::longitude;
+using gcxmlib::longitude;
 
 
 template<class T>

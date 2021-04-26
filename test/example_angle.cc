@@ -4,11 +4,11 @@
  * @author Ryou Ohsawa
  * @year 2021
  */
-#include "spchord.h"
+#include "gcxmlib.h"
 #include <random>
 
-using spchord::angle;
-using namespace spchord::literals;
+using gcxmlib::angle;
+using namespace gcxmlib::literals;
 
 
 template<class T>

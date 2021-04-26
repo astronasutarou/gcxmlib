@@ -9,7 +9,7 @@ with open('README.md', 'r') as fd:
   version = '0.1'
   author = 'Ryou Ohsawa'
   email = 'ohsawa@ioa.s.u-tokyo.ac.jp'
-  description = 'SPChord: a library to handle chords on a sphere'
+  description = 'GCXMlib: a library for x-matching with great circles'
   long_description = fd.read()
   license = 'MIT'
 
@@ -24,17 +24,17 @@ classifiers = [
   'Programming Language :: Python :: Implementation :: CPython',
   'Topic :: Scientific/Engineering :: Astronomy']
 
-if os.path.exists('spchord.pyx'):
+if os.path.exists('gcxmlib.pyx'):
   USE_CYTHON = True
-  filename   = 'spchord.pyx'
+  filename   = 'gcxmlib.pyx'
 else:
   USE_CYTHON = False
-  if os.path.exists('spchord.cpp'):
-    filename   = 'spchord.cpp'
-  elif os.path.exists('spchord.cxx'):
-    filename   = 'spchord.cxx'
-  elif os.path.exists('spchord.cc'):
-    filename   = 'spchord.cc'
+  if os.path.exists('gcxmlib.cpp'):
+    filename   = 'gcxmlib.cpp'
+  elif os.path.exists('gcxmlib.cxx'):
+    filename   = 'gcxmlib.cxx'
+  elif os.path.exists('gcxmlib.cc'):
+    filename   = 'gcxmlib.cc'
 
 
 if __name__ == '__main__':
@@ -49,7 +49,7 @@ if __name__ == '__main__':
   include_dirs = [numpy.get_include(), 'src']
   compile_args = ['-std=c++11','-O2']
   extensions   = [
-    Extension('spchord',
+    Extension('gcxmlib',
               language='c++',
               sources=sources,
               libraries=libraries,
@@ -63,7 +63,7 @@ if __name__ == '__main__':
     extensions = cythonize(extensions, language_level=3)
 
   setup(
-    name='spchord',
+    name='gcxmlib',
     version=version,
     author=author,
     author_email=email,
@@ -72,7 +72,7 @@ if __name__ == '__main__':
     description=description,
     long_description=long_description,
     long_description_content_type='text/markdown',
-    url='https://bitbucket.org/ryou_ohsawa/spchord/src/master/',
+    url='https://bitbucket.org/ryou_ohsawa/gcxmlib/src/master/',
     license=license,
     classifiers=classifiers,
     install_requires=['numpy','matplotlib',],

@@ -4,11 +4,11 @@
  * @author Ryou Ohsawa
  * @year 2021
  */
-#include "spchord.h"
+#include "gcxmlib.h"
 #include <random>
 
-using spchord::source;
-using spchord::degree;
+using gcxmlib::source;
+using gcxmlib::degree;
 using std::chrono::seconds;
 
 int
@@ -24,7 +24,7 @@ main(int argn, char** argv)
 
   for (size_t i=0; i<10000; i++) {
     {
-      const spchord::timestamp_t t0 = std::chrono::system_clock::now();
+      const gcxmlib::timestamp_t t0 = std::chrono::system_clock::now();
       double x(unif(gen)), y(unif(gen)), z(1.0);
       source p(x,y,z,t0+seconds(i));
       if (p0.neighbor_to(p, degree(5.0))) {

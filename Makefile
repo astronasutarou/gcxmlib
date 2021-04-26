@@ -4,7 +4,7 @@ LIBS   := -I./src -L./src -lm
 CFLAGS := -std=c++14 -g -Wall -O3
 CXX    := $(CC) $(LIBS) $(CFLAGS)
 
-HEADER := src/spchord.h
+HEADER := src/gcxmlib.h
 SOURCE := $(wildcard src/*.cc)
 OBJECT := $(patsubst %.cc,%.o,$(SOURCE))
 

@@ -1,11 +1,11 @@
 /**
- * @file spchord.h
- * @brief header file for the spchord library
+ * @file gcxmlib.h
+ * @brief header file for the gcxmlib library
  * @author Ryou Ohsawa
  * @year 2021
  */
-#ifndef __SPCHORD_H_INCLUDE
-#define __SPCHORD_H_INCLUDE
+#ifndef __GCXMLIB_H_INCLUDE
+#define __GCXMLIB_H_INCLUDE
 #define _USE_MATH_DEFINES
 
 #include <cstdio>
@@ -20,7 +20,7 @@
 #include <stdexcept>
 
 
-namespace spchord {
+namespace gcxmlib {
   using namespace std::chrono_literals;
 
   constexpr bool __debug__ = false;
@@ -554,4 +554,4 @@ namespace spchord {
   { return neighbor_to(p, s.radian+p.s.radian); }
 }
 
-#endif  // __SPCHORD_H_INCLUDE
+#endif  // __GCXMLIB_H_INCLUDE

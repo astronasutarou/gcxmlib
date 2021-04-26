@@ -4,10 +4,10 @@
  * @author Ryou Ohsawa
  * @year 2021
  */
-#include "spchord.h"
+#include "gcxmlib.h"
 #include <random>
 
-using spchord::vector3;
+using gcxmlib::vector3;
 
 int
 main(int argn, char** argv)
@@ -78,14 +78,14 @@ main(int argn, char** argv)
          "# Calculate the separation `d` between _q_ and _p_ in arcsec.\n"
          "# The result should be [%.5lf].\n"
          "# q.separation(p) = %.5lf\n",
-         std::acos(1.0*x/q.d)*spchord::radian_to_arcsec,
+         std::acos(1.0*x/q.d)*gcxmlib::radian_to_arcsec,
          q.separation_arcsec(p));
 
   printf("\n"
          "# Calculate the separation `d` between _q_ and [1,1,1] in arcsec.\n"
          "# The result should be [%.5lf].\n"
          "# q.separation(p) = %.5lf\n",
-         std::acos((x+y+z)/q.d/std::sqrt(3.0))*spchord::radian_to_arcsec,
+         std::acos((x+y+z)/q.d/std::sqrt(3.0))*gcxmlib::radian_to_arcsec,
          q.separation_arcsec({1,1,1}));
 
   auto e = std::chrono::system_clock::now();
