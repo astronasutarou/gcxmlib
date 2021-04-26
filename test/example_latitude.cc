@@ -1,5 +1,5 @@
 /**
- * @file sample_latitude.cc
+ * @file example_latitude.cc
  * @brief functional test of the latitude class
  * @author Ryou Ohsawa
  * @year 2021
@@ -31,6 +31,8 @@ put_boolean(const bool b)
 int
 main(int argn, char** argv)
 {
+  auto s = std::chrono::system_clock::now();
+
   printf("The domain of the `latitude` instance is [-pi/2, pi/2).\n");
   printf("Create `latitude` instances with various angles.\n");
   printf("# latitude(1.0)\n  ");
@@ -95,6 +97,10 @@ main(int argn, char** argv)
   put_boolean(latitude(1.0) > latitude(0.5));
   printf("# latitude(2.0) == latitude(2.0)\n  ");
   put_boolean(latitude(1.0) == latitude(1.0));
+
+  auto e = std::chrono::system_clock::now();
+  std::chrono::duration<double> dt = e-s;
+  printf("\n# elapsed time:: %.8lf ms\n", dt.count()*1e3);
 
   return 0;
 }

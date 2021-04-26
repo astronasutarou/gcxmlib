@@ -8,13 +8,16 @@ HEADER := src/spchord.h
 SOURCE := $(wildcard src/*.cc)
 OBJECT := $(patsubst %.cc,%.o,$(SOURCE))
 
+EXAMPLE := test/example_angle \
+           test/example_longitude \
+           test/example_latitude \
+           test/example_vector3 \
+           test/example_dcos \
+           test/example_source
+
 .PHONY: clean build test build_pypi upload_test upload_pypi
 
-all: test/sample_angle \
-     test/sample_longitude \
-     test/sample_latitude \
-     test/sample_vector3 \
-     test/sample_dcos
+all: $(EXAMPLE)
 
 test/sample_%: test/sample_%.cc $(OBJECT) $(HEADER)
 	$(CXX) -o $@ $< $(OBJECT)

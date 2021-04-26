@@ -1,5 +1,5 @@
 /**
- * @file sample_angles.cc
+ * @file example_angle.cc
  * @brief functional test of the angle class
  * @author Ryou Ohsawa
  * @year 2021
@@ -31,6 +31,8 @@ put_boolean(const bool b)
 int
 main(int argn, char** argv)
 {
+  auto s = std::chrono::system_clock::now();
+
   printf("The domain of the `angle` instance is [0, 2pi).\n");
   printf("Create `angle` instances with various angles.\n");
   printf("# angle(1.0)\n  ");
@@ -81,6 +83,10 @@ main(int argn, char** argv)
   put_boolean(angle(2.0) > angle(1.0));
   printf("# angle(2.0) == angle(2.0)\n  ");
   put_boolean(angle(2.0) == angle(2.0));
+
+  auto e = std::chrono::system_clock::now();
+  std::chrono::duration<double> dt = e-s;
+  printf("\n# elapsed time:: %.8lf ms\n", dt.count()*1e3);
 
   return 0;
 }
