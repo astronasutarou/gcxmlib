@@ -10,7 +10,10 @@
 
 #include <cstdio>
 #include <cmath>
+#include <ctime>
 #include <chrono>
+#include <iomanip>
+#include <sstream>
 #include <utility>
 #include <vector>
 #include <set>
@@ -18,6 +21,8 @@
 
 
 namespace spchord {
+  using namespace std::chrono_literals;
+
   constexpr bool __debug__ = false;
   constexpr double radian_to_degree = 180./M_PI;
   constexpr double degree_to_radian = M_PI/180.;
@@ -28,7 +33,7 @@ namespace spchord {
 
   typedef std::chrono::duration<double> sec_t;
   typedef std::chrono::time_point
-    <std::chrono::high_resolution_clock, sec_t> timestamp_t;
+      <std::chrono::system_clock, sec_t> timestamp_t;
 
   enum class angle_range
   {
@@ -254,6 +259,14 @@ namespace spchord {
   /** `latitude` is defined within [-pi/2,pi/2]. */
   typedef base_angle<angle_range::minus_pi_2_to_pi_2> latitude;
 
+  namespace literals {
+    const angle operator"" deg(long double ang)
+    { return angle(ang*degree_to_radian); }
+    const angle operator"" amin(long double ang)
+    { return angle(ang*arcmin_to_radian); }
+    const angle operator"" asec(long double ang)
+    { return angle(ang*arcsec_to_radian); }
+  }
 
   class vector3 {
   public:
@@ -368,16 +381,30 @@ namespace spchord {
   class source : public direction_cosine {
   public:
     /**
-     * @brief construct a `source` instance
+     * @brief construct a `source` instance initialized with (1,0,0).
      */
     source() : source(1.0, 0.0, 0.0) {}
 
     /**
-     * @brief
+     * @brief construct a `source` instance with (x,y,z)
      */
     source(const double _x, const double _y, const double _z)
       : direction_cosine(_x, _y, _z), t(now()), s(1.0) {}
 
+    source(const double _x, const double _y, const double _z,
+           const timestamp_t _t, const double _s = 1.0)
+      : direction_cosine(_x, _y, _z), t(_t), s(_s) {}
+
+    /**
+     * @brief dump all the elements to stdout.
+     */
+    void dump() const
+    {
+      const std::time_t tm = std::chrono::system_clock::to_time_t(t);
+      std::stringstream ss;
+      ss << std::put_time(std::gmtime(&tm), "%Y-%m-%dT%X");
+      printf("%.5lf %.5lf %.5lf %lf\n", x, y, z, t.time_since_epoch().count());
+    }
 
     const timestamp_t t; /** timestamp of the measurement. */
     const double s;      /** uncertainty of the position in arcsecond. */

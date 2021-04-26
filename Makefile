@@ -1,7 +1,7 @@
 CC     := g++
 TESTPY := --repository-url https://test.pypi.org/legacy/
 LIBS   := -I./src -L./src -lm
-CFLAGS := -std=c++11 -g -Wall -O3
+CFLAGS := -std=c++14 -g -Wall -O3
 CXX    := $(CC) $(LIBS) $(CFLAGS)
 
 HEADER := src/spchord.h
@@ -19,7 +19,7 @@ EXAMPLE := test/example_angle \
 
 all: $(EXAMPLE)
 
-test/sample_%: test/sample_%.cc $(OBJECT) $(HEADER)
+test/example_%: test/example_%.cc $(OBJECT) $(HEADER)
 	$(CXX) -o $@ $< $(OBJECT)
 
 .cc.o: $(HEADER)
@@ -28,8 +28,8 @@ test/sample_%: test/sample_%.cc $(OBJECT) $(HEADER)
 build:
 	python setup.py build_ext --inplace
 
-test: build
-	python -c 'import minimalKNN as m; m.simple_demo_box()'
+# test: build
+# 	python -c 'import minimalKNN as m; m.simple_demo_box()'
 
 build_pypi: build
 	python setup.py sdist bdist_wheel -p manylinux1_x86_64

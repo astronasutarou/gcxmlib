@@ -8,6 +8,7 @@
 #include <random>
 
 using spchord::angle;
+using namespace spchord::literals;
 
 
 template<class T>
@@ -85,6 +86,15 @@ main(int argn, char** argv)
   put_boolean(angle(2.0) > angle(1.0));
   printf("# angle(2.0) == angle(2.0)\n  ");
   put_boolean(angle(2.0) == angle(2.0));
+
+  printf("\n");
+  printf("Use literals to construct `angle` instances.\n");
+  printf("# 123.45deg\n");
+  { auto x = 123.45deg; display_angle(x); }
+  printf("# 123.45amin\n");
+  { auto x = 123.45amin; display_angle(x); }
+  printf("# 123.45asec\n");
+  { auto x = 123.45asec; display_angle(x); }
 
   auto e = std::chrono::system_clock::now();
   std::chrono::duration<double> dt = e-s;
