@@ -462,23 +462,6 @@ namespace gcxmlib {
       : direction_cosine(_lon, _lat), t(_t), s(_s) {}
 
     /**
-     * @brief dump all the elements to stdout.
-     */
-    void dump() const
-    {
-      const std::time_t tm = std::chrono::system_clock::to_time_t(t);
-      const auto dur = t.time_since_epoch();
-      const auto sub =
-        std::chrono::duration_cast<std::chrono::microseconds>(dur)
-        % std::chrono::seconds{1};
-      std::stringstream ss;
-      ss << std::put_time(std::gmtime(&tm), "%FT%T") << "."
-         << std::setfill('0') << std::setw(6) << sub.count();
-      printf("%.5lf %.5lf %.5lf %s\n", x, y, z, ss.str().c_str());
-    }
-
-
-    /**
      * @brief return `true` if another point is inside the range.
      * @param[in] p: another positional instance.
      * @param[in] range: an `angle` instance.
@@ -522,6 +505,23 @@ namespace gcxmlib {
       const double tsep = std::abs(static_cast<sec_t>(t-p.t).count());
       const double sepcos = separation_cosine(p);
       return (sepcos >= cosine) && (tsep < trange.count());
+    }
+
+    /**
+     * @brief dump all the elements to stdout.
+     */
+    void dump() const
+    {
+      const std::time_t tm = std::chrono::system_clock::to_time_t(t);
+      const auto dur = t.time_since_epoch();
+      const auto sub =
+        std::chrono::duration_cast<std::chrono::microseconds>(dur)
+        % std::chrono::seconds{1};
+      std::stringstream ss;
+      ss << std::put_time(std::gmtime(&tm), "%FT%T") << "."
+         << std::setfill('0') << std::setw(6) << sub.count();
+      printf("%.5lf %.5lf %.5lf %.5lf %s\n",
+             x, y, z, s.arcsec, ss.str().c_str());
     }
 
     const timestamp_t t; /** timestamp of the measurement. */
@@ -578,7 +578,7 @@ namespace gcxmlib {
    * @param[in] plus: returns the positive solution if `true`.
    */
   const direction_cosine
-  __deflect_cosine(const direction_cosine& p1,
+  __deflect_helper(const direction_cosine& p1,
                    const direction_cosine& p2,
                    const double cost,
                    const double cosf1, const double cosf2,
@@ -618,7 +618,7 @@ namespace gcxmlib {
     const double&& cosf2 = std::cos(f2.radian);
     const double&& cosfp = std::cos((f1+f2).radian);
     const double&& cosfm = std::cos((f1-f2).radian);
-    return __deflect_cosine(p1,p2,cost,cosf1,cosf2,cosfp,cosfm);
+    return __deflect_helper(p1,p2,cost,cosf1,cosf2,cosfp,cosfm);
   }
 
   /**
@@ -645,7 +645,7 @@ namespace gcxmlib {
     const double&& cos2f1 = cosf1*cosf1-sinf1*sinf1;
     const double&& sin2f1 = 2*cosf1*sinf1;
     const double&& cosfm  = cos2f1*cost+sin2f1*sint;
-    return __deflect_cosine(p1,p2,cost,cosf1,cosf2,cosfp,cosfm);
+    return __deflect_helper(p1,p2,cost,cosf1,cosf2,cosfp,cosfm);
   }
 
   class great_circle {
@@ -797,21 +797,87 @@ namespace gcxmlib {
      *         (invalid_argumet): timestamps of `s` and `e` are the same.
      */
     motion_arc(const source& _s, const source& _e)
-      : great_circle(get_pole(_s,_e)), s(_s), e(_e), dt(_e.t-_s.t)
+      : great_circle(get_pole(_s,_e)), s(_s), e(_e), dt(_e.t-_s.t),
+        h_s1(make_helper(s,e,true)), h_s2(make_helper(s,e,false)),
+        h_e1(make_helper(e,s,true)), h_e2(make_helper(e,s,false)),
+        p_s1(get_pole(s,h_s1)), p_s2(get_pole(s,h_s2)),
+        p_e1(get_pole(e,h_e1)), p_e2(get_pole(e,h_e2)),
+        cost_s12(p_s1.separation_cosine(p_s2)),
+        cost_e12(p_e1.separation_cosine(p_e2))
     {
       if (std::abs(dt.count()) < 1e-15)
         throw std::invalid_argument
           ("no time difference bwteen two positions.");
+      if (__debug__) {
+        printf("# s   : "); s.dump();
+        printf("# e   : "); e.dump();
+        printf("# dt  : %lf s\n", dt.count());
+        printf("# h_s1: "); h_s1.dump();
+        printf("# h_s2: "); h_s2.dump();
+        printf("# h_e1: "); h_e1.dump();
+        printf("# h_e2: "); h_e2.dump();
+        printf("# p_s1: "); p_s1.dump();
+        printf("# p_s2: "); p_s2.dump();
+        printf("# p_e1: "); p_e1.dump();
+        printf("# p_e2: "); p_e2.dump();
+      }
+    }
+
+    const direction_cosine
+    propagate(const timestamp_t& T) const;
+    const direction_cosine
+    propagate(const sec_t& dT) const;
+
+    const bool
+    in_sight_of(const direction_cosine& p) const
+    {
+      {
+        const direction_cosine ps = get_pole(s,p);
+        const double cost_p1 = ps.separation_cosine(p_s1);
+        const double cost_p2 = ps.separation_cosine(p_s2);
+        const double sint_p1 = std::sqrt(1-cost_p1*cost_p1);
+        const double sint_p2 = std::sqrt(1-cost_p2*cost_p2);
+        const double cost_pp = cost_p1*cost_p2-sint_p1*sint_p2;
+        if (std::abs(cost_pp-cost_s12)<__epsilon__) return true;
+      }
+      {
+        const direction_cosine pe = get_pole(e,p);
+        const double cost_p1 = pe.separation_cosine(p_e1);
+        const double cost_p2 = pe.separation_cosine(p_e2);
+        const double sint_p1 = std::sqrt(1-cost_p1*cost_p1);
+        const double sint_p2 = std::sqrt(1-cost_p2*cost_p2);
+        const double cost_pp = cost_p1*cost_p2-sint_p1*sint_p2;
+        if (std::abs(cost_pp-cost_e12)<__epsilon__) return true;
+      }
+      return false;
     }
 
     const bool
-    colinear_with(const great_circle& gc);
-
+    colinear_with(const great_circle& gc, const angle& tol = degree(5.0));
 
     const source s; /** the starting point of the arc. */
     const source e; /** the end point of the arc. */
     const sec_t dt; /** the time separation between `s` and `e` */
   private:
+    const direction_cosine h_s1; /** the first helper point for `s`. */
+    const direction_cosine h_s2; /** the second helper point for `s`. */
+    const direction_cosine h_e1; /** the first helper point for `e`. */
+    const direction_cosine h_e2; /** the second helper point for `e`. */
+    const direction_cosine p_s1; /** the first helper pole for `s`. */
+    const direction_cosine p_s2; /** the second helper pole for `s`. */
+    const direction_cosine p_e1; /** the first helper pole for `e`. */
+    const direction_cosine p_e2; /** the second helper pole for `e`. */
+    const double cost_s12; /** a helper varialbe for `in_sight_of`. */
+    const double cost_e12; /** a helper variable for `in_sight_of`. */
+
+    const direction_cosine
+    make_helper(const source& from, const source& to, const bool parity)
+    {
+      const angle theta = from.separation(to);
+      const angle delta = to.s;
+      const angle phi = radian(std::hypot(theta.radian,delta.radian));
+      return deflect(from, to, phi, (parity?1.0:-1.0)*delta);
+    }
   };
 }
 

@@ -19,7 +19,8 @@ EXAMPLE := test/example_angle \
            test/example_great_circle_dump \
            test/example_great_circle_separation \
            test/example_interp \
-           test/example_motion_arc
+           test/example_motion_arc \
+           test/example_motion_arc_in_sight_of
 
 .PHONY: clean build test build_pypi upload_test upload_pypi
 
