@@ -24,6 +24,8 @@ namespace gcxmlib {
   using namespace std::chrono_literals;
 
   constexpr bool __debug__ = false;
+  constexpr double __epsilon__ = 1e-15;
+  constexpr double __exact_zero__ = 0.0;
   constexpr double radian_to_degree = 180./M_PI;
   constexpr double degree_to_radian = M_PI/180.;
   constexpr double radian_to_arcmin = 60.*180./M_PI;
@@ -73,10 +75,6 @@ namespace gcxmlib {
     const double arcmin; /** angle in arcmin */
     const double arcsec; /** angle in arcsec */
 
-    /**
-     * @brief implicit conversion to `float` returns `radian`.
-     */
-    operator float() const { return radian; }
     /**
      * @brief implicit conversion to `double` returns `radian`.
      */
@@ -564,7 +562,7 @@ namespace gcxmlib {
   get_pole(const vector3& p1, const vector3& p2)
   {
     const vector3 n = outer_product(p1,p2);
-    if (n.d < 1e-15)
+    if (n.d < __epsilon__)
       throw std::invalid_argument
         ("two vectors are colinear. pole is not defined.");
     return direction_cosine(n);
@@ -587,15 +585,14 @@ namespace gcxmlib {
                    const direction_cosine& p2,
                    const double cost,
                    const double cosf1, const double cosf2,
-                   const double cosfp, const double cosfm,
-                   const bool plus)
+                   const double cosfp, const double cosfm)
   {
     const double w2 = (cost-cosfp)*(cosfm-cost);
-    if (cost >= 1)
+    if (1.0-cost < __epsilon__)
       throw std::invalid_argument("p1 and p2 are identical.");
-    if (w2 < 0)
+    if (w2 < __exact_zero__)
       throw std::range_error("cannot find the solution.");
-    const double w = (plus?1.0:-1.0)*std::sqrt(w2);
+    const double w = ((cost-cosfp)>0?1.0:-1.0)*std::sqrt(w2);
     const double&& l =
       (p1.l-p2.l*cost)*cosf1+(p2.l-p1.l*cost)*cosf2+(p1.m*p2.n-p1.n*p2.m)*w;
     const double&& m =
@@ -617,16 +614,14 @@ namespace gcxmlib {
   const direction_cosine
   deflect(const direction_cosine& p1,
           const direction_cosine& p2,
-          const angle& f1,
-          const angle& f2,
-          const bool plus = true)
+          const angle& f1, const angle& f2)
   {
     const double&& cost  = p1.separation_cosine(p2);
     const double&& cosf1 = std::cos(f1.radian);
     const double&& cosf2 = std::cos(f2.radian);
     const double&& cosfp = std::cos((f1+f2).radian);
     const double&& cosfm = std::cos((f1-f2).radian);
-    return __deflect_cosine(p1,p2,cost,cosf1,cosf2,cosfp,cosfm,plus);
+    return __deflect_cosine(p1,p2,cost,cosf1,cosf2,cosfp,cosfm);
   }
 
   /**
@@ -653,7 +648,7 @@ namespace gcxmlib {
     const double&& cos2f1 = cosf1*cosf1-sinf1*sinf1;
     const double&& sin2f1 = 2*cosf1*sinf1;
     const double&& cosfm  = cos2f1*cost+sin2f1*sint;
-    return __deflect_cosine(p1,p2,cost,cosf1,cosf2,cosfp,cosfm,true);
+    return __deflect_cosine(p1,p2,cost,cosf1,cosf2,cosfp,cosfm);
   }
 
   class great_circle {
@@ -722,6 +717,32 @@ namespace gcxmlib {
     separation(const direction_cosine& p) const
     { return std::acos(separation_cosine(p).radian); }
 
+
+    /**
+     * @brief obtain a foot of the perpendicular from `p`.
+     * @param[in] p: a `direction_cosine` instance.
+     */
+    const direction_cosine
+    foot_of(const direction_cosine& p) const
+    {
+      const double cost = pole.separation_cosine(p);
+      if (1.0-cost > __epsilon__) {
+        const double sint = std::sqrt(1-cost*cost);
+        const double&& l = (p.l-pole.l*cost)*sint;
+        const double&& m = (p.m-pole.m*cost)*sint;
+        const double&& n = (p.n-pole.n*cost)*sint;
+        return direction_cosine(l,m,n);
+      } else {
+        // `p` and `pole` is almost identical.
+        // use (1,0,0) or (0,1,0) instead of `p`.
+        const direction_cosine px(1,0,0), py(0,1,0);
+        const double&& costx = pole.separation_cosine(px);
+        const double&& costy = pole.separation_cosine(py);
+        return foot_of(costy>costx?px:py);
+      }
+    }
+
+
     /**
      * @brief dump (x,y,z)-coordinates on the circle.
      * @param[in] N: the number of points (default: 512).
@@ -733,14 +754,8 @@ namespace gcxmlib {
       const double&& dcosq = pole.separation_cosine(q);
       const direction_cosine x = outer_product(pole,(dcosq>dcosp?p:q));
       for (size_t i=0; i<N; i++) {
-        const double phi = M_PI/N*i;
-        const auto P = deflect(x, pole, phi, M_PI_2);
-        P.dump();
-      }
-      for (size_t i=0; i<N; i++) {
-        const double phi = M_PI-M_PI/N*i;
-        const auto P = deflect(x, pole, phi, M_PI_2, false);
-        P.dump();
+        const double phi = 2*M_PI/(N-1)*i;
+        deflect(x, pole, phi, M_PI_2).dump();
       }
     }
 

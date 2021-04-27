@@ -25,28 +25,28 @@ main(int argn, char** argv)
   auto s = std::chrono::system_clock::now();
 
   printf("# create `great_circle` with the pole of (0,0,1)\n");
-  great_circle p(0,0,1);
+  great_circle gc(0,0,1);
 
   for (size_t i=0; i<5; i++) {
     const longitude lon(degree(0.0));
     const latitude lat(degree(ang(gen)));
-    printf("# create `great_circle` _q_ with (%lf deg,%lf deg).\n",
+    printf("# create `great_circle` _p_ with (%lf deg,%lf deg).\n",
            lon.degree, lat.degree);
-    const great_circle q(lon,lat);
-    printf("# separation angle between _p_ and _q_ should be %lf.\n",
+    const great_circle p(lon,lat);
+    printf("# separation angle between _gc_ and _p_ should be %lf.\n",
            90.0-lat.degree);
-    printf("p.separation(q).degree = %lf\n", p.separation(q).degree);
+    printf("gc.separation(p).degree = %lf\n", gc.separation(p).degree);
   }
 
   printf("\n");
 
   for (size_t i=0; i<5; i++) {
     const double x(pos(gen)), y(pos(gen)), z(pos(gen));
-    const dcos q(x,y,z);
-    const double d = std::abs(90.0-dcos{0,0,1}.separation(q).degree);
-    printf("# create `direction_cosine` _q_ with (%lf,%lf,%lf).\n",x,y,z);
-    printf("# separation angle between _p_ and _q_ should be %lf.\n", d);
-    printf("p.separation(q).degree = %lf\n", p.separation(q).degree);
+    const dcos p(x,y,z);
+    const double d = std::abs(90.0-dcos{0,0,1}.separation(p).degree);
+    printf("# create `direction_cosine` _p_ with (%lf,%lf,%lf).\n",x,y,z);
+    printf("# separation angle between _p_ and _p_ should be %lf.\n", d);
+    printf("gc.separation(p).degree = %lf\n", gc.separation(p).degree);
   }
 
   auto e = std::chrono::system_clock::now();
