@@ -1,6 +1,6 @@
 /**
- * @file example_interp.cc
- * @brief test of the interp() function.
+ * @file example_motion_arc.cc
+ * @brief functional test of the `motion_arc` class.
  * @author Ryou Ohsawa
  * @year 2021
  */
@@ -8,8 +8,8 @@
 #include <random>
 #include <unistd.h>
 
-using gcxmlib::minor_arc;
-using gcxmlib::dcos;
+using gcxmlib::motion_arc;
+using gcxmlib::source;
 
 
 int
@@ -23,31 +23,25 @@ main(int argn, char** argv)
 
   {
     printf("# case 1: p1=(1,0,0) and p2=(0,1,0).\n");
-    const dcos p1(1,0,0), p2(0,1,0);
-    const minor_arc arc(p1,p2);
+    const source p1(1,0,0), p2(0,1,0);
+    const motion_arc arc(p1,p2);
+    printf("# s : "); arc.s.dump();
+    printf("# e : "); arc.e.dump();
+    printf("# dt: %lf ms\n", (double)arc.dt.count()*1e3);
     arc.dump();
-    printf("\n\n");
-    for (size_t i=0; i<12; i++) {
-       const double f = i/12.;
-       const auto p = interp(p1,p2,f);
-       p.dump();
-    }
   }
 
    printf("\n\n");
 
   {
     printf("# case 2: two random points.\n");
-    const dcos p1(unif(gen),unif(gen),unif(gen));
-    const dcos p2(unif(gen),unif(gen),unif(gen));
-    const minor_arc arc(p1,p2);
+    const source p1(unif(gen),unif(gen),unif(gen));
+    const source p2(unif(gen),unif(gen),unif(gen));
+    const motion_arc arc(p1,p2);
+    printf("# s : "); arc.s.dump();
+    printf("# e : "); arc.e.dump();
+    printf("# dt: %lf ms\n", (double)arc.dt.count()*1e3);
     arc.dump();
-    printf("\n\n");
-    for (size_t i=0; i<12; i++) {
-      const double f = i/12.;
-      const auto p = interp(p1,p2,f);
-      p.dump();
-    }
   }
 
   auto e = std::chrono::system_clock::now();

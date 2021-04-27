@@ -726,6 +726,41 @@ namespace gcxmlib {
     const direction_cosine e; /** the end point of the arc. */
   private:
   };
+
+  class motion_arc : public great_circle {
+  public:
+    /**
+     * @brief construct a `minor_arc` instance from (1,0,0) to (0,1,0).
+     * @note this constructor always throw `invalid_argument`.
+     */
+    motion_arc()
+      : motion_arc(source{1,0,0},source{0,1,0}) {}
+
+    /**
+     * @brief construct a `minor_arc` instance from `s` to `e`.
+     * @param[in] _s: the starting point of the arc.
+     * @param[in] _e: the end pont of the arc.
+     * @note throw an exception when
+     *         (invalid_argumet): a pole cannot be defined by `s` and `e`.
+     *         (invalid_argumet): timestamps of `s` and `e` are the same.
+     */
+    motion_arc(const source& _s, const source& _e)
+      : great_circle(get_pole(_s,_e)), s(_s), e(_e), dt(_e.t-_s.t)
+    {
+      if (std::abs(dt.count()) < 1e-15)
+        throw std::invalid_argument
+          ("no time difference bwteen two positions.");
+    }
+
+    const bool
+    colinear_with(const great_circle& gc);
+
+
+    const source s; /** the starting point of the arc. */
+    const source e; /** the end point of the arc. */
+    const sec_t dt; /** the time separation between `s` and `e` */
+  private:
+  };
 }
 
 #endif  // __GCXMLIB_H_INCLUDE
