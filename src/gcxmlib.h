@@ -562,7 +562,13 @@ namespace gcxmlib {
    */
   const direction_cosine
   get_pole(const vector3& p1, const vector3& p2)
-  { return direction_cosine(outer_product(p1,p2)); }
+  {
+    const vector3 n = outer_product(p1,p2);
+    if (n.d < 1e-15)
+      throw std::invalid_argument
+        ("two vectors are colinear. pole is not defined.");
+    return direction_cosine(n);
+  }
 
 
   /**
@@ -628,19 +634,20 @@ namespace gcxmlib {
    *        a distance of f2 from p2, respectively.
    * @param[in] p1: the first anchor point.
    * @param[in] p2: the second anchor point.
-   * @param[in] f1: the angular distance from `p1`.
-   * @param[in] f2: the angular distance from `p2`.
-   * @param[in] plus: returns the positive solution if `true`.
+   * @param[in] f: the fraction between `p1` and `p2`.
+   * @note set `f` in [0,1] for interpolation.
+   *       in case that `f<0` or `f>1` an extrapolated value is obtained.
    */
   const direction_cosine
   interp(const direction_cosine& p1,
          const direction_cosine& p2,
-         const angle& phi)
+         const double f)
   {
+    const angle theta = p1.separation(p2);
     const double cost  = p1.separation_cosine(p2);
     const double sint  = std::sqrt(1-cost);
-    const double cosf1 = std::cos(phi.radian);
-    const double sinf1 = std::sin(phi.radian);
+    const double cosf1 = std::cos(theta.radian*f);
+    const double sinf1 = std::sin(theta.radian*f);
     const double&& cosf2  = cosf1*cost+sinf1*sint;
     const double&  cosfp  = cost;
     const double&& cos2f1 = cosf1*cosf1-sinf1*sinf1;
