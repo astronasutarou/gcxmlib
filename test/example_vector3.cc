@@ -16,7 +16,7 @@ main(int argn, char** argv)
   std::mt19937 gen; gen.seed(seed);
   std::uniform_real_distribution<double> unif(-1,1);
   double x(unif(gen)), y(unif(gen)), z(unif(gen));
-  vector3 p, q(x,y,z);
+  vector3 p(1,0,0), q(x,y,z);
 
   auto s = std::chrono::system_clock::now();
 

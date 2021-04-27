@@ -48,6 +48,9 @@ namespace gcxmlib {
   template<angle_range _range>
   class base_angle {
   public:
+    /** disable the constructor without an argument. */
+    base_angle() = delete;
+
     /**
      * @brief construct an `base_angle` instance.
      * @param[in] _r: angle value in radian.
@@ -300,10 +303,8 @@ namespace gcxmlib {
 
   class vector3 {
   public:
-    /**
-     * @brief construct a `vector3` instance initialized with (1,0,0).
-     */
-    vector3() : vector3(1.0,0.0,0.0) {}
+    /** disable the constructor without arguments. */
+    vector3() = delete;
 
     /**
      * @brief construct a `vector3` instance with (x,y,z).
@@ -355,10 +356,8 @@ namespace gcxmlib {
 
   class direction_cosine : public vector3 {
   public:
-    /**
-     * @brief construct a `direction_cosine` instance initialized with (1,0,0).
-     */
-    direction_cosine() : direction_cosine(1.0, 0.0, 0.0) {}
+    /** disable the constructor without arguments. */
+    direction_cosine() = delete;
 
     /** copy constructor */
     direction_cosine(const direction_cosine& copy)
@@ -436,10 +435,8 @@ namespace gcxmlib {
 
   class source : public direction_cosine {
   public:
-    /**
-     * @brief construct a `source` instance initialized with (1,0,0).
-     */
-    source() : source(1.0, 0.0, 0.0) {}
+    /** disable the constructor without arguments. */
+    source() = delete;
 
     /**
      * @brief construct a `source` instance with (x,y,z)
@@ -788,12 +785,8 @@ namespace gcxmlib {
 
   class motion_arc : public great_circle {
   public:
-    /**
-     * @brief construct a `minor_arc` instance from (1,0,0) to (0,1,0).
-     * @note this constructor always throw `invalid_argument`.
-     */
-    motion_arc()
-      : motion_arc(source{1,0,0},source{0,1,0}) {}
+    /** disable the constructor without arguments. */
+    motion_arc() = delete;
 
     /**
      * @brief construct a `minor_arc` instance from `s` to `e`.

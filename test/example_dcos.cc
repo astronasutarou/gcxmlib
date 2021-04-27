@@ -19,7 +19,7 @@ main(int argn, char** argv)
   std::mt19937 gen; gen.seed(seed);
   std::uniform_real_distribution<double> unif(-M_PI,M_PI);
   double x(unif(gen)), y(unif(gen)), z(unif(gen));
-  dcos p, q(x,y,z);
+  dcos p(1,0,0), q(x,y,z);
   double d = std::sqrt(x*x+y*y+z*z);
 
   auto s = std::chrono::system_clock::now();

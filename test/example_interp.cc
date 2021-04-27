@@ -28,7 +28,13 @@ main(int argn, char** argv)
     arc.dump();
     printf("\n\n");
     for (size_t i=0; i<12; i++) {
-       const double f = i/12.;
+       const double f = i/11.;
+       const auto p = interp(p1,p2,f);
+       p.dump();
+    }
+    printf("\n\n");
+    for (size_t i=0; i<12; i++) {
+       const double f = 2.5*i/11.-1.0;
        const auto p = interp(p1,p2,f);
        p.dump();
     }
@@ -44,7 +50,13 @@ main(int argn, char** argv)
     arc.dump();
     printf("\n\n");
     for (size_t i=0; i<12; i++) {
-      const double f = i/12.;
+      const double f = i/11.;
+      const auto p = interp(p1,p2,f);
+      p.dump();
+    }
+    printf("\n\n");
+    for (size_t i=0; i<12; i++) {
+      const double f = 2.5*i/11.-1.0;
       const auto p = interp(p1,p2,f);
       p.dump();
     }
