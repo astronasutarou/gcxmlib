@@ -687,13 +687,40 @@ namespace gcxmlib {
     great_circle(const longitude& lon, const latitude& lat)
       : pole(lon, lat) {}
 
+    /**
+     * @brief obtain `cos(d)` to another `great_circle`.
+     * @param[in] gc: a `great_circle` instance.
+     */
     const angle
-    separation(const great_circle gc) const
+    separation_cosine(const great_circle& gc) const
+    { return pole.separation_cosine(gc.pole); }
+
+    /**
+     * @brief obtain the separation angle to another `great_circle`.
+     * @param[in] gc: a `great_circle` instance.
+     */
+    const angle
+    separation(const great_circle& gc) const
     { return pole.separation(gc.pole); }
 
+    /**
+     * @brief obtain `cos(d)` to `direction_cosine`.
+     * @param[in] p: a `direction_cosine` instance.
+     */
     const angle
-    separation_cosine(const great_circle gc) const
-    { return pole.separation_cosine(gc.pole); }
+    separation_cosine(const direction_cosine& p) const
+    {
+      const double cost = pole.separation_cosine(p);
+      return std::sqrt(1-cost*cost);
+    }
+
+    /**
+     * @brief obtain the separation angle to `direction_cosine`.
+     * @param[in] p: a `direction_cosine` instance.
+     */
+    const angle
+    separation(const direction_cosine& p) const
+    { return std::acos(separation_cosine(p).radian); }
 
     /**
      * @brief dump (x,y,z)-coordinates on the circle.
@@ -723,9 +750,19 @@ namespace gcxmlib {
 
   class minor_arc : public great_circle {
   public:
+    /**
+     * @brief construct a `minor_arc` instance from (1,0,0) to (0,1,0).
+     */
     minor_arc()
       : minor_arc(dcos{1,0,0},dcos{0,1,0}) {}
 
+    /**
+     * @brief construct a `minor_arc` instance from `s` to `e`.
+     * @param[in] _s: the starting point of the arc.
+     * @param[in] _e: the end pont of the arc.
+     * @note throw an exception when
+     *         (invalid_argumet): a pole cannot be defined by `s` and `e`.
+     */
     minor_arc(const direction_cosine& _s, const direction_cosine& _e)
       : great_circle(get_pole(_s,_e)), s(_s), e(_e) {}
 

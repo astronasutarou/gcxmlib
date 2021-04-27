@@ -17,6 +17,7 @@ EXAMPLE := test/example_angle \
            test/example_source_match \
            test/example_outer_product \
            test/example_great_circle_dump \
+           test/example_great_circle_separation \
            test/example_interp \
            test/example_motion_arc
 
