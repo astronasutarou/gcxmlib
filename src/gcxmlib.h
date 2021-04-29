@@ -54,7 +54,7 @@ namespace gcxmlib {
 
     /**
      * @brief construct an `base_angle` instance.
-     * @param[in] _r: angle value in radian.
+     * @param _r: angle value in radian.
      *
      * The behavior of this constructor change with `angle_range`.
      * In case that the `angle_range` is `zero_to_twopi` or `minus_pi_to_pi`,
@@ -68,7 +68,7 @@ namespace gcxmlib {
 
     /**
      * @brief construct an `base_angle` instance from another `base_angle`.
-     * @param[in] ang: a `base_angle` instance.
+     * @param ang: a `base_angle` instance.
      */
     template<angle_range __range>
     base_angle(const base_angle<__range>& ang)
@@ -93,64 +93,64 @@ namespace gcxmlib {
 
     /**
      * @brief `add` operation with a floating point value.
-     * @param[in] ang: a `base_angle` intance.
-     * @param[in] val: a floating point value.
+     * @param ang: a `base_angle` intance.
+     * @param val: a floating point value.
      */
     friend const base_angle<_range>
     operator+(const base_angle<_range>& ang, const double val)
     { return base_angle<_range>(ang.radian+val); }
     /**
      * @brief `add` operation with a floating point value.
-     * @param[in] val: a floating point value.
-     * @param[in] ang: a `base_angle` intance.
+     * @param val: a floating point value.
+     * @param ang: a `base_angle` intance.
      */
     friend const base_angle<_range>
     operator+(const double val, const base_angle<_range>& ang)
     { return base_angle<_range>(val+ang.radian); }
     /**
      * @brief `subtract` operation with a floating point value.
-     * @param[in] ang: a `base_angle` intance.
-     * @param[in] val: a floating point value.
+     * @param ang: a `base_angle` intance.
+     * @param val: a floating point value.
      */
     friend const base_angle<_range>
     operator-(const base_angle<_range>& ang, const double val)
     { return base_angle<_range>(ang.radian-val); }
     /**
      * @brief `subtract` operation with a floating point value.
-     * @param[in] val: a floating point value.
-     * @param[in] ang: a `base_angle` intance.
+     * @param val: a floating point value.
+     * @param ang: a `base_angle` intance.
      */
     friend const base_angle<_range>
     operator-(const double val, const base_angle<_range>& ang)
     { return base_angle<_range>(val-ang.radian); }
     /**
      * @brief `multiply` operation with a floating point value.
-     * @param[in] ang: a `base_angle` intance.
-     * @param[in] val: a floating point value.
+     * @param ang: a `base_angle` intance.
+     * @param val: a floating point value.
      */
     friend const base_angle<_range>
     operator*(const base_angle<_range>& ang, const double val)
     { return base_angle<_range>(ang.radian*val); }
     /**
      * @brief `multiply` operation with a floating point value.
-     * @param[in] val: a floating point value.
-     * @param[in] ang: a `base_angle` intance.
+     * @param val: a floating point value.
+     * @param ang: a `base_angle` intance.
      */
     friend const base_angle<_range>
     operator*(const double val, const base_angle<_range>& ang)
     { return base_angle<_range>(ang.radian*val); }
     /**
      * @brief `divide` operation with a floating point value.
-     * @param[in] ang: a `base_angle` intance.
-     * @param[in] val: a floating point value.
+     * @param ang: a `base_angle` intance.
+     * @param val: a floating point value.
      */
     friend const base_angle<_range>
     operator/(const base_angle<_range>& ang, const double val)
     { return base_angle<_range>(ang.radian/val); }
     /**
      * @brief `divide` operation with a floating point value.
-     * @param[in] val: a floating point value.
-     * @param[in] ang: a `base_angle` intance.
+     * @param val: a floating point value.
+     * @param ang: a `base_angle` intance.
      */
     friend const base_angle<_range>
     operator/(const double val, const base_angle<_range>& ang)
@@ -158,7 +158,7 @@ namespace gcxmlib {
 
     /**
      * @brief `add` operation with another `base_angle` instance.
-     * @param[in] ang: another `base_angle` intance.
+     * @param ang: another `base_angle` intance.
      */
     template <angle_range __range>
     const base_angle<_range>
@@ -166,7 +166,7 @@ namespace gcxmlib {
     { return base_angle<_range>(radian+ang.radian); }
     /**
      * @brief `subtract` operation with another `base_angle` instance.
-     * @param[in] ang: another `base_angle` intance.
+     * @param ang: another `base_angle` intance.
      */
     template <angle_range __range>
     const base_angle<_range>
@@ -175,7 +175,7 @@ namespace gcxmlib {
 
     /**
      * @brief equality operator to a `base_angle` instance.
-     * @param[in] ang: another `base_angle` intance.
+     * @param ang: another `base_angle` intance.
      */
     template <angle_range __range>
     const bool
@@ -183,7 +183,7 @@ namespace gcxmlib {
     { return (radian == ang.radian); }
     /**
      * @brief inequality operator to a `base_angle` instance.
-     * @param[in] ang: another `base_angle` intance.
+     * @param ang: another `base_angle` intance.
      */
     template <angle_range __range>
     const bool
@@ -191,7 +191,7 @@ namespace gcxmlib {
     { return (radian != ang.radian); }
     /**
      * @brief lesser operator to a `base_angle` instance.
-     * @param[in] ang: another `base_angle` intance.
+     * @param ang: another `base_angle` intance.
      */
     template <angle_range __range>
     const bool
@@ -199,7 +199,7 @@ namespace gcxmlib {
     { return (radian < ang.radian); }
     /**
      * @brief lesser-or-equal operator to a `base_angle` instance.
-     * @param[in] ang: another `base_angle` intance.
+     * @param ang: another `base_angle` intance.
      */
     template <angle_range __range>
     const bool
@@ -207,7 +207,7 @@ namespace gcxmlib {
     { return (radian <= ang.radian); }
     /**
      * @brief greater operator to a `base_angle` instance.
-     * @param[in] ang: another `base_angle` intance.
+     * @param ang: another `base_angle` intance.
      */
     template <angle_range __range>
     const bool
@@ -215,7 +215,7 @@ namespace gcxmlib {
     { return (radian > ang.radian); }
     /**
      * @brief greater-or-equal operator to a `base_angle` instance.
-     * @param[in] ang: another `base_angle` intance.
+     * @param ang: another `base_angle` intance.
      */
     template <angle_range __range>
     const bool
@@ -225,7 +225,7 @@ namespace gcxmlib {
   private:
     /**
      * @brief wrap the angle within the domain of `base_angle`.
-     * @param[in] ang: angle value in radian.
+     * @param ang: angle value in radian.
      */
     const double
     wrap(double arg) const
@@ -309,9 +309,9 @@ namespace gcxmlib {
 
     /**
      * @brief construct a `vector3` instance with (x,y,z).
-     * @param[in] _x: coordinate x.
-     * @param[in] _y: coordinate y.
-     * @param[in] _z: coordinate z.
+     * @param _x: coordinate x.
+     * @param _y: coordinate y.
+     * @param _z: coordinate z.
      */
     vector3(const double _x, const double _y, const double _z)
       : x(_x), y(_y), z(_z), d(std::sqrt(x*x+y*y+z*z))
@@ -319,7 +319,7 @@ namespace gcxmlib {
 
     /**
      * @brief return an inner product with a `vector3` instance `p`.
-     * @param[in] p: an instance of `vector3` class.
+     * @param p: an instance of `vector3` class.
      */
     const double
     inner_product(const vector3& p) const
@@ -328,7 +328,7 @@ namespace gcxmlib {
 
     /**
      * @brief return `cos(d)` where `d` is the angular separation.
-     * @param[in] p: an instance of `vector3` class.
+     * @param p: an instance of `vector3` class.
      */
     const double
     separation_cosine(const vector3& p) const
@@ -336,7 +336,7 @@ namespace gcxmlib {
 
     /**
      * @brief return the separation angle from `p` in radian.
-     * @param[in] p: an instance of `vector3` class.
+     * @param p: an instance of `vector3` class.
      */
     const angle
     separation(const vector3& p) const
@@ -366,9 +366,9 @@ namespace gcxmlib {
 
     /**
      * @brief construct a `direction_cosine` instance with (x,y,z).
-     * @param[in] _l: x-coordinate.
-     * @param[in] _m: y-coordinate.
-     * @param[in] _n: z-coordinate.
+     * @param _l: x-coordinate.
+     * @param _m: y-coordinate.
+     * @param _n: z-coordinate.
      */
     direction_cosine(const double _l, const double _m, const double _n)
       : vector3(nx(_l,_m,_n),ny(_l,_m,_n),nz(_l,_m,_n)), l(x), m(y), n(z),
@@ -377,7 +377,7 @@ namespace gcxmlib {
 
     /**
      * @brief construct a `direction_cosine` instance with `vector3`.
-     * @parma[in] p: an instance of `vector3` class.
+     * @parma p: an instance of `vector3` class.
      */
     direction_cosine(const vector3& p)
       : direction_cosine(p.x, p.y, p.z)
@@ -385,8 +385,8 @@ namespace gcxmlib {
 
     /**
      * @brief construct a `direction_cosine` instance with (lon,lat).
-     * @param[in] lon: a `longitude` instance.
-     * @param[in] lat: a `latitude` instance.
+     * @param lon: a `longitude` instance.
+     * @param lat: a `latitude` instance.
      */
     direction_cosine(const longitude& _lon, const latitude& _lat)
       : direction_cosine(vx(_lon,_lat),vy(_lon,_lat),vz(_lon,_lat))
@@ -464,8 +464,8 @@ namespace gcxmlib {
 
     /**
      * @brief return `true` if another point is inside the range.
-     * @param[in] p: another positional instance.
-     * @param[in] range: an `angle` instance.
+     * @param p: another positional instance.
+     * @param range: an `angle` instance.
      */
     const bool
     neighbor_to(const vector3& p, const angle& range) const
@@ -477,7 +477,7 @@ namespace gcxmlib {
 
     /**
      * @brief return `true` if another point is inside the uncertainty.
-     * @param[in] p: another positional instance.
+     * @param p: another positional instance.
      */
     const bool
     neighbor_to(const vector3& p) const
@@ -485,7 +485,7 @@ namespace gcxmlib {
 
     /**
      * @brief return `true` if another point is inside the uncertainty.
-     * @param[in] p: another positional instance.
+     * @param p: another positional instance.
      * @note `range` is set the summation of the both uncertainties
      *       if `p` is an instance of `source`. as `range`.
      */
@@ -495,9 +495,9 @@ namespace gcxmlib {
 
     /**
      * @brief return `true` if another point is inside the range.
-     * @param[in] p: another positional instance.
-     * @param[in] range: an `angle` instance.
-     * @param[in] trange: a time duration.
+     * @param p: another positional instance.
+     * @param range: an `angle` instance.
+     * @param trange: a time duration.
      */
     const bool
     match(const source& p, const angle& range, const sec_t& trange) const
@@ -539,8 +539,8 @@ namespace gcxmlib {
 
   /**
    * @brief calculate the outer product of two positional classes.
-   * @param[in] P: the first argument of the outer product.
-   * @param[in] Q: the second argument of the outer product.
+   * @param P: the first argument of the outer product.
+   * @param Q: the second argument of the outer product.
    */
   const vector3
   outer_product(const vector3& p1, const vector3& p2)
@@ -553,8 +553,8 @@ namespace gcxmlib {
 
   /**
    * @brief calculate the pole direction of two positional classes.
-   * @param[in] p1: the first argument of the outer product.
-   * @param[in] p2: the second argument of the outer product.
+   * @param p1: the first argument of the outer product.
+   * @param p2: the second argument of the outer product.
    */
   const direction_cosine
   get_pole(const vector3& p1, const vector3& p2)
@@ -569,14 +569,14 @@ namespace gcxmlib {
 
   /**
    * @brief a helper function to calculate the deflected direction.
-   * @param[in] p1: the first anchor point.
-   * @param[in] p2: the second anchor point.
-   * @param[in] cost: `cos(d)` of `p1` and `p2`.
-   * @param[in] cosf1: `cos(f1)` value.
-   * @param[in] cosf2: `cos(f2)` value.
-   * @param[in] cosfp: `cos(f1+f2)` value.
-   * @param[in] cosfm: `cos(f1-f2)` value.
-   * @param[in] plus: returns the positive solution if `true`.
+   * @param p1: the first anchor point.
+   * @param p2: the second anchor point.
+   * @param cost: `cos(d)` of `p1` and `p2`.
+   * @param cosf1: `cos(f1)` value.
+   * @param cosf2: `cos(f2)` value.
+   * @param cosfp: `cos(f1+f2)` value.
+   * @param cosfm: `cos(f1-f2)` value.
+   * @param plus: returns the positive solution if `true`.
    */
   const direction_cosine
   __deflect_helper(const direction_cosine& p1,
@@ -603,11 +603,11 @@ namespace gcxmlib {
   /**
    * @brief obtain the point at a distance of f1 from p1 and
    *        a distance of f2 from p2, respectively.
-   * @param[in] p1: the first anchor point.
-   * @param[in] p2: the second anchor point.
-   * @param[in] f1: the angular distance from `p1`.
-   * @param[in] f2: the angular distance from `p2`.
-   * @param[in] plus: returns the positive solution if `true`.
+   * @param p1: the first anchor point.
+   * @param p2: the second anchor point.
+   * @param f1: the angular distance from `p1`.
+   * @param f2: the angular distance from `p2`.
+   * @param plus: returns the positive solution if `true`.
    */
   const direction_cosine
   deflect(const direction_cosine& p1,
@@ -625,9 +625,9 @@ namespace gcxmlib {
   /**
    * @brief obtain the point at a distance of f1 from p1 and
    *        a distance of f2 from p2, respectively.
-   * @param[in] p1: the first anchor point.
-   * @param[in] p2: the second anchor point.
-   * @param[in] f: the fraction between `p1` and `p2`.
+   * @param p1: the first anchor point.
+   * @param p2: the second anchor point.
+   * @param f: the fraction between `p1` and `p2`.
    * @note set `f` in [0,1] for interpolation.
    *       in case that `f<0` or `f>1` an extrapolated value is obtained.
    */
@@ -658,31 +658,31 @@ namespace gcxmlib {
 
     /**
      * @brief generate a great circle with the pole.
-     * @param[in] p: a `direction_cosine` instance pointing the pole.
+     * @param p: a `direction_cosine` instance pointing the pole.
      */
     great_circle(const direction_cosine& p)
       : pole(p) {}
 
     /**
      * @brief generate a great circle with the pole of (l,m,n).
-     * @param[in] l: the l-component of the pole.
-     * @param[in] m: the m-component of the pole.
-     * @param[in] n: the n-component of the pole.
+     * @param l: the l-component of the pole.
+     * @param m: the m-component of the pole.
+     * @param n: the n-component of the pole.
      */
     great_circle(const double l, const double m, const double n)
       : pole(l,m,n) {}
 
     /**
      * @brief generate a great circle with the pole of (lon,lat).
-     * @param[in] lon: the longitude of the pole.
-     * @param[in] lat: the latitude of the pole.
+     * @param lon: the longitude of the pole.
+     * @param lat: the latitude of the pole.
      */
     great_circle(const longitude& lon, const latitude& lat)
       : pole(lon, lat) {}
 
     /**
      * @brief obtain `cos(d)` to another `great_circle`.
-     * @param[in] gc: a `great_circle` instance.
+     * @param gc: a `great_circle` instance.
      */
     const angle
     separation_cosine(const great_circle& gc) const
@@ -690,7 +690,7 @@ namespace gcxmlib {
 
     /**
      * @brief obtain the separation angle to another `great_circle`.
-     * @param[in] gc: a `great_circle` instance.
+     * @param gc: a `great_circle` instance.
      */
     const angle
     separation(const great_circle& gc) const
@@ -698,7 +698,7 @@ namespace gcxmlib {
 
     /**
      * @brief obtain `cos(d)` to `direction_cosine`.
-     * @param[in] p: a `direction_cosine` instance.
+     * @param p: a `direction_cosine` instance.
      */
     const angle
     separation_cosine(const direction_cosine& p) const
@@ -709,7 +709,7 @@ namespace gcxmlib {
 
     /**
      * @brief obtain the separation angle to `direction_cosine`.
-     * @param[in] p: a `direction_cosine` instance.
+     * @param p: a `direction_cosine` instance.
      */
     const angle
     separation(const direction_cosine& p) const
@@ -718,7 +718,7 @@ namespace gcxmlib {
 
     /**
      * @brief obtain a foot of the perpendicular from `p`.
-     * @param[in] p: a `direction_cosine` instance.
+     * @param p: a `direction_cosine` instance.
      */
     const direction_cosine
     foot_of(const direction_cosine& p) const
@@ -743,7 +743,7 @@ namespace gcxmlib {
 
     /**
      * @brief dump (x,y,z)-coordinates on the circle.
-     * @param[in] N: the number of points (default: 512).
+     * @param N: the number of points (default: 512).
      */
     void dump(const size_t N=64) const
     {
@@ -761,6 +761,7 @@ namespace gcxmlib {
   private:
   };
 
+
   class minor_arc : public great_circle {
   public:
     /**
@@ -771,8 +772,8 @@ namespace gcxmlib {
 
     /**
      * @brief construct a `minor_arc` instance from `s` to `e`.
-     * @param[in] _s: the starting point of the arc.
-     * @param[in] _e: the end pont of the arc.
+     * @param _s: the starting point of the arc.
+     * @param _e: the end pont of the arc.
      * @note throw an exception when
      *         (invalid_argumet): a pole cannot be defined by `s` and `e`.
      */
@@ -784,6 +785,7 @@ namespace gcxmlib {
   private:
   };
 
+
   class motion_arc : public great_circle {
   public:
     /** disable the constructor without arguments. */
@@ -791,8 +793,8 @@ namespace gcxmlib {
 
     /**
      * @brief construct a `minor_arc` instance from `s` to `e`.
-     * @param[in] _s: the starting point of the arc.
-     * @param[in] _e: the end pont of the arc.
+     * @param _s: the starting point of the arc.
+     * @param _e: the end pont of the arc.
      * @note throw an exception when
      *         (invalid_argumet): a pole cannot be defined by `s` and `e`.
      *         (invalid_argumet): timestamps of `s` and `e` are the same.
@@ -826,20 +828,22 @@ namespace gcxmlib {
 
     /**
      * @brief obtain the point after `dT` from `s`.
-     * @param[in] dT: duration in second.
+     * @param dT: duration in second.
      */
     const direction_cosine
     propagate(const sec_t& dT) const;
+
     /**
      * @brief obtain the point at `T`.
-     * @param[in] T: timestamp instance.
+     * @param T: timestamp instance.
      */
     const direction_cosine
     propagate(const timestamp_t& T) const;
 
     /**
-     * @brief
-     * @param[in] p: a `direction_cosine` instance.
+     * @brief calculate `cos(d)` to the point `p` taking into account
+     *        the uncertainty of the arc.
+     * @param p: a `direction_cosine` instance.
      */
     const double
     separation_cosine(const direction_cosine& p) const
@@ -854,8 +858,9 @@ namespace gcxmlib {
       return std::max({cost_np,cost_s1,cost_s2,cost_e1,cost_e2});
     }
     /**
-     * @brief
-     * @param[in] p: a `direction_cosine` instance.
+     * @brief calculate the separation angle to the point `p` taking
+     *        into account the uncertainty of the arc.
+     * @param p: a `direction_cosine` instance.
      */
     const angle
     separation(const direction_cosine& p) const
@@ -865,7 +870,7 @@ namespace gcxmlib {
 
     /**
      * @brief
-     * @param[in] p: a `direction_cosine` instance.
+     * @param p: a `direction_cosine` instance.
      */
     const bool
     intersect_with(const direction_cosine& p) const
@@ -911,9 +916,9 @@ namespace gcxmlib {
 
     /**
      * @brief generate a helper point.
-     * @param[in] from: the origin of the line segment (`s` or `e`).
-     * @param[in] to: the destination of the line segment (`s` or `e`).
-     * @param[in] parity: the positive solution if `true`.
+     * @param from: the origin of the line segment (`s` or `e`).
+     * @param to: the destination of the line segment (`s` or `e`).
+     * @param parity: the positive solution if `true`.
      */
     const direction_cosine
     make_helper(const source& from, const source& to, const bool parity)
