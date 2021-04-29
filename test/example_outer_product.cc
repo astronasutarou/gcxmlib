@@ -10,8 +10,6 @@
 using gcxmlib::vector3;
 using gcxmlib::dcos;
 using gcxmlib::source;
-using gcxmlib::outer_product;
-using gcxmlib::get_pole;
 
 
 int
@@ -30,10 +28,8 @@ main(int argn, char** argv)
     p.dump();
     q.dump();
 
-    auto r = outer_product(p,q);
+    auto r = p.outer_product(q);
     r.dump();
-    auto n = get_pole(p,q);
-    n.dump();
   }
 
   printf("\n\n");
@@ -45,9 +41,9 @@ main(int argn, char** argv)
     p.dump();
     q.dump();
 
-    auto r = outer_product(p,q);
+    auto r = p.outer_product(q);
     r.dump();
-    auto n = get_pole(p,q);
+    auto n = p.get_pole(q);
     n.dump();
   }
 
@@ -60,39 +56,39 @@ main(int argn, char** argv)
     p.dump();
     q.dump();
 
-    auto r = outer_product(p,q);
+    auto r = p.outer_product(q);
     r.dump();
-    auto n = get_pole(p,q);
+    auto n = p.get_pole(q);
     n.dump();
   }
 
   printf("\n\n");
 
   {
-    printf("# outer_product() between `vector3` and `direction_cosine`.\n");
-    vector3 p(unif(gen), unif(gen), unif(gen));
-    dcos q(unif(gen), unif(gen), unif(gen));
+    printf("# outer_product() between `direction_cosine` and `vector3`.\n");
+    dcos p(unif(gen), unif(gen), unif(gen));
+    vector3 q(unif(gen), unif(gen), unif(gen));
     p.dump();
     q.dump();
 
-    auto r = outer_product(p,q);
+    auto r = p.outer_product(q);
     r.dump();
-    auto n = get_pole(p,q);
+    auto n = p.get_pole(q);
     n.dump();
   }
 
   printf("\n\n");
 
   {
-    printf("# outer_product() between `vector3` and `source`.\n");
-    vector3 p(unif(gen), unif(gen), unif(gen));
-    source q(unif(gen), unif(gen), unif(gen));
+    printf("# outer_product() between `source` and `vector3`.\n");
+    source p(unif(gen), unif(gen), unif(gen));
+    vector3 q(unif(gen), unif(gen), unif(gen));
     p.dump();
     q.dump();
 
-    auto r = outer_product(p,q);
+    auto r = p.outer_product(q);
     r.dump();
-    auto n = get_pole(p,q);
+    auto n = p.get_pole(q);
     n.dump();
   }
 

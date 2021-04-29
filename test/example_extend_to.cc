@@ -1,6 +1,6 @@
 /**
- * @file example_interp.cc
- * @brief test of the interp() function.
+ * @file example_extend_to.cc
+ * @brief test of the extend_to() function.
  * @author Ryou Ohsawa
  * @year 2021
  */
@@ -29,13 +29,13 @@ main(int argn, char** argv)
     printf("\n\n");
     for (size_t i=0; i<12; i++) {
        const double f = i/11.;
-       const auto p = interp(p1,p2,f);
+       const auto p = p1.extend_to(p2,f);
        p.dump();
     }
     printf("\n\n");
     for (size_t i=0; i<12; i++) {
        const double f = 2.5*i/11.-1.0;
-       const auto p = interp(p1,p2,f);
+       const auto p = p1.extend_to(p2,f);
        p.dump();
     }
   }
@@ -51,13 +51,13 @@ main(int argn, char** argv)
     printf("\n\n");
     for (size_t i=0; i<12; i++) {
       const double f = i/11.;
-      const auto p = interp(p1,p2,f);
+      const auto p = p1.extend_to(p2,f);
       p.dump();
     }
     printf("\n\n");
     for (size_t i=0; i<12; i++) {
       const double f = 2.5*i/11.-1.0;
-      const auto p = interp(p1,p2,f);
+      const auto p = p1.extend_to(p2,f);
       p.dump();
     }
   }

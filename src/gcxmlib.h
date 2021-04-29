@@ -302,6 +302,7 @@ namespace gcxmlib {
     { return arcsec(ang); }
   }
 
+
   class vector3 {
   public:
     /** disable the constructor without arguments. */
@@ -325,6 +326,18 @@ namespace gcxmlib {
     inner_product(const vector3& p) const
     { return p.x*x + p.y*y + p.z*z; }
 
+    /**
+     * @brief calculate the outer product against `v`.
+     * @param v: the second argument of the outer product.
+     */
+    const vector3
+    outer_product(const vector3& v) const
+    {
+      const double&& nx = y*v.z - z*v.y;
+      const double&& ny = z*v.x - x*v.z;
+      const double&& nz = x*v.y - y*v.x;
+      return vector3(nx,ny,nz);
+    }
 
     /**
      * @brief return `cos(d)` where `d` is the angular separation.
@@ -392,11 +405,65 @@ namespace gcxmlib {
       : direction_cosine(vx(_lon,_lat),vy(_lon,_lat),vz(_lon,_lat))
     {}
 
+    /**
+     * @brief calculate the normal vector of the plane.
+     * @param v: the second argument of the outer product.
+     */
+    const direction_cosine
+    get_pole(const vector3& v) const
+    {
+      const vector3 n = outer_product(v);
+      if (n.d < __epsilon__)
+        throw std::invalid_argument
+          ("two vectors are colinear. pole is not defined.");
+      return direction_cosine(n);
+    }
+
+    /**
+     * @brief obtain the point at a distance of f1 from p1 and
+     *        a distance of f2 from p2, respectively.
+     * @param q: the anchor point.
+     * @param f1: the angular distance from this point.
+     * @param f2: the angular distance from `q`.
+     */
+    const direction_cosine
+    pivot(const direction_cosine& q, const angle& f1, const angle& f2) const
+    {
+      const double&& cosd  = separation_cosine(q);
+      const double&& cosf1 = std::cos(f1.radian);
+      const double&& cosf2 = std::cos(f2.radian);
+      const double&& cosfp = std::cos((f1+f2).radian);
+      const double&& cosfm = std::cos((f1-f2).radian);
+      return __pivot_helper(q,cosd,cosf1,cosf2,cosfp,cosfm);
+    }
+
+    /**
+     * @brief obtain the point extended toward `q` by fraction `f`.
+     * @param q: the anchor point.
+     * @param f: the fraction of the length to `q`.
+     * @note interpolation for `f` between [0,1], otherwise extrapolation.
+     */
+    const direction_cosine
+    extend_to(const direction_cosine& q, const double f) const
+    {
+      const angle theta = separation(q);
+      const double cosd  = separation_cosine(q);
+      const double sind  = std::sqrt(1-cosd);
+      const double cosf1 = std::cos(theta.radian*f);
+      const double sinf1 = std::sin(theta.radian*f);
+      const double&& cosf2  = cosf1*cosd+sinf1*sind;
+      const double&  cosfp  = cosd;
+      const double&& cos2f1 = cosf1*cosf1-sinf1*sinf1;
+      const double&& sin2f1 = 2*cosf1*sinf1;
+      const double&& cosfm  = cos2f1*cosd+sin2f1*sind;
+      return __pivot_helper(q,cosd,cosf1,cosf2,cosfp,cosfm);
+    }
+
     const double& l; /** l-element of direction cosine (reference to x) */
     const double& m; /** m-element of direction cosine (reference to y) */
     const double& n; /** n-element of direction cosine (reference to z) */
-    const longitude lon;
-    const latitude lat;
+    const longitude lon; /** longitude angle. */
+    const latitude lat;  /** latitude angle. */
 
   private:
     /** normalize x-coordinate in initialization. */
@@ -423,12 +490,43 @@ namespace gcxmlib {
     const double
     vz(const longitude& _lon, const latitude& _lat)
     { return std::sin(_lat.radian); }
+    /** calculate longitude from (l,m,n) */
     const longitude
     calc_longitude()
     { return longitude(std::atan2(m,l));}
+    /** calculate latitude from (l,m,n) */
     const latitude
     calc_latitude()
     { return latitude(std::asin(n)); }
+    /**
+     * @brief a helper function to calculate the deflected direction.
+     * @param q: the anchor point.
+     * @param cosd: `cos(d)` to `q`.
+     * @param cosf1: `cos(f1)` value.
+     * @param cosf2: `cos(f2)` value.
+     * @param cosfp: `cos(f1+f2)` value.
+     * @param cosfm: `cos(f1-f2)` value.
+     * @param plus: returns the positive solution if `true`.
+     */
+    const direction_cosine
+    __pivot_helper(const direction_cosine& q, const double cosd,
+                   const double cosf1, const double cosf2,
+                   const double cosfp, const double cosfm) const
+    {
+      const double w2 = (cosd-cosfp)*(cosfm-cosd);
+      if (1.0-cosd < __epsilon__)
+        throw std::invalid_argument("p1 and p2 are identical.");
+      if (w2 < __exact_zero__)
+        throw std::range_error("cannot find the solution.");
+      const double w = ((cosd-cosfp)>0?1.0:-1.0)*std::sqrt(w2);
+      const double&& pl =
+        (l-q.l*cosd)*cosf1+(q.l-l*cosd)*cosf2+(m*q.n-n*q.m)*w;
+      const double&& pm =
+        (m-q.m*cosd)*cosf1+(q.m-m*cosd)*cosf2+(n*q.l-l*q.n)*w;
+      const double&& pn =
+        (n-q.n*cosd)*cosf1+(q.n-n*cosd)*cosf2+(l*q.m-m*q.l)*w;
+      return direction_cosine(pl,pm,pn);
+    }
   };
   /** define _dcos_ as a shorthand of direction_cosine. */
   typedef direction_cosine dcos;
@@ -535,117 +633,6 @@ namespace gcxmlib {
     const timestamp_t now() const
     { return std::chrono::system_clock::now(); }
   };
-
-
-  /**
-   * @brief calculate the outer product of two positional classes.
-   * @param P: the first argument of the outer product.
-   * @param Q: the second argument of the outer product.
-   */
-  const vector3
-  outer_product(const vector3& p1, const vector3& p2)
-  {
-    const double&& x = p1.y*p2.z - p1.z*p2.y;
-    const double&& y = p1.z*p2.x - p1.x*p2.z;
-    const double&& z = p1.x*p2.y - p1.y*p2.x;
-    return vector3(x,y,z);
-  }
-
-  /**
-   * @brief calculate the pole direction of two positional classes.
-   * @param p1: the first argument of the outer product.
-   * @param p2: the second argument of the outer product.
-   */
-  const direction_cosine
-  get_pole(const vector3& p1, const vector3& p2)
-  {
-    const vector3 n = outer_product(p1,p2);
-    if (n.d < __epsilon__)
-      throw std::invalid_argument
-        ("two vectors are colinear. pole is not defined.");
-    return direction_cosine(n);
-  }
-
-  /**
-   * @brief a helper function to calculate the deflected direction.
-   * @param p1: the first anchor point.
-   * @param p2: the second anchor point.
-   * @param cosd: `cos(d)` of `p1` and `p2`.
-   * @param cosf1: `cos(f1)` value.
-   * @param cosf2: `cos(f2)` value.
-   * @param cosfp: `cos(f1+f2)` value.
-   * @param cosfm: `cos(f1-f2)` value.
-   * @param plus: returns the positive solution if `true`.
-   */
-  const direction_cosine
-  __deflect_helper
-  (const direction_cosine& p1, const direction_cosine& p2,
-   const double cosd, const double cosf1, const double cosf2,
-   const double cosfp, const double cosfm)
-  {
-    const double w2 = (cosd-cosfp)*(cosfm-cosd);
-    if (1.0-cosd < __epsilon__)
-      throw std::invalid_argument("p1 and p2 are identical.");
-    if (w2 < __exact_zero__)
-      throw std::range_error("cannot find the solution.");
-    const double w = ((cosd-cosfp)>0?1.0:-1.0)*std::sqrt(w2);
-    const double&& l =
-      (p1.l-p2.l*cosd)*cosf1+(p2.l-p1.l*cosd)*cosf2+(p1.m*p2.n-p1.n*p2.m)*w;
-    const double&& m =
-      (p1.m-p2.m*cosd)*cosf1+(p2.m-p1.m*cosd)*cosf2+(p1.n*p2.l-p1.l*p2.n)*w;
-    const double&& n =
-      (p1.n-p2.n*cosd)*cosf1+(p2.n-p1.n*cosd)*cosf2+(p1.l*p2.m-p1.m*p2.l)*w;
-    return direction_cosine(l,m,n);
-  }
-
-  /**
-   * @brief obtain the point at a distance of f1 from p1 and
-   *        a distance of f2 from p2, respectively.
-   * @param p1: the first anchor point.
-   * @param p2: the second anchor point.
-   * @param f1: the angular distance from `p1`.
-   * @param f2: the angular distance from `p2`.
-   * @param plus: returns the positive solution if `true`.
-   */
-  const direction_cosine
-  deflect(const direction_cosine& p1,
-          const direction_cosine& p2,
-          const angle& f1, const angle& f2)
-  {
-    const double&& cosd  = p1.separation_cosine(p2);
-    const double&& cosf1 = std::cos(f1.radian);
-    const double&& cosf2 = std::cos(f2.radian);
-    const double&& cosfp = std::cos((f1+f2).radian);
-    const double&& cosfm = std::cos((f1-f2).radian);
-    return __deflect_helper(p1,p2,cosd,cosf1,cosf2,cosfp,cosfm);
-  }
-
-  /**
-   * @brief obtain the point at a distance of f1 from p1 and
-   *        a distance of f2 from p2, respectively.
-   * @param p1: the first anchor point.
-   * @param p2: the second anchor point.
-   * @param f: the fraction between `p1` and `p2`.
-   * @note set `f` in [0,1] for interpolation.
-   *       in case that `f<0` or `f>1` an extrapolated value is obtained.
-   */
-  const direction_cosine
-  interp(const direction_cosine& p1,
-         const direction_cosine& p2,
-         const double f)
-  {
-    const angle theta = p1.separation(p2);
-    const double cosd  = p1.separation_cosine(p2);
-    const double sind  = std::sqrt(1-cosd);
-    const double cosf1 = std::cos(theta.radian*f);
-    const double sinf1 = std::sin(theta.radian*f);
-    const double&& cosf2  = cosf1*cosd+sinf1*sind;
-    const double&  cosfp  = cosd;
-    const double&& cos2f1 = cosf1*cosf1-sinf1*sinf1;
-    const double&& sin2f1 = 2*cosf1*sinf1;
-    const double&& cosfm  = cos2f1*cosd+sin2f1*sind;
-    return __deflect_helper(p1,p2,cosd,cosf1,cosf2,cosfp,cosfm);
-  }
 
   class great_circle {
   public:
@@ -759,10 +746,10 @@ namespace gcxmlib {
       const direction_cosine p(1,0,0), q(0,1,0);
       const double&& dcosp = _pole.separation_cosine(p);
       const double&& dcosq = _pole.separation_cosine(q);
-      const direction_cosine x = outer_product(_pole,(dcosq>dcosp?p:q));
+      const direction_cosine x = _pole.outer_product(dcosq>dcosp?p:q);
       for (size_t i=0; i<N; i++) {
         const double phi = 2*M_PI/(N-1)*i;
-        deflect(x, _pole, phi, M_PI_2).dump();
+        x.pivot(_pole, phi, M_PI_2).dump();
       }
     }
 
@@ -786,7 +773,7 @@ namespace gcxmlib {
      *         (invalid_argumet): a pole cannot be defined by `s` and `e`.
      */
     minor_arc(const direction_cosine& _s, const direction_cosine& _e)
-      : great_circle(get_pole(_s,_e)), s(_s), e(_e),
+      : great_circle(_s.get_pole(_e)), s(_s), e(_e),
         cosd_se(_s.separation_cosine(_e)) {}
 
     /**
@@ -827,7 +814,7 @@ namespace gcxmlib {
     {
       for (size_t i=0; i<N; i++) {
         const double&& f=1.0/(N-1)*i;
-        const direction_cosine p = interp(s,e,f);
+        const direction_cosine p = s.extend_to(e,f);
         p.dump();
       }
     }
@@ -853,11 +840,11 @@ namespace gcxmlib {
      *         (invalid_argumet): timestamps of `s` and `e` are the same.
      */
     motion_arc(const source& _s, const source& _e)
-      : great_circle(get_pole(_s,_e)), s(_s), e(_e), dt(_e.t-_s.t),
+      : great_circle(_s.get_pole(_e)), s(_s), e(_e), dt(_e.t-_s.t),
         h_s1(make_helper(s,e,true)), h_s2(make_helper(s,e,false)),
         h_e1(make_helper(e,s,true)), h_e2(make_helper(e,s,false)),
-        p_s1(get_pole(s,h_s1)), p_s2(get_pole(s,h_s2)),
-        p_e1(get_pole(e,h_e1)), p_e2(get_pole(e,h_e2)),
+        p_s1(s.get_pole(h_s1)), p_s2(s.get_pole(h_s2)),
+        p_e1(e.get_pole(h_e1)), p_e2(e.get_pole(h_e2)),
         cosd_s12(p_s1.separation_cosine(p_s2)),
         cosd_e12(p_e1.separation_cosine(p_e2)),
         arc_s(minor_arc(p_s1,p_s2)), arc_e(minor_arc(p_e2,p_e1))
@@ -955,7 +942,7 @@ namespace gcxmlib {
     intersect_with(const direction_cosine& p) const
     {
       {
-        const direction_cosine ps = get_pole(s,p);
+        const direction_cosine ps = s.get_pole(p);
         const double&& cosd_p1 = ps.separation_cosine(p_s1);
         const double&& cosd_p2 = ps.separation_cosine(p_s2);
         const double&& sind_p1 = std::sqrt(1-cosd_p1*cosd_p1);
@@ -965,7 +952,7 @@ namespace gcxmlib {
       }
       {
         return false;
-        const direction_cosine pe = get_pole(e,p);
+        const direction_cosine pe = e.get_pole(p);
         const double&& cosd_p1 = pe.separation_cosine(p_e1);
         const double&& cosd_p2 = pe.separation_cosine(p_e2);
         const double&& sind_p1 = std::sqrt(1-cosd_p1*cosd_p1);
@@ -1089,7 +1076,7 @@ namespace gcxmlib {
       const angle theta = from.separation(to);
       const angle delta = to.s;
       const angle phi = radian(std::hypot(theta.radian,delta.radian));
-      return deflect(from, to, phi, (parity?1.0:-1.0)*delta);
+      return from.pivot(to, phi, (parity?1.0:-1.0)*delta);
     }
   };
 }
