@@ -25,7 +25,7 @@ namespace gcxmlib {
   using namespace std::chrono_literals;
 
   constexpr bool __debug__ = false;
-  constexpr double __epsilon__ = 1e-15;
+  constexpr double __epsilon__ = 1e-12;
   constexpr double __exact_zero__ = 0.0;
   constexpr double radian_to_degree = 180./M_PI;
   constexpr double degree_to_radian = M_PI/180.;
