@@ -1,6 +1,6 @@
 /**
- * @file example_motion_arc_in_sight_of.cc
- * @brief test of the `motion_arc.in_sight_of()` function.
+ * @file example_motion_arc_intersect_with.cc
+ * @brief test of the `motion_arc.intersect_with()` function.
  * @author Ryou Ohsawa
  * @year 2021
  */
@@ -43,7 +43,7 @@ main(int argn, char** argv)
     for (size_t i=0; i<10000; i++) {
       const double x(pos(gen)), y(pos(gen)), z(pos(gen));
       const dcos p(x,y,z);
-      printf("%d ", (int32_t)(arc.in_sight_of(p)));
+      printf("%d ", (int32_t)(arc.intersect_with(p)));
       p.dump();
     }
   }

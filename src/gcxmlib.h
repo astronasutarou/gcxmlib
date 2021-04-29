@@ -823,13 +823,25 @@ namespace gcxmlib {
       }
     }
 
-    const direction_cosine
-    propagate(const timestamp_t& T) const;
+    /**
+     * @brief obtain the point after `dT` from `s`.
+     * @param[in] dT: duration in second.
+     */
     const direction_cosine
     propagate(const sec_t& dT) const;
+    /**
+     * @brief obtain the point at `T`.
+     * @param[in] T: timestamp instance.
+     */
+    const direction_cosine
+    propagate(const timestamp_t& T) const;
 
+    /**
+     * @brief
+     * @param[in] p: a `direction_cosine` instance.
+     */
     const bool
-    in_sight_of(const direction_cosine& p) const
+    intersect_with(const direction_cosine& p) const
     {
       {
         const direction_cosine ps = get_pole(s,p);
@@ -867,9 +879,15 @@ namespace gcxmlib {
     const direction_cosine p_s2; /** the second helper pole for `s`. */
     const direction_cosine p_e1; /** the first helper pole for `e`. */
     const direction_cosine p_e2; /** the second helper pole for `e`. */
-    const double cost_s12; /** a helper varialbe for `in_sight_of`. */
-    const double cost_e12; /** a helper variable for `in_sight_of`. */
+    const double cost_s12; /** a helper varialbe for `intersect_with`. */
+    const double cost_e12; /** a helper variable for `intersect_with`. */
 
+    /**
+     * @brief generate a helper point.
+     * @param[in] from: the origin of the line segment (`s` or `e`).
+     * @param[in] to: the destination of the line segment (`s` or `e`).
+     * @param[in] parity: the positive solution if `true`.
+     */
     const direction_cosine
     make_helper(const source& from, const source& to, const bool parity)
     {
