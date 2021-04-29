@@ -1,5 +1,5 @@
 /**
- * @file example_motion_arc_intersect_with.cc
+ * @file example_motion_arc_intersect_with_point.cc
  * @brief test of the `motion_arc.intersect_with()` function.
  * @author Ryou Ohsawa
  * @year 2021
