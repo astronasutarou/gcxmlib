@@ -15,6 +15,7 @@
 #include <iomanip>
 #include <sstream>
 #include <utility>
+#include <algorithm>
 #include <vector>
 #include <set>
 #include <stdexcept>
@@ -835,6 +836,32 @@ namespace gcxmlib {
      */
     const direction_cosine
     propagate(const timestamp_t& T) const;
+
+    /**
+     * @brief
+     * @param[in] p: a `direction_cosine` instance.
+     */
+    const double
+    separation_cosine(const direction_cosine& p) const
+    {
+      if (intersect_with(p)) return 1.0;
+      const direction_cosine np = get_pole(s,p);
+      const double&& cost_np = pole.separation_cosine(np);
+      const double&& cost_s1 = p_s1.separation_cosine(np);
+      const double&& cost_s2 = p_s2.separation_cosine(np);
+      const double&& cost_e1 = p_e1.separation_cosine(np);
+      const double&& cost_e2 = p_e2.separation_cosine(np);
+      return std::max({cost_np,cost_s1,cost_s2,cost_e1,cost_e2});
+    }
+    /**
+     * @brief
+     * @param[in] p: a `direction_cosine` instance.
+     */
+    const angle
+    separation(const direction_cosine& p) const
+    {
+      return std::acos(separation_cosine(p));
+    }
 
     /**
      * @brief
