@@ -1,1 +1,32 @@
-site_name: My Docs
+site_name: gcxmlib
+nav:
+  - index.md
+theme:
+  name: 'material'
+  icon:
+    logo: logo
+  language: 'en'
+  palette:
+    scheme: default
+    primary: blue grey
+    accent: deep orange
+  features:
+    - navigation.tabs
+    - header.autohide
+markdown_extensions:
+  - toc:
+      toc_depth: 2
+  - extra
+  - admonition
+  - smarty
+  - sane_lists
+  - meta
+  - pymdownx.details
+  - pymdownx.critic
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.superfences
+  - pymdownx.snippets:
+      check_paths: True
+  - pymdownx.arithmatex:
+      generic: true
