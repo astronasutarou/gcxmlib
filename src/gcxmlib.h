@@ -566,12 +566,11 @@ namespace gcxmlib {
     return direction_cosine(n);
   }
 
-
   /**
    * @brief a helper function to calculate the deflected direction.
    * @param p1: the first anchor point.
    * @param p2: the second anchor point.
-   * @param cost: `cos(d)` of `p1` and `p2`.
+   * @param cosd: `cos(d)` of `p1` and `p2`.
    * @param cosf1: `cos(f1)` value.
    * @param cosf2: `cos(f2)` value.
    * @param cosfp: `cos(f1+f2)` value.
@@ -579,24 +578,23 @@ namespace gcxmlib {
    * @param plus: returns the positive solution if `true`.
    */
   const direction_cosine
-  __deflect_helper(const direction_cosine& p1,
-                   const direction_cosine& p2,
-                   const double cost,
-                   const double cosf1, const double cosf2,
-                   const double cosfp, const double cosfm)
+  __deflect_helper
+  (const direction_cosine& p1, const direction_cosine& p2,
+   const double cosd, const double cosf1, const double cosf2,
+   const double cosfp, const double cosfm)
   {
-    const double w2 = (cost-cosfp)*(cosfm-cost);
-    if (1.0-cost < __epsilon__)
+    const double w2 = (cosd-cosfp)*(cosfm-cosd);
+    if (1.0-cosd < __epsilon__)
       throw std::invalid_argument("p1 and p2 are identical.");
     if (w2 < __exact_zero__)
       throw std::range_error("cannot find the solution.");
-    const double w = ((cost-cosfp)>0?1.0:-1.0)*std::sqrt(w2);
+    const double w = ((cosd-cosfp)>0?1.0:-1.0)*std::sqrt(w2);
     const double&& l =
-      (p1.l-p2.l*cost)*cosf1+(p2.l-p1.l*cost)*cosf2+(p1.m*p2.n-p1.n*p2.m)*w;
+      (p1.l-p2.l*cosd)*cosf1+(p2.l-p1.l*cosd)*cosf2+(p1.m*p2.n-p1.n*p2.m)*w;
     const double&& m =
-      (p1.m-p2.m*cost)*cosf1+(p2.m-p1.m*cost)*cosf2+(p1.n*p2.l-p1.l*p2.n)*w;
+      (p1.m-p2.m*cosd)*cosf1+(p2.m-p1.m*cosd)*cosf2+(p1.n*p2.l-p1.l*p2.n)*w;
     const double&& n =
-      (p1.n-p2.n*cost)*cosf1+(p2.n-p1.n*cost)*cosf2+(p1.l*p2.m-p1.m*p2.l)*w;
+      (p1.n-p2.n*cosd)*cosf1+(p2.n-p1.n*cosd)*cosf2+(p1.l*p2.m-p1.m*p2.l)*w;
     return direction_cosine(l,m,n);
   }
 
@@ -614,12 +612,12 @@ namespace gcxmlib {
           const direction_cosine& p2,
           const angle& f1, const angle& f2)
   {
-    const double&& cost  = p1.separation_cosine(p2);
+    const double&& cosd  = p1.separation_cosine(p2);
     const double&& cosf1 = std::cos(f1.radian);
     const double&& cosf2 = std::cos(f2.radian);
     const double&& cosfp = std::cos((f1+f2).radian);
     const double&& cosfm = std::cos((f1-f2).radian);
-    return __deflect_helper(p1,p2,cost,cosf1,cosf2,cosfp,cosfm);
+    return __deflect_helper(p1,p2,cosd,cosf1,cosf2,cosfp,cosfm);
   }
 
   /**
@@ -637,16 +635,16 @@ namespace gcxmlib {
          const double f)
   {
     const angle theta = p1.separation(p2);
-    const double cost  = p1.separation_cosine(p2);
-    const double sint  = std::sqrt(1-cost);
+    const double cosd  = p1.separation_cosine(p2);
+    const double sind  = std::sqrt(1-cosd);
     const double cosf1 = std::cos(theta.radian*f);
     const double sinf1 = std::sin(theta.radian*f);
-    const double&& cosf2  = cosf1*cost+sinf1*sint;
-    const double&  cosfp  = cost;
+    const double&& cosf2  = cosf1*cosd+sinf1*sind;
+    const double&  cosfp  = cosd;
     const double&& cos2f1 = cosf1*cosf1-sinf1*sinf1;
     const double&& sin2f1 = 2*cosf1*sinf1;
-    const double&& cosfm  = cos2f1*cost+sin2f1*sint;
-    return __deflect_helper(p1,p2,cost,cosf1,cosf2,cosfp,cosfm);
+    const double&& cosfm  = cos2f1*cosd+sin2f1*sind;
+    return __deflect_helper(p1,p2,cosd,cosf1,cosf2,cosfp,cosfm);
   }
 
   class great_circle {
@@ -703,8 +701,8 @@ namespace gcxmlib {
     const angle
     separation_cosine(const direction_cosine& p) const
     {
-      const double cost = pole.separation_cosine(p);
-      return std::sqrt(1-cost*cost);
+      const double cosd = pole.separation_cosine(p);
+      return std::sqrt(1-cosd*cosd);
     }
 
     /**
@@ -723,20 +721,20 @@ namespace gcxmlib {
     const direction_cosine
     foot_of(const direction_cosine& p) const
     {
-      const double cost = pole.separation_cosine(p);
-      if (1.0-cost > __epsilon__) {
-        const double sint = std::sqrt(1-cost*cost);
-        const double&& l = (p.l-pole.l*cost)*sint;
-        const double&& m = (p.m-pole.m*cost)*sint;
-        const double&& n = (p.n-pole.n*cost)*sint;
+      const double cosd = pole.separation_cosine(p);
+      if (1.0-cosd > __epsilon__) {
+        const double sind = std::sqrt(1-cosd*cosd);
+        const double&& l = (p.l-pole.l*cosd)*sind;
+        const double&& m = (p.m-pole.m*cosd)*sind;
+        const double&& n = (p.n-pole.n*cosd)*sind;
         return direction_cosine(l,m,n);
       } else {
         // `p` and `pole` is almost identical.
         // use (1,0,0) or (0,1,0) instead of `p`.
         const direction_cosine px(1,0,0), py(0,1,0);
-        const double&& costx = pole.separation_cosine(px);
-        const double&& costy = pole.separation_cosine(py);
-        return foot_of(costy>costx?px:py);
+        const double&& cosdx = pole.separation_cosine(px);
+        const double&& cosdy = pole.separation_cosine(py);
+        return foot_of(cosdy>cosdx?px:py);
       }
     }
 
@@ -767,6 +765,7 @@ namespace gcxmlib {
         deflect(x, _pole, phi, M_PI_2).dump();
       }
     }
+
   private:
   };
 
@@ -787,11 +786,56 @@ namespace gcxmlib {
      *         (invalid_argumet): a pole cannot be defined by `s` and `e`.
      */
     minor_arc(const direction_cosine& _s, const direction_cosine& _e)
-      : great_circle(get_pole(_s,_e)), s(_s), e(_e) {}
+      : great_circle(get_pole(_s,_e)), s(_s), e(_e),
+        cosd_se(_s.separation_cosine(_e)) {}
+
+    /**
+     * @brief calculate `cos(d)` between the arc and the point `p`.
+     * @param p: a `direction_cosine` instance.
+     */
+    const double
+    distance_cosine(const direction_cosine& p) const
+    {
+      const direction_cosine ft = foot_of(p);
+      const double&& cosd_ps = s.separation_cosine(ft);
+      const double&& cosd_pe = e.separation_cosine(ft);
+      const double&& sind_ps = std::sqrt(1-cosd_ps*cosd_ps);
+      const double&& sind_pe = std::sqrt(1-cosd_pe*cosd_pe);
+      const double&& cosd = cosd_ps*cosd_pe-sind_ps*sind_pe;
+      const double&& sind = cosd_ps*sind_pe+sind_ps*cosd_pe;
+      if (std::abs(cosd-cosd_se) < __epsilon__ && sind > 0) {
+        return separation_cosine(p);
+      } else {
+        const double&& sep_s = s.separation_cosine(p);
+        const double&& sep_e = e.separation_cosine(p);
+        return std::max(sep_s,sep_e);
+      }
+    }
+
+    /**
+     * @brief calculate the distance between the arc and the point `p`.
+     * @param p: a `direction_cosine` instance.
+     */
+    const angle
+    distance(const direction_cosine& p) const
+    {
+      return std::acos(distance_cosine(p));
+    }
+
+    void
+    dump_arc(const size_t N=64) const
+    {
+      for (size_t i=0; i<N; i++) {
+        const double&& f=1.0/(N-1)*i;
+        const direction_cosine p = interp(s,e,f);
+        p.dump();
+      }
+    }
 
     const direction_cosine s; /** the starting point of the arc. */
     const direction_cosine e; /** the end point of the arc. */
   private:
+    const double cosd_se; /** `cos(d)` between `s` and `e`. */
   };
 
 
@@ -814,8 +858,9 @@ namespace gcxmlib {
         h_e1(make_helper(e,s,true)), h_e2(make_helper(e,s,false)),
         p_s1(get_pole(s,h_s1)), p_s2(get_pole(s,h_s2)),
         p_e1(get_pole(e,h_e1)), p_e2(get_pole(e,h_e2)),
-        cost_s12(p_s1.separation_cosine(p_s2)),
-        cost_e12(p_e1.separation_cosine(p_e2))
+        cosd_s12(p_s1.separation_cosine(p_s2)),
+        cosd_e12(p_e1.separation_cosine(p_e2)),
+        arc_s(minor_arc(p_s1,p_s2)), arc_e(minor_arc(p_e2,p_e1))
     {
       if (std::abs(dt.count()) < 1e-15)
         throw std::invalid_argument
@@ -848,6 +893,30 @@ namespace gcxmlib {
      */
     const direction_cosine
     propagate(const timestamp_t& T) const;
+
+    /**
+     * @brief calculate `cos(d)` to the great circle `gc` taking into account
+     *        the uncertainty of the arc.
+     * @param gc: a `great_circle` instance.
+     */
+    const double
+    separation_cosine(const great_circle& gc) const
+    {
+      const double&& ds = arc_s.distance_cosine(gc.pole);
+      const double&& de = arc_e.distance_cosine(gc.pole);
+      printf("# sep %lf %lf\n", ds, de);
+      return std::max(ds, de);
+    }
+    /**
+     * @brief calculate the separation angle to the great circle `gc`
+     *        taking into account the uncertainty of the arc.
+     * @param p: a `direction_cosine` instance.
+     */
+    const angle
+    separation(const great_circle& gc) const
+    {
+      return std::acos(separation_cosine(gc));
+    }
 
     /**
      * @brief calculate `cos(d)` to the point `p` taking into account
@@ -887,22 +956,22 @@ namespace gcxmlib {
     {
       {
         const direction_cosine ps = get_pole(s,p);
-        const double cost_p1 = ps.separation_cosine(p_s1);
-        const double cost_p2 = ps.separation_cosine(p_s2);
-        const double sint_p1 = std::sqrt(1-cost_p1*cost_p1);
-        const double sint_p2 = std::sqrt(1-cost_p2*cost_p2);
-        const double cost_pp = cost_p1*cost_p2-sint_p1*sint_p2;
-        if (std::abs(cost_pp-cost_s12)<__epsilon__) return true;
+        const double&& cosd_p1 = ps.separation_cosine(p_s1);
+        const double&& cosd_p2 = ps.separation_cosine(p_s2);
+        const double&& sind_p1 = std::sqrt(1-cosd_p1*cosd_p1);
+        const double&& sind_p2 = std::sqrt(1-cosd_p2*cosd_p2);
+        const double&& cosd = cosd_p1*cosd_p2-sind_p1*sind_p2;
+        if (std::abs(cosd-cosd_s12)<__epsilon__) return true;
       }
       {
         return false;
         const direction_cosine pe = get_pole(e,p);
-        const double cost_p1 = pe.separation_cosine(p_e1);
-        const double cost_p2 = pe.separation_cosine(p_e2);
-        const double sint_p1 = std::sqrt(1-cost_p1*cost_p1);
-        const double sint_p2 = std::sqrt(1-cost_p2*cost_p2);
-        const double cost_pp = cost_p1*cost_p2-sint_p1*sint_p2;
-        if (std::abs(cost_pp-cost_e12)<__epsilon__) return false;
+        const double&& cosd_p1 = pe.separation_cosine(p_e1);
+        const double&& cosd_p2 = pe.separation_cosine(p_e2);
+        const double&& sind_p1 = std::sqrt(1-cosd_p1*cosd_p1);
+        const double&& sind_p2 = std::sqrt(1-cosd_p2*cosd_p2);
+        const double&& cosd = cosd_p1*cosd_p2-sind_p1*sind_p2;
+        if (std::abs(cosd-cosd_e12)<__epsilon__) return false;
       }
       return false;
     }
@@ -929,8 +998,52 @@ namespace gcxmlib {
       return intersect_with(arc.s) || intersect_with(arc.e);
     }
 
+    /**
+     * @brief check if the arc is colinear with a `great_circle` taking
+     *        into account the uncertainties of the end points.
+     * @param gc: a `great_circle` instance.
+     */
     const bool
-    colinear_with(const great_circle& gc, const angle& tol = degree(5.0));
+    colinear_with(const great_circle& gc,
+                  const angle& tol = degree(5.0)) const
+    {
+      if (tol.degree > 90.0)
+        throw std::invalid_argument("invalid tolerance value.");
+      const double&& cosd = separation_cosine(gc);
+      return cosd >= std::cos(tol.radian);
+    }
+
+    /**
+     * @brief check if the arc is colinear with a `great_circle` taking
+     *        into account the uncertainties of the end points.
+     * @param arc: a `minor_arc` instance.
+     */
+    const bool
+    colinear_with(const minor_arc& arc,
+                  const angle& tol = degree(5.0)) const
+    {
+      if (tol.degree > 90.0)
+        throw std::invalid_argument("invalid tolerance value.");
+      if (!intersect_with(arc)) throw false;
+      const double&& cosd = separation_cosine(arc);
+      return cosd >= std::cos(tol.radian);
+    }
+
+    /**
+     * @brief check if the arc is colinear with a `great_circle` taking
+     *        into account the uncertainties of the end points.
+     * @param arc: a `motion_arc` instance.
+     */
+    const bool
+    colinear_with(const motion_arc& arc,
+                  const angle& tol = degree(5.0)) const
+    {
+      if (tol.degree > 90.0)
+        throw std::invalid_argument("invalid tolerance value.");
+      if (!intersect_with(arc)) throw false;
+      const double&& cosd = separation_cosine(arc);
+      return cosd >= std::cos(tol.radian);
+    }
 
     /**
      * @brief dump (x,y,z)-coordinates on the uncertainty circles.
@@ -959,8 +1072,10 @@ namespace gcxmlib {
     const direction_cosine p_s2; /** the second helper pole for `s`. */
     const direction_cosine p_e1; /** the first helper pole for `e`. */
     const direction_cosine p_e2; /** the second helper pole for `e`. */
-    const double cost_s12; /** a helper varialbe for `intersect_with`. */
-    const double cost_e12; /** a helper variable for `intersect_with`. */
+    const double cosd_s12; /** a helper varialbe for `intersect_with`. */
+    const double cosd_e12; /** a helper variable for `intersect_with`. */
+    const minor_arc arc_s; /** a helper variable for `separation_cosine`. */
+    const minor_arc arc_e; /** a helper variable for `separation_cosine`. */
 
     /**
      * @brief generate a helper point.
