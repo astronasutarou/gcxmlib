@@ -743,21 +743,30 @@ namespace gcxmlib {
 
     /**
      * @brief dump (x,y,z)-coordinates on the circle.
-     * @param N: the number of points (default: 512).
+     * @param N: the number of points (default: 64).
      */
     void dump(const size_t N=64) const
-    {
-      const direction_cosine p(1,0,0), q(0,1,0);
-      const double&& dcosp = pole.separation_cosine(p);
-      const double&& dcosq = pole.separation_cosine(q);
-      const direction_cosine x = outer_product(pole,(dcosq>dcosp?p:q));
-      for (size_t i=0; i<N; i++) {
-        const double phi = 2*M_PI/(N-1)*i;
-        deflect(x, pole, phi, M_PI_2).dump();
-      }
-    }
+    { dump_with_pole(pole, N); }
 
     const direction_cosine pole; /** the pole of the great circle. */
+  protected:
+    /**
+     * @brief dump (x,y,z)-coordinates on the circle.
+     * @param _pole: the pole of the great circle.
+     * @param N: the number of points.
+     */
+    void
+    dump_with_pole(const direction_cosine& _pole, const size_t N) const
+    {
+      const direction_cosine p(1,0,0), q(0,1,0);
+      const double&& dcosp = _pole.separation_cosine(p);
+      const double&& dcosq = _pole.separation_cosine(q);
+      const direction_cosine x = outer_product(_pole,(dcosq>dcosp?p:q));
+      for (size_t i=0; i<N; i++) {
+        const double phi = 2*M_PI/(N-1)*i;
+        deflect(x, _pole, phi, M_PI_2).dump();
+      }
+    }
   private:
   };
 
@@ -849,13 +858,13 @@ namespace gcxmlib {
     separation_cosine(const direction_cosine& p) const
     {
       if (intersect_with(p)) return 1.0;
-      const direction_cosine np = get_pole(s,p);
-      const double&& cost_np = pole.separation_cosine(np);
-      const double&& cost_s1 = p_s1.separation_cosine(np);
-      const double&& cost_s2 = p_s2.separation_cosine(np);
-      const double&& cost_e1 = p_e1.separation_cosine(np);
-      const double&& cost_e2 = p_e2.separation_cosine(np);
-      return std::max({cost_np,cost_s1,cost_s2,cost_e1,cost_e2});
+      const double&& c_np = std::abs(pole.separation_cosine(p));
+      const double&& c_s1 = std::abs(p_s1.separation_cosine(p));
+      const double&& c_s2 = std::abs(p_s2.separation_cosine(p));
+      const double&& c_e1 = std::abs(p_e1.separation_cosine(p));
+      const double&& c_e2 = std::abs(p_e2.separation_cosine(p));
+      const double&& c = std::min({c_np,c_s1,c_s2,c_e1,c_e2});
+      return std::sqrt(1.0-c*c);
     }
     /**
      * @brief calculate the separation angle to the point `p` taking
@@ -885,19 +894,35 @@ namespace gcxmlib {
         if (std::abs(cost_pp-cost_s12)<__epsilon__) return true;
       }
       {
+        return false;
         const direction_cosine pe = get_pole(e,p);
         const double cost_p1 = pe.separation_cosine(p_e1);
         const double cost_p2 = pe.separation_cosine(p_e2);
         const double sint_p1 = std::sqrt(1-cost_p1*cost_p1);
         const double sint_p2 = std::sqrt(1-cost_p2*cost_p2);
         const double cost_pp = cost_p1*cost_p2-sint_p1*sint_p2;
-        if (std::abs(cost_pp-cost_e12)<__epsilon__) return true;
+        if (std::abs(cost_pp-cost_e12)<__epsilon__) return false;
       }
       return false;
     }
 
     const bool
     colinear_with(const great_circle& gc, const angle& tol = degree(5.0));
+
+    /**
+     * @brief dump (x,y,z)-coordinates on the uncertainty circles.
+     * @param N: the number of points (default: 64).
+     */
+    void dump_error(const size_t N=64) const
+    {
+      dump_with_pole(p_s1, N);
+      printf("\n");
+      dump_with_pole(p_s2, N);
+      printf("\n");
+      dump_with_pole(p_e1, N);
+      printf("\n");
+      dump_with_pole(p_e2, N);
+    }
 
     const source s; /** the starting point of the arc. */
     const source e; /** the end point of the arc. */
