@@ -21,6 +21,7 @@ EXAMPLE := test/example_angle \
            test/example_interp \
            test/example_motion_arc \
            test/example_motion_arc_intersect_with_point \
+           test/example_motion_arc_intersect_with_arc \
            test/example_motion_arc_separation
 
 .PHONY: clean build test build_pypi upload_test upload_pypi

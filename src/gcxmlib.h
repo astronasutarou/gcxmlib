@@ -878,7 +878,8 @@ namespace gcxmlib {
     }
 
     /**
-     * @brief
+     * @brief check if the arc intersects with the position `p` taking
+     *        into account the uncertainties of the end points.
      * @param p: a `direction_cosine` instance.
      */
     const bool
@@ -904,6 +905,28 @@ namespace gcxmlib {
         if (std::abs(cost_pp-cost_e12)<__epsilon__) return false;
       }
       return false;
+    }
+
+    /**
+     * @brief check if the arc intersects with the arc `arc` taking
+     *        into account the uncertainties of the end points.
+     * @param arc: a `minor_arc` instance.
+     */
+    const bool
+    intersect_with(const minor_arc& arc) const
+    {
+      return intersect_with(arc.s) || intersect_with(arc.e);
+    }
+
+    /**
+     * @brief check if the arc intersects with the arc `arc` taking
+     *        into account the uncertainties of the end points.
+     * @param arc: a `motion_arc` instance.
+     */
+    const bool
+    intersect_with(const motion_arc& arc) const
+    {
+      return intersect_with(arc.s) || intersect_with(arc.e);
     }
 
     const bool
