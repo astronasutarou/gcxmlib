@@ -610,6 +610,16 @@ namespace gcxmlib {
     { return neighbor_to(p, s.radian+p.s.radian); }
 
     /**
+     * @brief obtain the source extended toward `q` by fraction `f`.
+     * @param q: the anchor point.
+     * @param f: the fraction of the length to `q`.
+     * @note interpolation for `f` between [0,1], otherwise extrapolation.
+     *       this method is defined later since it depends on `motion_arc`.
+     */
+    const source
+    extend_to(const source& q, const double f) const;
+
+    /**
      * @brief return `true` if another point is inside the range.
      * @param p: another positional instance.
      * @param range: an `angle` instance.
@@ -827,6 +837,10 @@ namespace gcxmlib {
       return std::acos(distance_cosine(p));
     }
 
+    /**
+     * @brief dump (x,y,z)-coordinates of the arc.
+     * @param N: the number of points (default: 64).
+     */
     void
     dump_arc(const size_t N=64) const
     {
@@ -1051,6 +1065,40 @@ namespace gcxmlib {
     }
 
     /**
+     * @brief return the uncertainty at the foot of `q`.
+     * @param q: a `direction_cosine` instance.
+     * @param skip: skip execution of `foot_of` if true.
+     */
+    const angle
+    error_at(const direction_cosine& q, const bool skip=true) const
+    {
+      const direction_cosine ft = (skip)?foot_of(q):q;
+      const double&& s1 = p_s1.separation_cosine(ft);
+      const double&& s2 = p_s2.separation_cosine(ft);
+      const double&& e1 = p_e1.separation_cosine(ft);
+      const double&& e2 = p_e2.separation_cosine(ft);
+      const double&& d_s1 = std::sqrt(1-s1*s1);
+      const double&& d_s2 = std::sqrt(1-s2*s2);
+      const double&& d_e1 = std::sqrt(1-e1*e1);
+      const double&& d_e2 = std::sqrt(1-e2*e2);
+      return std::acos(std::min({d_s1,d_s2,d_e1,d_e2}));
+    }
+
+    /**
+     * @brief dump (x,y,z)-coordinates of the arc.
+     * @param N: the number of points (default: 64).
+     */
+    void
+    dump_arc(const size_t N=64) const
+    {
+      for (size_t i=0; i<N; i++) {
+        const double&& f=1.0/(N-1)*i;
+        const direction_cosine p = s.extend_to(e,f);
+        p.dump();
+      }
+    }
+
+    /**
      * @brief dump (x,y,z)-coordinates on the uncertainty circles.
      * @param N: the number of points (default: 64).
      */
@@ -1097,6 +1145,15 @@ namespace gcxmlib {
       return from.pivot(to, phi, (parity?1.0:-1.0)*delta);
     }
   };
+
+  const source
+  source::extend_to(const source& q, const double f) const
+  {
+    const timestamp_t eT = advance_timestamp(t, f*(q.t-t));
+    const direction_cosine& ep = direction_cosine::extend_to(q,f);
+    const double&& es = motion_arc(*this, q).error_at(ep);
+    return source(ep.l,ep.m,ep.n,eT,es);
+  }
 }
 
 #endif  // __GCXMLIB_H_INCLUDE

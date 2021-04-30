@@ -22,24 +22,28 @@ main(int argn, char** argv)
   auto s = std::chrono::system_clock::now();
 
   {
-    printf("# case 1: p1=(1,0,0) and p2=(0,1,0).\n");
-    const source p1(1,0,0), p2(0,1,0);
-    const minor_arc arc(p1,p2);
+    printf("# case 1: p0=(1,0,0) and p1=(0,1,0).\n");
+    const source p0(1,0,0), p1(0,1,0);
+    const minor_arc arc(p0,p1);
     printf("# s : "); arc.s.dump();
     printf("# e : "); arc.e.dump();
     arc.dump();
+    printf("\n\n");
+    arc.dump_arc();
   }
 
    printf("\n\n");
 
   {
     printf("# case 2: two random points.\n");
+    const source p0(unif(gen),unif(gen),unif(gen));
     const source p1(unif(gen),unif(gen),unif(gen));
-    const source p2(unif(gen),unif(gen),unif(gen));
-    const minor_arc arc(p1,p2);
+    const minor_arc arc(p0,p1);
     printf("# s : "); arc.s.dump();
     printf("# e : "); arc.e.dump();
     arc.dump();
+    printf("\n\n");
+    arc.dump_arc();
   }
 
   auto e = std::chrono::system_clock::now();
