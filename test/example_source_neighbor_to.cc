@@ -24,7 +24,7 @@ main(int argn, char** argv)
 
   for (size_t i=0; i<10000; i++) {
     {
-      const gcxmlib::timestamp_t t0 = std::chrono::system_clock::now();
+      const gcxmlib::timestamp_t t0 = gcxmlib::now();
       double x(unif(gen)), y(unif(gen)), z(1.0);
       source p(x,y,z,t0+seconds(i));
       if (p0.neighbor_to(p, degree(5.0))) {

@@ -20,14 +20,14 @@ main(int argn, char** argv)
 
   auto s = std::chrono::system_clock::now();
 
-  const gcxmlib::timestamp_t t0 = std::chrono::system_clock::now();
+  const gcxmlib::timestamp_t t0 = gcxmlib::now();
   source p0(0,0,1,t0+seconds(5000));
   gcxmlib::angle dR = degree(10.0);
   gcxmlib::sec_t dT(1000.0);
 
   for (size_t i=0; i<10000; i++) {
     {
-      const gcxmlib::timestamp_t t = std::chrono::system_clock::now();
+      const gcxmlib::timestamp_t t = gcxmlib::now();
       double x(unif(gen)), y(unif(gen)), z(1.0);
       source p(x,y,z,t+seconds(i));
       if (p0.match(p, dR, dT)) {

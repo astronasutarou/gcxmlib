@@ -34,9 +34,27 @@ namespace gcxmlib {
   constexpr double radian_to_arcsec = 3600.*180./M_PI;
   constexpr double arcsec_to_radian = M_PI/180./3600.;
 
-  typedef std::chrono::duration<double> sec_t;
-  typedef std::chrono::time_point
-      <std::chrono::system_clock> timestamp_t;
+  using sec_t = std::chrono::duration<double>;
+  using default_clock = std::chrono::system_clock;
+  using timestamp_t = std::chrono::time_point<default_clock>;
+
+  /**
+   * @brief return the current time using `default_clock`.
+   */
+  const auto
+  now() { return default_clock::now(); }
+
+  /**
+   * @brief a helper function to advance the timestamp by `dt`.
+   * @param t0: the `timestamp_t` instance of the time origin.
+   * @param dt: the `chrono::duration` instance.
+   */
+  template<typename duration_t>
+  const auto
+  advance_timestamp(const timestamp_t& t0, const duration_t& dt)
+  {
+    return t0 + std::chrono::duration_cast<default_clock::duration>(dt);
+  }
 
   enum class angle_range
   {
@@ -272,11 +290,11 @@ namespace gcxmlib {
   };
 
   /** general purpose angle class. */
-  typedef base_angle<angle_range::zero_to_twopi> angle;
+  using angle = base_angle<angle_range::zero_to_twopi>;
   /** `longitude` is an alias to `angle`. */
-  typedef base_angle<angle_range::zero_to_twopi> longitude;
+  using longitude = base_angle<angle_range::zero_to_twopi>;
   /** `latitude` is defined within [-pi/2,pi/2]. */
-  typedef base_angle<angle_range::minus_pi_2_to_pi_2> latitude;
+  using latitude = base_angle<angle_range::minus_pi_2_to_pi_2>;
 
   /** a helper function to make `angle` in radian. */
   const angle radian(const double ang)
@@ -529,7 +547,7 @@ namespace gcxmlib {
     }
   };
   /** define _dcos_ as a shorthand of direction_cosine. */
-  typedef direction_cosine dcos;
+  using dcos = direction_cosine;
 
 
   class source : public direction_cosine {
@@ -549,7 +567,7 @@ namespace gcxmlib {
      * @note set `s` 1 arcsec if not assigned.
      */
     source(const double _x, const double _y, const double _z,
-           const timestamp_t _t, const angle& _s = arcsec(1.0))
+           const timestamp_t& _t, const angle& _s = arcsec(1.0))
       : direction_cosine(_x, _y, _z), t(_t), s(_s) {}
 
     /**
@@ -557,7 +575,7 @@ namespace gcxmlib {
      * @note set `s` 1 arcsec if not assigned.
      */
     source(const longitude& _lon, const latitude& _lat,
-           const timestamp_t _t, const angle& _s = arcsec(1.0))
+           const timestamp_t& _t, const angle& _s = arcsec(1.0))
       : direction_cosine(_lon, _lat), t(_t), s(_s) {}
 
     /**
@@ -631,7 +649,7 @@ namespace gcxmlib {
     { return true; }
   private:
     const timestamp_t now() const
-    { return std::chrono::system_clock::now(); }
+    { return (default_clock::now()); }
   };
 
   class great_circle {
@@ -685,7 +703,7 @@ namespace gcxmlib {
      * @brief obtain `cos(d)` to `direction_cosine`.
      * @param p: a `direction_cosine` instance.
      */
-    const angle
+    const double
     separation_cosine(const direction_cosine& p) const
     {
       const double cosd = pole.separation_cosine(p);
@@ -698,7 +716,7 @@ namespace gcxmlib {
      */
     const angle
     separation(const direction_cosine& p) const
-    { return std::acos(separation_cosine(p).radian); }
+    { return std::acos(separation_cosine(p)); }
 
 
     /**
