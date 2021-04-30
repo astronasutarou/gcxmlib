@@ -5,7 +5,7 @@ set view equal xyz
 set xr [-1:1]
 set yr [-1:1]
 set zr [-1:1]
-data="< ./example_extend_to"
+data="< ./example_dcos_extend_to"
 
 splot for [n=0:1] data i 3*n u 1:2:3 w l lc n+1 \
       t sprintf("great circle #_%d",n+1), \

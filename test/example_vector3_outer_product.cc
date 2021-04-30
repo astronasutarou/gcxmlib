@@ -1,6 +1,6 @@
 /**
- * @file example_outer_product.cc
- * @brief test of the outer_product() function.
+ * @file example_vector3_outer_product.cc
+ * @brief test of the vector3.outer_product() function.
  * @author Ryou Ohsawa
  * @year 2021
  */

@@ -1,6 +1,6 @@
 /**
- * @file example_extend_to.cc
- * @brief test of the extend_to() function.
+ * @file example_docs_extend_to.cc
+ * @brief test of the dcos.extend_to() function.
  * @author Ryou Ohsawa
  * @year 2021
  */

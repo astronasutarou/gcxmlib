@@ -12,13 +12,13 @@ EXAMPLE := test/example_angle \
            test/example_longitude \
            test/example_latitude \
            test/example_vector3 \
+           test/example_vector3_outer_product \
            test/example_dcos \
+           test/example_dcos_extend_to \
            test/example_source_neighbor_to \
            test/example_source_match \
-           test/example_outer_product \
            test/example_great_circle_dump \
            test/example_great_circle_separation \
-           test/example_extend_to \
            test/example_minor_arc \
            test/example_minor_arc_distance \
            test/example_motion_arc \
