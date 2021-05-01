@@ -10,7 +10,7 @@
 
 using gcxmlib::trail;
 using gcxmlib::dcos;
-using gcxmlib::source;
+using gcxmlib::footprint;
 using gcxmlib::degree;
 using gcxmlib::timestamp_t;
 using std::chrono::seconds;
@@ -29,8 +29,8 @@ main(int argn, char** argv)
     printf("# case 1: p1=(1.0,-0.1,0.0) and p2=(1.0,0.1,0.0).\n");
     const timestamp_t t0 = std::chrono::system_clock::now();
     const timestamp_t t1 = t0+seconds(5);
-    const source p1(1.0,-0.1, 0.0, t0, degree(0.5));
-    const source p2(1.0, 0.1, 0.0, t1, degree(3.0));
+    const footprint p1(1.0,-0.1, 0.0, t0, degree(0.5));
+    const footprint p2(1.0, 0.1, 0.0, t1, degree(3.0));
     const trail arc(p1,p2);
     printf("# s : "); arc.s.dump();
     printf("# e : "); arc.e.dump();

@@ -550,31 +550,31 @@ namespace gcxmlib {
   using dcos = direction_cosine;
 
 
-  class source : public direction_cosine {
+  class footprint : public direction_cosine {
   public:
     /** disable the constructor without arguments. */
-    source() = delete;
+    footprint() = delete;
 
     /**
-     * @brief construct a `source` instance with (x,y,z)
+     * @brief construct a `footprint` instance with (x,y,z)
      * @note set `t` and `s` the system time and 1 arcsec, respectivly.
      */
-    source(const double _x, const double _y, const double _z)
+    footprint(const double _x, const double _y, const double _z)
       : direction_cosine(_x, _y, _z), t(now()), s(arcsec(1.0)) {}
 
     /**
-     * @brief construct a `source` instance with (x,y,z,t)
+     * @brief construct a `footprint` instance with (x,y,z,t)
      * @note set `s` 1 arcsec if not assigned.
      */
-    source(const double _x, const double _y, const double _z,
+    footprint(const double _x, const double _y, const double _z,
            const timestamp_t& _t, const angle& _s = arcsec(1.0))
       : direction_cosine(_x, _y, _z), t(_t), s(_s) {}
 
     /**
-     * @brief construct a `source` instance with (lon,lat,t)
+     * @brief construct a `footprint` instance with (lon,lat,t)
      * @note set `s` 1 arcsec if not assigned.
      */
-    source(const longitude& _lon, const latitude& _lat,
+    footprint(const longitude& _lon, const latitude& _lat,
            const timestamp_t& _t, const angle& _s = arcsec(1.0))
       : direction_cosine(_lon, _lat), t(_t), s(_s) {}
 
@@ -603,21 +603,21 @@ namespace gcxmlib {
      * @brief return `true` if another point is inside the uncertainty.
      * @param p: another positional instance.
      * @note `range` is set the summation of the both uncertainties
-     *       if `p` is an instance of `source`. as `range`.
+     *       if `p` is an instance of `footprint`. as `range`.
      */
     const bool
-    neighbor_to(const source& p) const
+    neighbor_to(const footprint& p) const
     { return neighbor_to(p, s.radian+p.s.radian); }
 
     /**
-     * @brief obtain the source extended toward `q` by fraction `f`.
+     * @brief obtain the footprint extended toward `q` by fraction `f`.
      * @param q: the anchor point.
      * @param f: the fraction of the length to `q`.
      * @note interpolation for `f` between [0,1], otherwise extrapolation.
      *       this method is defined later since it depends on `trail`.
      */
-    const source
-    extend_to(const source& q, const double f) const;
+    const footprint
+    extend_to(const footprint& q, const double f) const;
 
     /**
      * @brief return `true` if another point is inside the range.
@@ -626,7 +626,7 @@ namespace gcxmlib {
      * @param trange: a time duration.
      */
     const bool
-    match(const source& p, const angle& range, const sec_t& trange) const
+    match(const footprint& p, const angle& range, const sec_t& trange) const
     {
       const double cosine = std::cos(range.radian);
       const double tsep = std::abs(static_cast<sec_t>(t-p.t).count());
@@ -655,7 +655,7 @@ namespace gcxmlib {
     const angle s;       /** uncertainty of the position. */
 
     friend bool
-    operator==(const source& lhs, const source& rhs)
+    operator==(const footprint& lhs, const footprint& rhs)
     { return true; }
   private:
     const timestamp_t now() const
@@ -753,7 +753,6 @@ namespace gcxmlib {
       }
     }
 
-
     /**
      * @brief dump (x,y,z)-coordinates on the circle.
      * @param N: the number of points (default: 64).
@@ -762,6 +761,7 @@ namespace gcxmlib {
     { dump_with_pole(pole, N); }
 
     const direction_cosine pole; /** the pole of the great circle. */
+
   protected:
     /**
      * @brief dump (x,y,z)-coordinates on the circle.
@@ -778,6 +778,35 @@ namespace gcxmlib {
       for (size_t i=0; i<N; i++) {
         const double phi = 2*M_PI/(N-1)*i;
         x.pivot(_pole, phi, M_PI_2).dump();
+      }
+    }
+
+    /**
+     * @brief a helper function to calculate the distance to the arc.
+     * @param s: the starting point of the arc.
+     * @param e: the end point of the arc.
+     * @param p: the distance from thie point is measured.
+     * @note this function is defined for inherited arc classes.
+     */
+    const double
+    distance_cosine(const direction_cosine& s,
+                    const direction_cosine& e,
+                    const direction_cosine& p) const
+    {
+      const direction_cosine ft = foot_of(p);
+      const double&& cosd_ps = s.separation_cosine(ft);
+      const double&& cosd_pe = e.separation_cosine(ft);
+      const double&& cosd_se = s.separation_cosine(e);
+      const double&& sind_ps = std::sqrt(1-cosd_ps*cosd_ps);
+      const double&& sind_pe = std::sqrt(1-cosd_pe*cosd_pe);
+      const double&& cosd = cosd_ps*cosd_pe-sind_ps*sind_pe;
+      const double&& sind = cosd_ps*sind_pe+sind_ps*cosd_pe;
+      if (std::abs(cosd-cosd_se) < __epsilon__ && sind > 0) {
+        return separation_cosine(p);
+      } else {
+        const double&& sep_s = s.separation_cosine(p);
+        const double&& sep_e = e.separation_cosine(p);
+        return std::max(sep_s,sep_e);
       }
     }
 
@@ -801,8 +830,7 @@ namespace gcxmlib {
      *         (invalid_argumet): a pole cannot be defined by `s` and `e`.
      */
     minor_arc(const direction_cosine& _s, const direction_cosine& _e)
-      : great_circle(_s.get_pole(_e)), s(_s), e(_e),
-        cosd_se(_s.separation_cosine(_e)) {}
+      : great_circle(_s.get_pole(_e)), s(_s), e(_e) {}
 
     /**
      * @brief calculate `cos(d)` between the arc and the point `p`.
@@ -811,20 +839,7 @@ namespace gcxmlib {
     const double
     distance_cosine(const direction_cosine& p) const
     {
-      const direction_cosine ft = foot_of(p);
-      const double&& cosd_ps = s.separation_cosine(ft);
-      const double&& cosd_pe = e.separation_cosine(ft);
-      const double&& sind_ps = std::sqrt(1-cosd_ps*cosd_ps);
-      const double&& sind_pe = std::sqrt(1-cosd_pe*cosd_pe);
-      const double&& cosd = cosd_ps*cosd_pe-sind_ps*sind_pe;
-      const double&& sind = cosd_ps*sind_pe+sind_ps*cosd_pe;
-      if (std::abs(cosd-cosd_se) < __epsilon__ && sind > 0) {
-        return separation_cosine(p);
-      } else {
-        const double&& sep_s = s.separation_cosine(p);
-        const double&& sep_e = e.separation_cosine(p);
-        return std::max(sep_s,sep_e);
-      }
+      return great_circle::distance_cosine(s,e,p);
     }
 
     /**
@@ -854,7 +869,6 @@ namespace gcxmlib {
     const direction_cosine s; /** the starting point of the arc. */
     const direction_cosine e; /** the end point of the arc. */
   private:
-    const double cosd_se; /** `cos(d)` between `s` and `e`. */
   };
 
 
@@ -871,13 +885,12 @@ namespace gcxmlib {
      *         (invalid_argumet): a pole cannot be defined by `s` and `e`.
      *         (invalid_argumet): timestamps of `s` and `e` are the same.
      */
-    trail(const source& _s, const source& _e)
+    trail(const footprint& _s, const footprint& _e)
       : great_circle(_s.get_pole(_e)), s(_s), e(_e), dt(_e.t-_s.t),
         h_s1(make_helper(s,e,true)), h_s2(make_helper(s,e,false)),
         h_e1(make_helper(e,s,true)), h_e2(make_helper(e,s,false)),
         p_s1(s.get_pole(h_s1)), p_s2(s.get_pole(h_s2)),
         p_e1(e.get_pole(h_e1)), p_e2(e.get_pole(h_e2)),
-        cosd_se(s.separation_cosine(e)),
         cosd_s12(p_s1.separation_cosine(p_s2)),
         cosd_e12(p_e1.separation_cosine(p_e2)),
         arc_s(minor_arc(p_s1,p_s2)), arc_e(minor_arc(p_e2,p_e1))
@@ -973,20 +986,7 @@ namespace gcxmlib {
     const double
     distance_cosine(const direction_cosine& p) const
     {
-      const direction_cosine ft = foot_of(p);
-      const double&& cosd_ps = s.separation_cosine(ft);
-      const double&& cosd_pe = e.separation_cosine(ft);
-      const double&& sind_ps = std::sqrt(1-cosd_ps*cosd_ps);
-      const double&& sind_pe = std::sqrt(1-cosd_pe*cosd_pe);
-      const double&& cosd = cosd_ps*cosd_pe-sind_ps*sind_pe;
-      const double&& sind = cosd_ps*sind_pe+sind_ps*cosd_pe;
-      if (std::abs(cosd-cosd_se) < __epsilon__ && sind > 0) {
-        return separation_cosine(p);
-      } else {
-        const double&& sep_s = s.separation_cosine(p);
-        const double&& sep_e = e.separation_cosine(p);
-        return std::max(sep_s,sep_e);
-      }
+      return great_circle::distance_cosine(s,e,p);
     }
 
     /**
@@ -1147,8 +1147,8 @@ namespace gcxmlib {
       dump_with_pole(p_e2, N);
     }
 
-    const source s; /** the starting point of the arc. */
-    const source e; /** the end point of the arc. */
+    const footprint s; /** the starting point of the arc. */
+    const footprint e; /** the end point of the arc. */
     const sec_t dt; /** the time separation between `s` and `e` */
   private:
     const direction_cosine h_s1; /** the first helper point for `s`. */
@@ -1159,7 +1159,6 @@ namespace gcxmlib {
     const direction_cosine p_s2; /** the second helper pole for `s`. */
     const direction_cosine p_e1; /** the first helper pole for `e`. */
     const direction_cosine p_e2; /** the second helper pole for `e`. */
-    const double cosd_se; /** `cos(d)` between `s` and `e`. */
     const double cosd_s12; /** a helper varialbe for `intersect_with`. */
     const double cosd_e12; /** a helper variable for `intersect_with`. */
     const minor_arc arc_s; /** a helper variable for `separation_cosine`. */
@@ -1172,7 +1171,7 @@ namespace gcxmlib {
      * @param parity: the positive solution if `true`.
      */
     const direction_cosine
-    make_helper(const source& from, const source& to, const bool parity)
+    make_helper(const footprint& from, const footprint& to, const bool parity)
     {
       const angle theta = from.separation(to);
       const angle delta = to.s;
@@ -1181,13 +1180,13 @@ namespace gcxmlib {
     }
   };
 
-  const source
-  source::extend_to(const source& q, const double f) const
+  const footprint
+  footprint::extend_to(const footprint& q, const double f) const
   {
     const timestamp_t eT = advance_timestamp(t, f*(q.t-t));
     const direction_cosine& ep = direction_cosine::extend_to(q,f);
     const double&& es = trail(*this, q).error_at(ep);
-    return source(ep.l,ep.m,ep.n,eT,es);
+    return footprint(ep.l,ep.m,ep.n,eT,es);
   }
 }
 

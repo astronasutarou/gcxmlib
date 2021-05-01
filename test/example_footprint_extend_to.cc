@@ -1,13 +1,13 @@
 /**
- * @file example_source_extend_to.cc
- * @brief test of the source.extend_to() function
+ * @file example_footprint_extend_to.cc
+ * @brief test of the footprint.extend_to() function
  * @author Ryou Ohsawa
  * @year 2021
  */
 #include "gcxmlib.h"
 #include <random>
 
-using gcxmlib::source;
+using gcxmlib::footprint;
 using gcxmlib::degree;
 using gcxmlib::trail;
 using std::chrono::seconds;
@@ -22,8 +22,8 @@ main(int argn, char** argv)
   auto s = std::chrono::system_clock::now();
 
   const gcxmlib::timestamp_t t0 = gcxmlib::now();
-  source p0(1,0,0,t0+seconds(0),degree(2.0));
-  source p1(0,1,0,t0+seconds(5),degree(10.0));
+  footprint p0(1,0,0,t0+seconds(0),degree(2.0));
+  footprint p1(0,1,0,t0+seconds(5),degree(10.0));
   trail arc(p0,p1);
 
   arc.dump();

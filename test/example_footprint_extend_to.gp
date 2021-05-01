@@ -5,7 +5,7 @@ set view equal xyz
 set xr [-1:1]
 set yr [-1:1]
 set zr [-1:1]
-data="< ./example_source_extend_to"
+data="< ./example_footprint_extend_to"
 asec2z(t) = atan(t/180./3600.*pi)
 getsec(n) = substr(strcol(n),18,99)
 

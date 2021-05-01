@@ -9,7 +9,7 @@
 
 using gcxmlib::vector3;
 using gcxmlib::dcos;
-using gcxmlib::source;
+using gcxmlib::footprint;
 
 
 int
@@ -50,9 +50,9 @@ main(int argn, char** argv)
   printf("\n\n");
 
   {
-    printf("# outer_product() for `source` class.\n");
-    source p(unif(gen), unif(gen), unif(gen));
-    source q(unif(gen), unif(gen), unif(gen));
+    printf("# outer_product() for `footprint` class.\n");
+    footprint p(unif(gen), unif(gen), unif(gen));
+    footprint q(unif(gen), unif(gen), unif(gen));
     p.dump();
     q.dump();
 
@@ -80,8 +80,8 @@ main(int argn, char** argv)
   printf("\n\n");
 
   {
-    printf("# outer_product() between `source` and `vector3`.\n");
-    source p(unif(gen), unif(gen), unif(gen));
+    printf("# outer_product() between `footprint` and `vector3`.\n");
+    footprint p(unif(gen), unif(gen), unif(gen));
     vector3 q(unif(gen), unif(gen), unif(gen));
     p.dump();
     q.dump();

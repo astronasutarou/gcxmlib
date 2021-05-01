@@ -1,13 +1,13 @@
 /**
- * @file example_source_neighbor_to.cc
- * @brief test of the source.neighbor_to() function
+ * @file example_footprint_neighbor_to.cc
+ * @brief test of the footprint.neighbor_to() function
  * @author Ryou Ohsawa
  * @year 2021
  */
 #include "gcxmlib.h"
 #include <random>
 
-using gcxmlib::source;
+using gcxmlib::footprint;
 using gcxmlib::degree;
 using std::chrono::seconds;
 
@@ -20,13 +20,13 @@ main(int argn, char** argv)
 
   auto s = std::chrono::system_clock::now();
 
-  source p0(0,0,1);
+  footprint p0(0,0,1);
 
   for (size_t i=0; i<10000; i++) {
     {
       const gcxmlib::timestamp_t t0 = gcxmlib::now();
       double x(unif(gen)), y(unif(gen)), z(1.0);
-      source p(x,y,z,t0+seconds(i));
+      footprint p(x,y,z,t0+seconds(i));
       if (p0.neighbor_to(p, degree(5.0))) {
         printf("1 ");
       } else {
@@ -40,9 +40,9 @@ main(int argn, char** argv)
   std::chrono::duration<double> dt = e-s;
   printf("\n# elapsed time:: %.8lf ms\n", dt.count()*1e3);
 
-  printf("# 10000 random sources are generated.\n");
+  printf("# 10000 random footprints are generated.\n");
   printf("# [tag, x, y, z, t] are listed.\n");
   printf("# the first element `tag` becomes unity,\n"
-         "# if source is located within 5 degree of (0,0,1).\n");
+         "# if footprint is located within 5 degree of (0,0,1).\n");
   return 0;
 }

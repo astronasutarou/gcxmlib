@@ -9,7 +9,7 @@
 #include <unistd.h>
 
 using gcxmlib::trail;
-using gcxmlib::source;
+using gcxmlib::footprint;
 using gcxmlib::degree;
 using gcxmlib::now;
 
@@ -24,8 +24,8 @@ main(int argn, char** argv)
 
   {
     printf("# case 1: p0=(1,0,0) and p1=(0,1,0).\n");
-    const source p0(1,0,0,now(),degree(0.5));
-    const source p1(0,1,0,now(),degree(3.0));
+    const footprint p0(1,0,0,now(),degree(0.5));
+    const footprint p1(0,1,0,now(),degree(3.0));
     const trail arc(p0,p1);
     printf("# s : "); arc.s.dump();
     printf("# e : "); arc.e.dump();
@@ -41,8 +41,8 @@ main(int argn, char** argv)
 
   {
     printf("# case 2: two random points.\n");
-    const source p0(unif(gen),unif(gen),unif(gen),now(),degree(5.0));
-    const source p1(unif(gen),unif(gen),unif(gen),now(),degree(1.0));
+    const footprint p0(unif(gen),unif(gen),unif(gen),now(),degree(5.0));
+    const footprint p1(unif(gen),unif(gen),unif(gen),now(),degree(1.0));
     const trail arc(p0,p1);
     printf("# s : "); arc.s.dump();
     printf("# e : "); arc.e.dump();

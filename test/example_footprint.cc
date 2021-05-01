@@ -1,13 +1,13 @@
 /**
- * @file example_source.cc
- * @brief functional test of the source class
+ * @file example_footprint.cc
+ * @brief functional test of the footprint class
  * @author Ryou Ohsawa
  * @year 2021
  */
 #include "gcxmlib.h"
 #include <random>
 
-using gcxmlib::source;
+using gcxmlib::footprint;
 using gcxmlib::longitude;
 using gcxmlib::latitude;
 using gcxmlib::arcsec;
@@ -21,7 +21,7 @@ main(int argn, char** argv)
   std::uniform_real_distribution<double> unif(-M_PI,M_PI);
   double x(unif(gen)), y(unif(gen)), z(unif(gen));
   const timestamp_t t0 = gcxmlib::now();
-  source p(1,0,0,t0,arcsec(1.0)), q(x,y,z,t0,arcsec(3.0));
+  footprint p(1,0,0,t0,arcsec(1.0)), q(x,y,z,t0,arcsec(3.0));
   double d = std::sqrt(x*x+y*y+z*z);
 
   auto s = std::chrono::system_clock::now();
@@ -47,7 +47,7 @@ main(int argn, char** argv)
 
   longitude lon(unif(gen));
   latitude lat(unif(gen)/2.0);
-  source r(lon,lat,t0,arcsec(5.0));
+  footprint r(lon,lat,t0,arcsec(5.0));
   printf("\n"
          "# Define `direction_cosine` _r_ with (lon,lat) pair.\n"
          "# The elements of _r_ should be\n"

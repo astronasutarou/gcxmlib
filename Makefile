@@ -15,12 +15,13 @@ EXAMPLE := test/example_angle \
            test/example_vector3_outer_product \
            test/example_dcos \
            test/example_dcos_extend_to \
-           test/example_source \
-           test/example_source_neighbor_to \
-           test/example_source_match \
-           test/example_source_extend_to \
+           test/example_footprint \
+           test/example_footprint_neighbor_to \
+           test/example_footprint_match \
+           test/example_footprint_extend_to \
            test/example_great_circle_dump \
            test/example_great_circle_separation \
+           test/example_great_circle_foot_of \
            test/example_minor_arc \
            test/example_minor_arc_distance \
            test/example_trail \
