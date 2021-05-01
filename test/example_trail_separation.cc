@@ -26,12 +26,12 @@ main(int argn, char** argv)
   auto s = std::chrono::system_clock::now();
 
   {
-    printf("# case 1: p1=(1.0,-0.1,0.0) and p2=(1.0,0.1,0.0).\n");
+    printf("# case 1: p0=(1.0,-0.1,0.0) and p1=(1.0,0.1,0.0).\n");
     const timestamp_t t0 = std::chrono::system_clock::now();
     const timestamp_t t1 = t0+seconds(5);
-    const footprint p1(1.0,-0.1, 0.0, t0, degree(0.5));
-    const footprint p2(1.0, 0.1, 0.0, t1, degree(3.0));
-    const trail arc(p1,p2);
+    const footprint p0(1.0,-0.1, 0.0, t0, degree(0.5));
+    const footprint p1(1.0, 0.1, 0.0, t1, degree(3.0));
+    const trail arc(p0,p1);
     printf("# s : "); arc.s.dump();
     printf("# e : "); arc.e.dump();
     printf("# dt: %lf ms\n", (double)arc.dt.count()*1e3);

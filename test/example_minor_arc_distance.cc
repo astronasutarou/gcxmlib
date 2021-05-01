@@ -23,10 +23,10 @@ main(int argn, char** argv)
   auto s = std::chrono::system_clock::now();
 
   {
-    printf("# case 1: p1=(1,0,0) and p2=(0,1,0).\n");
-    const dcos p1(1,1,0);
-    const dcos p2(1,-1,0);
-    const minor_arc arc(p1,p2);
+    printf("# case 1: p0=(1,0,0) and p1=(0,1,0).\n");
+    const dcos p0(1,1,0);
+    const dcos p1(1,-1,0);
+    const minor_arc arc(p0,p1);
     printf("# s : "); arc.s.dump();
     printf("# e : "); arc.e.dump();
     arc.dump();
