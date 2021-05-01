@@ -466,15 +466,12 @@ namespace gcxmlib {
     {
       const angle theta = separation(q);
       const double cosd  = separation_cosine(q);
-      const double sind  = std::sqrt(1-cosd);
+      const double sind  = std::sqrt(1-cosd*cosd);
       const double cosf1 = std::cos(theta.radian*f);
       const double sinf1 = std::sin(theta.radian*f);
       const double&& cosf2  = cosf1*cosd+sinf1*sind;
-      const double&  cosfp  = cosd;
-      const double&& cos2f1 = cosf1*cosf1-sinf1*sinf1;
-      const double&& sin2f1 = 2*cosf1*sinf1;
-      const double&& cosfm  = cos2f1*cosd+sin2f1*sind;
-      return __pivot_helper(q,cosd,cosf1,cosf2,cosfp,cosfm);
+      const double& cosfp  = cosd; // make sure `w` equals zero.
+      return __pivot_helper(q,cosd,cosf1,cosf2,cosfp,cosfp);
     }
 
     const double& l; /** l-element of direction cosine (reference to x) */
@@ -614,10 +611,10 @@ namespace gcxmlib {
      * @param q: the anchor point.
      * @param f: the fraction of the length to `q`.
      * @note interpolation for `f` between [0,1], otherwise extrapolation.
-     *       this method is defined later since it depends on `trail`.
      */
     const footprint
     extend_to(const footprint& q, const double f) const;
+    // this method is defined later since it depends on `trail`.
 
     /**
      * @brief return `true` if another point is inside the range.
@@ -853,6 +850,17 @@ namespace gcxmlib {
     }
 
     /**
+     * @brief return an extrapolated point of the arc.
+     * @param f: fraction of the extrapolation. the end point of the arc
+     *           is obtained for f = 1.
+     */
+    const direction_cosine
+    extrapolate(const double f) const
+    {
+      return s.extend_to(e, f);
+    }
+
+    /**
      * @brief dump (x,y,z)-coordinates of the arc.
      * @param N: the number of points (default: 64).
      */
@@ -912,20 +920,6 @@ namespace gcxmlib {
         printf("# p_e2: "); p_e2.dump();
       }
     }
-
-    /**
-     * @brief obtain the point after `dT` from `s`.
-     * @param dT: duration in second.
-     */
-    const direction_cosine
-    propagate(const sec_t& dT) const;
-
-    /**
-     * @brief obtain the point at `T`.
-     * @param T: timestamp instance.
-     */
-    const direction_cosine
-    propagate(const timestamp_t& T) const;
 
     /**
      * @brief calculate `cos(d)` to the great circle `gc` taking into account
@@ -996,6 +990,41 @@ namespace gcxmlib {
     distance(const direction_cosine& p) const
     {
       return std::acos(distance_cosine(p));
+    }
+
+    /**
+     * @brief return an extrapolated point of the arc.
+     * @param f: fraction of the extrapolation. the end point of the arc
+     *           is obtained for f = 1.
+     */
+    const direction_cosine
+    extrapolate(const double f) const
+    {
+      return s.extend_to(e, f);
+    }
+
+    /**
+     * @brief obtain the point after `dT` from `e`.
+     * @param dT: duration in second.
+     */
+    const footprint
+    propagate(const sec_t& dT) const
+    {
+      const double f = 1.0+(double)(dT/dt);
+      const auto&& T = advance_timestamp(e.t, dT);
+      const direction_cosine q = extrapolate(f);
+      const angle&& qs = error_at(q);
+      return footprint(q.l,q.m,q.n,T,qs);
+    }
+
+    /**
+     * @brief obtain the point at `T`.
+     * @param T: timestamp instance.
+     */
+    const footprint
+    propagate(const timestamp_t& T) const
+    {
+      return propagate(T - e.t);
     }
 
     /**
