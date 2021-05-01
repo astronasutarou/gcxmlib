@@ -10,7 +10,7 @@ asec2z(t) = atan(t/180./3600.*pi)
 getsec(n) = substr(strcol(n),18,99)
 
 splot data i 0 u 1:2:3 w l lc 1 t sprintf("great circle #_%d",1), \
-      data i 1 u 1:2:3 w l lw 6 lc 7 t sprintf("motion arc #_%d",1), \
+      data i 1 u 1:2:3 w l lw 6 lc 7 t sprintf("trail #_%d",1), \
       for [n=0:3] data i 2 ev :::n::n u 1:2:3 w l lc 1 lw 0.5 not, \
       data i 3 u 1:2:3 w lp ps 1 pt 7 lc 2 not,\
       data i 3 u 1:2:3:(getsec(5)) w labels font ",10" \

@@ -9,9 +9,8 @@ data="< ./example_trail_intersect_with_arc"
 set table $arc
 plot data i 3 u 1:2:3:4:5 with table
 unset table
-print $arc
 
-splot data i 0 u 1:2:3 w l lc 1 t sprintf("motion arc #_%d",1), \
+splot data i 0 u 1:2:3 w l lc 1 t sprintf("great circle #_%d",1), \
       for [n=0:3] data i 1 u 1:2:3 ev :::n::n w l lc rgb "gray60" not, \
       data i 2 u 1:2:3 w p pt 6 ps 2 lc 1 not, \
       for [n=0:300] $arc u 3:4:($1==0?$5:1/0) \
