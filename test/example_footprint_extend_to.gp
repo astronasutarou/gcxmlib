@@ -18,4 +18,4 @@ splot data i 0 u 1:2:3 w l lc 1 t sprintf("great circle #_%d",1), \
       data i 3 u 1:2:($3+asec2z($4)) w l lc 3 lw 3 t "uncertainty",\
       data i 3 u 1:2:($3-asec2z($4)) w l lc 3 lw 3 not
 
-pause -1
+pause 3

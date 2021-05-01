@@ -937,7 +937,6 @@ namespace gcxmlib {
     {
       const double&& ds = arc_s.distance_cosine(gc.pole);
       const double&& de = arc_e.distance_cosine(gc.pole);
-      printf("# sep %lf %lf\n", ds, de);
       return std::max(ds, de);
     }
     /**
@@ -1077,7 +1076,7 @@ namespace gcxmlib {
     {
       if (tol.degree > 90.0)
         throw std::invalid_argument("invalid tolerance value.");
-      if (!intersect_with(arc)) throw false;
+      if (!intersect_with(arc)) return false;
       const double&& cosd = separation_cosine(arc);
       return cosd >= std::cos(tol.radian);
     }

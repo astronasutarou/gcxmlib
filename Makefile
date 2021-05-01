@@ -28,6 +28,7 @@ EXAMPLE := test/example_angle \
            test/example_trail_intersect_with_point \
            test/example_trail_intersect_with_arc \
            test/example_trail_colinear_with_gc \
+           test/example_trail_colinear_with_arc \
            test/example_trail_separation
 
 .PHONY: clean build test build_pypi upload_test upload_pypi

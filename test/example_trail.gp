@@ -14,4 +14,4 @@ splot for [n=0:1] data i 3*n u 1:2:3 w l lc n+1 \
       for [m=0:3] for [n=0:1] data i 3*n+2 ev :::m::m \
       u 1:2:3 w l lw 1 lc n+1 not
 
-pause -1
+pause 3

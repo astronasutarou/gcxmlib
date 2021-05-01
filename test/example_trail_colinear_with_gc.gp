@@ -12,4 +12,4 @@ splot data i 0 u 1:2:3 w l lc 1 t sprintf("motion arc #_%d",1), \
       data i 2 u 1:2:3 w p pt 6 ps 2 lc 1 not, \
       data i 3 u 1:2:3 w p pt 6 lc 3 not
 
-pause -1
+pause 3

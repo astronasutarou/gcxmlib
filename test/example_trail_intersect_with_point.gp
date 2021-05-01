@@ -13,4 +13,4 @@ splot data i 0 u 1:2:3 w l lc 1 t sprintf("motion arc #_%d",1), \
       data i 3 u 2:3:($1==0?$4:1/0) w p pt 6 ps 0.2 lc 3 t "not matched", \
       data i 3 u 2:3:($1==1?$4:1/0) w p pt 6 ps 0.5 lc 2 t "matched"
 
-pause -1
+pause 3
