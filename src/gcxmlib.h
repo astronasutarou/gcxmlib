@@ -458,20 +458,31 @@ namespace gcxmlib {
     /**
      * @brief obtain the point extended toward `q` by fraction `f`.
      * @param q: the anchor point.
+     * @param d: the separation angle from thi point.
+     */
+    const direction_cosine
+    extend_to(const direction_cosine& q, const angle& d) const
+    {
+      const double cosd  = separation_cosine(q);
+      const double sind  = std::sqrt(1-cosd*cosd);
+      const double cosf1 = std::cos(d.radian);
+      const double sinf1 = std::sin(d.radian);
+      const double&& cosf2  = cosf1*cosd+sinf1*sind;
+      const double& cosfp  = cosd; // make sure `w` equals zero.
+      return __pivot_helper(q,cosd,cosf1,cosf2,cosfp,cosfp);
+    }
+
+    /**
+     * @brief obtain the point extended toward `q` by fraction `f`.
+     * @param q: the anchor point.
      * @param f: the fraction of the length to `q`.
      * @note interpolation for `f` between [0,1], otherwise extrapolation.
      */
     const direction_cosine
     extend_to(const direction_cosine& q, const double f) const
     {
-      const angle theta = separation(q);
-      const double cosd  = separation_cosine(q);
-      const double sind  = std::sqrt(1-cosd*cosd);
-      const double cosf1 = std::cos(theta.radian*f);
-      const double sinf1 = std::sin(theta.radian*f);
-      const double&& cosf2  = cosf1*cosd+sinf1*sind;
-      const double& cosfp  = cosd; // make sure `w` equals zero.
-      return __pivot_helper(q,cosd,cosf1,cosf2,cosfp,cosfp);
+      const angle theta = separation(q)*f;
+      return extend_to(q, theta);
     }
 
     const double& l; /** l-element of direction cosine (reference to x) */
@@ -531,9 +542,9 @@ namespace gcxmlib {
       const double w2 = (cosd-cosfp)*(cosfm-cosd);
       if (1.0-cosd < __epsilon__)
         throw std::invalid_argument("p1 and p2 are identical.");
-      if (w2 < __exact_zero__)
+      if (w2 < -__epsilon__)
         throw std::range_error("cannot find the solution.");
-      const double w = ((cosd-cosfp)>0?1.0:-1.0)*std::sqrt(w2);
+      const double w = ((cosd-cosfp)>0?1.0:-1.0)*std::sqrt(std::max(w2,0.));
       const double&& pl =
         (l-q.l*cosd)*cosf1+(q.l-l*cosd)*cosf2+(m*q.n-n*q.m)*w;
       const double&& pm =
@@ -755,7 +766,9 @@ namespace gcxmlib {
      * @param N: the number of points (default: 64).
      */
     void dump(const size_t N=64) const
-    { dump_with_pole(pole, N); }
+    {
+      for (const auto& v: list_around_pole(pole, N)) v.dump();
+    }
 
     const direction_cosine pole; /** the pole of the great circle. */
 
@@ -765,17 +778,33 @@ namespace gcxmlib {
      * @param _pole: the pole of the great circle.
      * @param N: the number of points.
      */
-    void
-    dump_with_pole(const direction_cosine& _pole, const size_t N) const
+    const std::vector<direction_cosine>
+    list_around_pole(const direction_cosine& _pole,
+                     const direction_cosine& _anchor,
+                     const size_t N) const
+    {
+      std::vector<direction_cosine> list; list.reserve(N);
+      for (size_t i=0; i<N; i++) {
+        const double phi = 2*M_PI/(N-1)*i;
+        list.push_back(_anchor.pivot(_pole, phi, M_PI_2));
+      }
+      return list;
+    }
+    /**
+     * @brief dump (x,y,z)-coordinates on the circle.
+     * @param _pole: the pole of the great circle.
+     * @param _anchor: the anchor point to make the circle.
+     * @param N: the number of points.
+     */
+    const std::vector<direction_cosine>
+    list_around_pole(const direction_cosine& _pole,
+                     const size_t N) const
     {
       const direction_cosine p(1,0,0), q(0,1,0);
       const double&& dcosp = _pole.separation_cosine(p);
       const double&& dcosq = _pole.separation_cosine(q);
-      const direction_cosine x = _pole.outer_product(dcosq>dcosp?p:q);
-      for (size_t i=0; i<N; i++) {
-        const double phi = 2*M_PI/(N-1)*i;
-        x.pivot(_pole, phi, M_PI_2).dump();
-      }
+      const direction_cosine _anchor = _pole.outer_product(dcosq>dcosp?p:q);
+      return list_around_pole(_pole, _anchor, N);
     }
 
     /**
@@ -1126,6 +1155,10 @@ namespace gcxmlib {
       return cosd >= std::cos(tol.radian);
     }
 
+
+    const bool
+    match(const trail& arc) const;
+
     /**
      * @brief return the uncertainty at the foot of `q`.
      * @param q: a `direction_cosine` instance.
@@ -1166,13 +1199,17 @@ namespace gcxmlib {
      */
     void dump_error(const size_t N=64) const
     {
-      dump_with_pole(p_s1, N);
+      const auto s1 = list_around_pole(p_s1, s, N);
+      const auto s2 = list_around_pole(p_s2, s, N);
+      const auto e1 = list_around_pole(p_e1, e, N);
+      const auto e2 = list_around_pole(p_e2, e, N);
+      for (size_t i=1; i<N; i++) s1[i].dump();
       printf("\n");
-      dump_with_pole(p_s2, N);
+      for (size_t i=1; i<N; i++) s2[i].dump();
+      printf("\n\n");
+      for (size_t i=1; i<N; i++) e1[i].dump();
       printf("\n");
-      dump_with_pole(p_e1, N);
-      printf("\n");
-      dump_with_pole(p_e2, N);
+      for (size_t i=1; i<N; i++) e2[i].dump();
     }
 
     const footprint s; /** the starting point of the arc. */

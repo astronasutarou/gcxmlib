@@ -32,9 +32,9 @@ main(int argn, char** argv)
     printf("# dt: %lf ms\n", (double)arc.dt.count()*1e3);
     arc.dump();
     printf("\n\n");
-    arc.dump_arc();
-    printf("\n\n");
     arc.dump_error();
+    printf("\n\n");
+    arc.dump_arc();
   }
 
    printf("\n\n");
@@ -49,9 +49,9 @@ main(int argn, char** argv)
     printf("# dt: %lf ms\n", (double)arc.dt.count()*1e3);
     arc.dump();
     printf("\n\n");
-    arc.dump_arc();
-    printf("\n\n");
     arc.dump_error();
+    printf("\n\n");
+    arc.dump_arc();
   }
 
   auto e = std::chrono::system_clock::now();
