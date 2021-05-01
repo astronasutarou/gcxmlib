@@ -614,7 +614,7 @@ namespace gcxmlib {
      * @param q: the anchor point.
      * @param f: the fraction of the length to `q`.
      * @note interpolation for `f` between [0,1], otherwise extrapolation.
-     *       this method is defined later since it depends on `motion_arc`.
+     *       this method is defined later since it depends on `trail`.
      */
     const source
     extend_to(const source& q, const double f) const;
@@ -858,10 +858,10 @@ namespace gcxmlib {
   };
 
 
-  class motion_arc : public great_circle {
+  class trail : public great_circle {
   public:
     /** disable the constructor without arguments. */
-    motion_arc() = delete;
+    trail() = delete;
 
     /**
      * @brief construct a `minor_arc` instance from `s` to `e`.
@@ -871,12 +871,13 @@ namespace gcxmlib {
      *         (invalid_argumet): a pole cannot be defined by `s` and `e`.
      *         (invalid_argumet): timestamps of `s` and `e` are the same.
      */
-    motion_arc(const source& _s, const source& _e)
+    trail(const source& _s, const source& _e)
       : great_circle(_s.get_pole(_e)), s(_s), e(_e), dt(_e.t-_s.t),
         h_s1(make_helper(s,e,true)), h_s2(make_helper(s,e,false)),
         h_e1(make_helper(e,s,true)), h_e2(make_helper(e,s,false)),
         p_s1(s.get_pole(h_s1)), p_s2(s.get_pole(h_s2)),
         p_e1(e.get_pole(h_e1)), p_e2(e.get_pole(h_e2)),
+        cosd_se(s.separation_cosine(e)),
         cosd_s12(p_s1.separation_cosine(p_s2)),
         cosd_e12(p_e1.separation_cosine(p_e2)),
         arc_s(minor_arc(p_s1,p_s2)), arc_e(minor_arc(p_e2,p_e1))
@@ -966,6 +967,39 @@ namespace gcxmlib {
     }
 
     /**
+     * @brief calculate `cos(d)` between the arc and the point `p`.
+     * @param p: a `direction_cosine` instance.
+     */
+    const double
+    distance_cosine(const direction_cosine& p) const
+    {
+      const direction_cosine ft = foot_of(p);
+      const double&& cosd_ps = s.separation_cosine(ft);
+      const double&& cosd_pe = e.separation_cosine(ft);
+      const double&& sind_ps = std::sqrt(1-cosd_ps*cosd_ps);
+      const double&& sind_pe = std::sqrt(1-cosd_pe*cosd_pe);
+      const double&& cosd = cosd_ps*cosd_pe-sind_ps*sind_pe;
+      const double&& sind = cosd_ps*sind_pe+sind_ps*cosd_pe;
+      if (std::abs(cosd-cosd_se) < __epsilon__ && sind > 0) {
+        return separation_cosine(p);
+      } else {
+        const double&& sep_s = s.separation_cosine(p);
+        const double&& sep_e = e.separation_cosine(p);
+        return std::max(sep_s,sep_e);
+      }
+    }
+
+    /**
+     * @brief calculate the distance between the arc and the point `p`.
+     * @param p: a `direction_cosine` instance.
+     */
+    const angle
+    distance(const direction_cosine& p) const
+    {
+      return std::acos(distance_cosine(p));
+    }
+
+    /**
      * @brief check if the arc intersects with the position `p` taking
      *        into account the uncertainties of the end points.
      * @param p: a `direction_cosine` instance.
@@ -1009,10 +1043,10 @@ namespace gcxmlib {
     /**
      * @brief check if the arc intersects with the arc `arc` taking
      *        into account the uncertainties of the end points.
-     * @param arc: a `motion_arc` instance.
+     * @param arc: a `trail` instance.
      */
     const bool
-    intersect_with(const motion_arc& arc) const
+    intersect_with(const trail& arc) const
     {
       return intersect_with(arc.s) || intersect_with(arc.e);
     }
@@ -1051,10 +1085,10 @@ namespace gcxmlib {
     /**
      * @brief check if the arc is colinear with a `great_circle` taking
      *        into account the uncertainties of the end points.
-     * @param arc: a `motion_arc` instance.
+     * @param arc: a `trail` instance.
      */
     const bool
-    colinear_with(const motion_arc& arc,
+    colinear_with(const trail& arc,
                   const angle& tol = degree(5.0)) const
     {
       if (tol.degree > 90.0)
@@ -1125,6 +1159,7 @@ namespace gcxmlib {
     const direction_cosine p_s2; /** the second helper pole for `s`. */
     const direction_cosine p_e1; /** the first helper pole for `e`. */
     const direction_cosine p_e2; /** the second helper pole for `e`. */
+    const double cosd_se; /** `cos(d)` between `s` and `e`. */
     const double cosd_s12; /** a helper varialbe for `intersect_with`. */
     const double cosd_e12; /** a helper variable for `intersect_with`. */
     const minor_arc arc_s; /** a helper variable for `separation_cosine`. */
@@ -1151,7 +1186,7 @@ namespace gcxmlib {
   {
     const timestamp_t eT = advance_timestamp(t, f*(q.t-t));
     const direction_cosine& ep = direction_cosine::extend_to(q,f);
-    const double&& es = motion_arc(*this, q).error_at(ep);
+    const double&& es = trail(*this, q).error_at(ep);
     return source(ep.l,ep.m,ep.n,eT,es);
   }
 }

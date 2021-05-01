@@ -9,7 +9,7 @@
 
 using gcxmlib::source;
 using gcxmlib::degree;
-using gcxmlib::motion_arc;
+using gcxmlib::trail;
 using std::chrono::seconds;
 
 int
@@ -24,7 +24,7 @@ main(int argn, char** argv)
   const gcxmlib::timestamp_t t0 = gcxmlib::now();
   source p0(1,0,0,t0+seconds(0),degree(2.0));
   source p1(0,1,0,t0+seconds(5),degree(10.0));
-  motion_arc arc(p0,p1);
+  trail arc(p0,p1);
 
   arc.dump();
   printf("\n\n");

@@ -1,6 +1,6 @@
 /**
- * @file example_motion_arc.cc
- * @brief functional test of the `motion_arc` class.
+ * @file example_trail.cc
+ * @brief functional test of the `trail` class.
  * @author Ryou Ohsawa
  * @year 2021
  */
@@ -8,7 +8,7 @@
 #include <random>
 #include <unistd.h>
 
-using gcxmlib::motion_arc;
+using gcxmlib::trail;
 using gcxmlib::source;
 using gcxmlib::degree;
 using gcxmlib::now;
@@ -26,7 +26,7 @@ main(int argn, char** argv)
     printf("# case 1: p0=(1,0,0) and p1=(0,1,0).\n");
     const source p0(1,0,0,now(),degree(0.5));
     const source p1(0,1,0,now(),degree(3.0));
-    const motion_arc arc(p0,p1);
+    const trail arc(p0,p1);
     printf("# s : "); arc.s.dump();
     printf("# e : "); arc.e.dump();
     printf("# dt: %lf ms\n", (double)arc.dt.count()*1e3);
@@ -43,7 +43,7 @@ main(int argn, char** argv)
     printf("# case 2: two random points.\n");
     const source p0(unif(gen),unif(gen),unif(gen),now(),degree(5.0));
     const source p1(unif(gen),unif(gen),unif(gen),now(),degree(1.0));
-    const motion_arc arc(p0,p1);
+    const trail arc(p0,p1);
     printf("# s : "); arc.s.dump();
     printf("# e : "); arc.e.dump();
     printf("# dt: %lf ms\n", (double)arc.dt.count()*1e3);

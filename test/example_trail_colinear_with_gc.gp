@@ -5,7 +5,7 @@ set view equal xyz
 set xr [-1:1]
 set yr [-1:1]
 set zr [-1:1]
-data="< ./example_motion_arc_colinear_with_gc"
+data="< ./example_trail_colinear_with_gc"
 set view 90,90
 
 splot data i 0 u 1:2:3 w l lc 1 t sprintf("motion arc #_%d",1), \

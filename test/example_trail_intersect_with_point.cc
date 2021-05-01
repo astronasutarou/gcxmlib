@@ -1,6 +1,6 @@
 /**
- * @file example_motion_arc_colinear_with_gc.cc
- * @brief test of the `motion_arc.colinear_with()` function.
+ * @file example_trail_intersect_with_point.cc
+ * @brief test of the `trail.intersect_with()` function.
  * @author Ryou Ohsawa
  * @year 2021
  */
@@ -8,8 +8,7 @@
 #include <random>
 #include <unistd.h>
 
-using gcxmlib::motion_arc;
-using gcxmlib::great_circle;
+using gcxmlib::trail;
 using gcxmlib::dcos;
 using gcxmlib::source;
 using gcxmlib::degree;
@@ -31,8 +30,8 @@ main(int argn, char** argv)
     const timestamp_t t0 = std::chrono::system_clock::now();
     const timestamp_t t1 = t0+seconds(5);
     const source p1(1.0,-0.1, 0.0, t0, degree(0.50));
-    const source p2(1.0, 0.1, 0.0, t1, degree(5.00));
-    const motion_arc arc(p1,p2);
+    const source p2(1.0, 0.1, 0.0, t1, degree(1.50));
+    const trail arc(p1,p2);
     printf("# s : "); arc.s.dump();
     printf("# e : "); arc.e.dump();
     printf("# dt: %lf ms\n", (double)arc.dt.count()*1e3);
@@ -44,11 +43,10 @@ main(int argn, char** argv)
     arc.e.dump();
     printf("\n\n");
     for (size_t i=0; i<10000; i++) {
-      const double dx(pos(gen)), dy(pos(gen)), dz(pos(gen));
-      const great_circle gc(dx,dy,1.0+dz);
-      if (arc.colinear_with(gc, degree(0.5))) {
-        gc.dump();
-      }
+      const double x(pos(gen)), y(pos(gen)), z(pos(gen));
+      const dcos p(x,y,z);
+      printf("%d ", (int32_t)(arc.intersect_with(p)));
+      p.dump();
     }
   }
 

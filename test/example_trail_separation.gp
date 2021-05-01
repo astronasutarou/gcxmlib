@@ -5,7 +5,7 @@ set view equal xyz
 set xr [-1:1]
 set yr [-1:1]
 set zr [-1:1]
-data="< ./example_motion_arc_separation"
+data="< ./example_trail_separation"
 
 splot data i 0 u 1:2:3 w l lc 1 t sprintf("motion arc #_%d",1), \
       for [n=0:3] data i 1 u 1:2:3 ev :::n::n w l lc rgb "gray60" not, \
