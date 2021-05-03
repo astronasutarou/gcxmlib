@@ -377,7 +377,7 @@ namespace gcxmlib {
      * @brief dump all the elements to stdout.
      */
     void dump() const
-    { printf("%.5lf %.5lf %.5lf\n", x, y, z); }
+    { printf("%+.5lf %+.5lf %+.5lf\n", x, y, z); }
 
     const double x; /** x-coordinate. */
     const double y; /** y-coordinate. */
@@ -452,6 +452,14 @@ namespace gcxmlib {
       const double&& cosf2 = std::cos(f2.radian);
       const double&& cosfp = std::cos((f1+f2).radian);
       const double&& cosfm = std::cos((f1-f2).radian);
+      if (__debug__) {
+        printf("# pivot_helper:\n");
+        printf("#   cosd  :%+g\n", cosd);
+        printf("#   cosf1 :%+g\n", cosf1);
+        printf("#   cosf2 :%+g\n", cosf2);
+        printf("#   cosfp :%+g\n", cosfp);
+        printf("#   cosfm :%+g\n", cosfm);
+      }
       return __pivot_helper(q,cosd,cosf1,cosf2,cosfp,cosfm);
     }
 
@@ -540,8 +548,17 @@ namespace gcxmlib {
                    const double cosfp, const double cosfm) const
     {
       const double w2 = (cosd-cosfp)*(cosfm-cosd);
+      if (__debug__) {
+        printf("# pivot_helper:\n");
+        printf("#   w2    :%+g\n", w2);
+        printf("#   cosd  :%+g\n", cosd);
+        printf("#   cosf1 :%+g\n", cosf1);
+        printf("#   cosf2 :%+g\n", cosf2);
+        printf("#   cosfp :%+g\n", cosfp);
+        printf("#   cosfm :%+g\n", cosfm);
+      }
       if (1.0-cosd < __epsilon__)
-        throw std::invalid_argument("p1 and p2 are identical.");
+        throw std::invalid_argument("p1 and p2 are almost identical.");
       if (w2 < -__epsilon__)
         throw std::range_error("cannot find the solution.");
       const double w = ((cosd-cosfp)>0?1.0:-1.0)*std::sqrt(std::max(w2,0.));
@@ -655,7 +672,7 @@ namespace gcxmlib {
       std::stringstream ss;
       ss << std::put_time(std::gmtime(&tm), "%FT%T") << "."
          << std::setfill('0') << std::setw(6) << sub.count();
-      printf("%.5lf %.5lf %.5lf %.5lf %s\n",
+      printf("%+.5lf %+.5lf %+.5lf %+.5lf %s\n",
              x, y, z, s.arcsec, ss.str().c_str());
     }
 
@@ -936,17 +953,18 @@ namespace gcxmlib {
         throw std::invalid_argument
           ("no time difference bwteen two positions.");
       if (__debug__) {
-        printf("# s   : "); s.dump();
-        printf("# e   : "); e.dump();
-        printf("# dt  : %lf s\n", dt.count());
-        printf("# h_s1: "); h_s1.dump();
-        printf("# h_s2: "); h_s2.dump();
-        printf("# h_e1: "); h_e1.dump();
-        printf("# h_e2: "); h_e2.dump();
-        printf("# p_s1: "); p_s1.dump();
-        printf("# p_s2: "); p_s2.dump();
-        printf("# p_e1: "); p_e1.dump();
-        printf("# p_e2: "); p_e2.dump();
+        printf("# trail:\n");
+        printf("#   s   : "); s.dump();
+        printf("#   e   : "); e.dump();
+        printf("#   dt  : %+lf s\n", dt.count());
+        printf("#   h_s1: "); h_s1.dump();
+        printf("#   h_s2: "); h_s2.dump();
+        printf("#   h_e1: "); h_e1.dump();
+        printf("#   h_e2: "); h_e2.dump();
+        printf("#   p_s1: "); p_s1.dump();
+        printf("#   p_s2: "); p_s2.dump();
+        printf("#   p_e1: "); p_e1.dump();
+        printf("#   p_e2: "); p_e2.dump();
       }
     }
 
@@ -1043,6 +1061,12 @@ namespace gcxmlib {
       const auto&& T = advance_timestamp(e.t, dT);
       const direction_cosine q = extrapolate(f);
       const angle&& qs = error_at(q);
+      if (__debug__) {
+        printf("# footprint.propagate()\n");
+        printf("#   f: %+lf\n", f);
+        printf("#   q: "); q.dump();
+        printf("#   s: %+lf\n", qs.arcsec);
+      }
       return footprint(q.l,q.m,q.n,T,qs);
     }
 
@@ -1150,14 +1174,40 @@ namespace gcxmlib {
     {
       if (tol.degree > 90.0)
         throw std::invalid_argument("invalid tolerance value.");
-      if (!intersect_with(arc)) throw false;
+      if (!intersect_with(arc)) return false;
       const double&& cosd = separation_cosine(arc);
       return cosd >= std::cos(tol.radian);
     }
 
 
+    /**
+     * @brief check if the two trails are consistent or not.
+     * @param arc: another arc.
+     * @param dtol: a torelance in direction.
+     * @param rtol: a torelance in range.
+     * @param margin: an uncertainty multiplication factor.
+     */
     const bool
-    match(const trail& arc) const;
+    match(const trail& arc,
+          const angle& dtol = degree(5.0),
+          const angle& rtol = arcmin(5.0),
+          const double margin = 1.0) const
+    {
+      if (!colinear_with(arc)) return false;
+      const auto pred_s = propagate(arc.s.t);
+      const auto pred_e = propagate(arc.e.t);
+      const angle&& dist_s = pred_s.separation(arc.s);
+      const angle&& dist_e = pred_e.separation(arc.e);
+      if (__debug__) {
+        printf("# pred_s : %+g\n", (double)pred_s.s);
+        printf("#        : %+g\n", (double)(pred_s.s*margin+rtol));
+        printf("# dist_s : %+g\n", (double)dist_s);
+        printf("# pred_e : %+g\n", (double)pred_e.s);
+        printf("#        : %+g\n", (double)(pred_e.s*margin+rtol));
+        printf("# dist_e : %+g\n", (double)dist_e);
+      }
+      return (pred_s.s*margin+rtol>dist_s)&&(pred_e.s*margin+rtol>dist_e);
+    }
 
     /**
      * @brief return the uncertainty at the foot of `q`.
@@ -1239,8 +1289,20 @@ namespace gcxmlib {
     make_helper(const footprint& from, const footprint& to, const bool parity)
     {
       const angle theta = from.separation(to);
-      const angle delta = to.s;
-      const angle phi = radian(std::hypot(theta.radian,delta.radian));
+      const angle& delta = to.s;
+      const angle&& b = theta.radian*theta.radian-delta.radian*delta.radian;
+      const angle phi = radian(std::sqrt(b.radian));
+      if (__debug__) {
+        printf("# make_helper:\n");
+        printf("#   from  : "); from.dump();
+        printf("#   to    : "); to.dump();
+        printf("#   parity: %s\n",(parity?"true":"false"));
+        printf("#   theta : %+lf\n", theta.radian);
+        printf("#   delta : %+lf\n", delta.radian);
+        printf("#   phi   : %+lf\n", phi.radian);
+      }
+      if (delta > theta)
+        throw std::invalid_argument("too large uncertainty.");
       return from.pivot(to, phi, (parity?1.0:-1.0)*delta);
     }
   };

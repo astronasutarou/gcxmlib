@@ -38,7 +38,6 @@ main(int argn, char** argv)
       p.dump();
     }
   }
-  printf("1 "); p0.dump();
 
   auto e = std::chrono::system_clock::now();
   std::chrono::duration<double> dt = e-s;
