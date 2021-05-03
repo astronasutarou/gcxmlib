@@ -17,6 +17,7 @@
 #include <utility>
 #include <algorithm>
 #include <vector>
+#include <array>
 #include <set>
 #include <stdexcept>
 
@@ -1314,6 +1315,82 @@ namespace gcxmlib {
     const direction_cosine& ep = direction_cosine::extend_to(q,f);
     const double&& es = trail(*this, q).error_at(ep);
     return footprint(ep.l,ep.m,ep.n,eT,es);
+  }
+
+
+  class matrix3 {
+  public:
+    matrix3()
+      : arr({1,0,0,0,1,0,0,0,1})
+    {}
+
+    matrix3(const std::array<double,9> _arr)
+      : arr(_arr)
+    {}
+
+    template<typename positional>
+    const positional
+    operator* (const positional& v) const
+    {
+      const double&& x = arr[0]*v.x+arr[1]*v.y+arr[2]*v.z;
+      const double&& y = arr[3]*v.x+arr[4]*v.y+arr[5]*v.z;
+      const double&& z = arr[6]*v.x+arr[7]*v.y+arr[8]*v.z;
+      return positional(x,y,z);
+    }
+
+    const footprint
+    operator* (const footprint& p) const
+    {
+      const double&& x = arr[0]*p.x+arr[1]*p.y+arr[2]*p.z;
+      const double&& y = arr[3]*p.x+arr[4]*p.y+arr[5]*p.z;
+      const double&& z = arr[6]*p.x+arr[7]*p.y+arr[8]*p.z;
+      return footprint(x,y,z,p.t,p.s);
+    }
+
+    const matrix3
+    operator* (const matrix3& m) const
+    {
+      const double&& a00 = arr[0]*m.arr[0]+arr[1]*m.arr[3]+arr[2]*m.arr[6];
+      const double&& a01 = arr[0]*m.arr[1]+arr[1]*m.arr[4]+arr[2]*m.arr[7];
+      const double&& a02 = arr[0]*m.arr[2]+arr[1]*m.arr[5]+arr[2]*m.arr[8];
+      const double&& a10 = arr[3]*m.arr[0]+arr[4]*m.arr[3]+arr[5]*m.arr[6];
+      const double&& a11 = arr[3]*m.arr[1]+arr[4]*m.arr[4]+arr[5]*m.arr[7];
+      const double&& a12 = arr[3]*m.arr[2]+arr[4]*m.arr[5]+arr[5]*m.arr[8];
+      const double&& a20 = arr[6]*m.arr[0]+arr[7]*m.arr[3]+arr[8]*m.arr[6];
+      const double&& a21 = arr[6]*m.arr[1]+arr[7]*m.arr[4]+arr[8]*m.arr[7];
+      const double&& a22 = arr[6]*m.arr[2]+arr[7]*m.arr[5]+arr[8]*m.arr[8];
+      return matrix3({a00,a01,a02,a10,a11,a12,a20,a21,a22});
+    }
+
+    void
+    dump() const
+    {
+      printf("  | %+.2f %+.2f %+.2f |\n", arr[0],arr[1],arr[2]);
+      printf("  | %+.2f %+.2f %+.2f |\n", arr[3],arr[4],arr[5]);
+      printf("  | %+.2f %+.2f %+.2f |\n", arr[6],arr[7],arr[8]);
+    }
+
+  private:
+    const std::array<double,9> arr;
+  };
+
+  const matrix3
+  rotation_matrix_x(const angle& t)
+  { return matrix3
+      ({1,0,0,0,std::cos(t),-std::sin(t),0,std::sin(t),std::cos(t)}); }
+  const matrix3
+  rotation_matrix_y(const angle& t)
+  { return matrix3
+      ({std::cos(t),0,std::sin(t),0,1,0,-std::sin(t),0,std::cos(t)}); }
+  const matrix3
+  rotation_matrix_z(const angle& t)
+  { return matrix3
+      ({std::cos(t),-std::sin(t),0,std::sin(t),std::cos(t),0,0,0,1}); }
+
+  namespace matrix {
+    const auto& Rx = rotation_matrix_x;
+    const auto& Ry = rotation_matrix_y;
+    const auto& Rz = rotation_matrix_z;
   }
 }
 
