@@ -47,13 +47,13 @@ main(int argn, char** argv)
     printf("\n");
 
     printf("# `vector3` can be multiplied by `matrix3` from left.\n"
-           "(M*p).dump() = ");
+           "(M*p).dump() = \n  ");
     (M*p).dump();
 
     printf("\n");
 
     printf("# `vector3` can be multiplied by `matrix3` from left.\n"
-           "(M*q).dump() = ");
+           "(M*q).dump() = \n  ");
     (M*q).dump();
   }
 
@@ -63,9 +63,15 @@ main(int argn, char** argv)
            "\nRx(90) = \n");
     matrix3 M = Rx(degree(90));
     M.dump();
+    printf("\n");
+
+    printf("# Transpose of `matrix3`\n"
+           "\nRx(90).T = \n");
+    M.T().dump();
+    printf("\n");
 
     printf("# `vector3` can be multiplied by `matrix3` from left.\n"
-           "(M*p).dump() = ");
+           "(M*p).dump() = \n  ");
     (M*p).dump();
   }
 
@@ -78,13 +84,13 @@ main(int argn, char** argv)
     printf("\n");
 
     printf("# `vector3` can be multiplied by `matrix3` from left.\n"
-           "(M*p).dump() = ");
+           "(M*p).dump() = \n  ");
     (M*p).dump();
 
     printf("\n");
 
     printf("# `vector3` can be multiplied by `matrix3` from left.\n"
-           "(M*q).dump() = ");
+           "(M*q).dump() = \n  ");
     (M*q).dump();
   }
 
@@ -97,13 +103,12 @@ main(int argn, char** argv)
     printf("\n");
 
     printf("# `vector3` can be multiplied by `matrix3` from left.\n"
-           "(M*p).dump() = ");
+           "(M*p).dump() = \n  ");
     (M*p).dump();
-
     printf("\n");
 
     printf("# `vector3` can be multiplied by `matrix3` from left.\n"
-           "(M*q).dump() = ");
+           "(M*q).dump() = \n  ");
     (M*q).dump();
   }
 
@@ -112,14 +117,16 @@ main(int argn, char** argv)
     printf("# Two `matrix3` instances can be multiplied.\n");
     matrix3 Mx = Rx(degree(90));
     matrix3 Mz = Rz(degree(90));
-    printf("\nRx(90) = \n"); Mx.dump();
-    printf("\nRz(90) = \n"); Mz.dump();
+    printf("\nRx(90) = \n");
+    Mx.dump();
+    printf("\n");
 
+    printf("\nRz(90) = \n");
+    Mz.dump();
     printf("\n");
 
     printf("(Mx*Mz).dump() = \n");
     (Mx*Mz).dump();
-
     printf("\n");
 
     printf("(Mz*Mx).dump() = \n");
@@ -131,15 +138,16 @@ main(int argn, char** argv)
   {
     printf("# _r_ is a `footprint` instance.\n");
     r.dump();
-
     printf("\n");
 
     printf("# the footprint instance can be rotated by `matrix3`.\n");
     const matrix3 Mz = Rz(degree(15));
 
-    printf("\nRz(15) = \n"); Mz.dump();
+    printf("\nRz(15) = \n");
+    Mz.dump();
+    printf("\n");
 
-    printf("(Mz*r).dump() = ");
+    printf("(Mz*r).dump() = \n  ");
     (Mz*r).dump();
   }
 

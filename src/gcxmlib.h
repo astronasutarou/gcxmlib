@@ -98,144 +98,84 @@ namespace gcxmlib {
     const double arcmin; /** angle in arcmin */
     const double arcsec; /** angle in arcsec */
 
-    /**
-     * @brief implicit conversion to `double` returns `radian`.
-     */
+    /** implicit conversion to `double` returns `radian`. */
     operator double() const { return radian; }
 
-    /**
-     * @brief `unary minus` operator.
-     */
+    /** `unary minus` operator. */
     const base_angle<_range>
     operator-() const
     { return base_angle<_range>(-radian); }
 
-    /**
-     * @brief `add` operation with a floating point value.
-     * @param ang: a `base_angle` intance.
-     * @param val: a floating point value.
-     */
+    /** `add` operation with a floating point value. */
     friend const base_angle<_range>
     operator+(const base_angle<_range>& ang, const double val)
     { return base_angle<_range>(ang.radian+val); }
-    /**
-     * @brief `add` operation with a floating point value.
-     * @param val: a floating point value.
-     * @param ang: a `base_angle` intance.
-     */
+    /** `add` operation with a floating point value. */
     friend const base_angle<_range>
     operator+(const double val, const base_angle<_range>& ang)
     { return base_angle<_range>(val+ang.radian); }
-    /**
-     * @brief `subtract` operation with a floating point value.
-     * @param ang: a `base_angle` intance.
-     * @param val: a floating point value.
-     */
+    /** `subtract` operation with a floating point value. */
     friend const base_angle<_range>
     operator-(const base_angle<_range>& ang, const double val)
     { return base_angle<_range>(ang.radian-val); }
-    /**
-     * @brief `subtract` operation with a floating point value.
-     * @param val: a floating point value.
-     * @param ang: a `base_angle` intance.
-     */
+    /** `subtract` operation with a floating point value. */
     friend const base_angle<_range>
     operator-(const double val, const base_angle<_range>& ang)
     { return base_angle<_range>(val-ang.radian); }
-    /**
-     * @brief `multiply` operation with a floating point value.
-     * @param ang: a `base_angle` intance.
-     * @param val: a floating point value.
-     */
+    /** `multiply` operation with a floating point value. */
     friend const base_angle<_range>
     operator*(const base_angle<_range>& ang, const double val)
     { return base_angle<_range>(ang.radian*val); }
-    /**
-     * @brief `multiply` operation with a floating point value.
-     * @param val: a floating point value.
-     * @param ang: a `base_angle` intance.
-     */
+    /** `multiply` operation with a floating point value. */
     friend const base_angle<_range>
     operator*(const double val, const base_angle<_range>& ang)
     { return base_angle<_range>(ang.radian*val); }
-    /**
-     * @brief `divide` operation with a floating point value.
-     * @param ang: a `base_angle` intance.
-     * @param val: a floating point value.
-     */
+    /** `divide` operation with a floating point value. */
     friend const base_angle<_range>
     operator/(const base_angle<_range>& ang, const double val)
     { return base_angle<_range>(ang.radian/val); }
-    /**
-     * @brief `divide` operation with a floating point value.
-     * @param val: a floating point value.
-     * @param ang: a `base_angle` intance.
-     */
+    /** `divide` operation with a floating point value. */
     friend const base_angle<_range>
     operator/(const double val, const base_angle<_range>& ang)
     { return base_angle<_range>(val/ang.radian); }
 
-    /**
-     * @brief `add` operation with another `base_angle` instance.
-     * @param ang: another `base_angle` intance.
-     */
+    /** `add` operation with another `base_angle` instance. */
     template <angle_range __range>
     const base_angle<_range>
     operator+(const base_angle<__range>& ang) const
     { return base_angle<_range>(radian+ang.radian); }
-    /**
-     * @brief `subtract` operation with another `base_angle` instance.
-     * @param ang: another `base_angle` intance.
-     */
+    /** `subtract` operation with another `base_angle` instance. */
     template <angle_range __range>
     const base_angle<_range>
     operator-(const base_angle<__range>& ang) const
     { return base_angle<_range>(radian-ang.radian); }
 
-    /**
-     * @brief equality operator to a `base_angle` instance.
-     * @param ang: another `base_angle` intance.
-     */
+    /** `equality` operator to a `base_angle` instance. */
     template <angle_range __range>
     const bool
     operator==(const base_angle<__range>& ang) const
     { return (radian == ang.radian); }
-    /**
-     * @brief inequality operator to a `base_angle` instance.
-     * @param ang: another `base_angle` intance.
-     */
+    /** `inequality` operator to a `base_angle` instance. */
     template <angle_range __range>
     const bool
     operator!=(const base_angle<__range>& ang) const
     { return (radian != ang.radian); }
-    /**
-     * @brief lesser operator to a `base_angle` instance.
-     * @param ang: another `base_angle` intance.
-     */
+    /** `lesser` operator to a `base_angle` instance. */
     template <angle_range __range>
     const bool
     operator<(const base_angle<__range>& ang) const
     { return (radian < ang.radian); }
-    /**
-     * @brief lesser-or-equal operator to a `base_angle` instance.
-     * @param ang: another `base_angle` intance.
-     */
+    /** `lesser-or-equal` operator to a `base_angle` instance. */
     template <angle_range __range>
     const bool
     operator<=(const base_angle<__range>& ang) const
     { return (radian <= ang.radian); }
-    /**
-     * @brief greater operator to a `base_angle` instance.
-     * @param ang: another `base_angle` intance.
-     */
+    /** `greater` operator to a `base_angle` instance. */
     template <angle_range __range>
     const bool
     operator>(const base_angle<__range>& ang) const
     { return (radian > ang.radian); }
-    /**
-     * @brief greater-or-equal operator to a `base_angle` instance.
-     * @param ang: another `base_angle` intance.
-     */
+    /** `greater-or-equal` operator to a `base_angle` instance. */
     template <angle_range __range>
     const bool
     operator>=(const base_angle<__range>& ang) const
@@ -311,12 +251,16 @@ namespace gcxmlib {
   { return angle(ang*arcsec_to_radian); }
 
   namespace literals {
+    /** user-defined literal for radian. */
     const angle operator"" rad(long double ang)
     { return radian(ang); }
+    /** user-defined literal for degree. */
     const angle operator"" deg(long double ang)
     { return degree(ang); }
+    /** user-defined literal for arcminute. */
     const angle operator"" amin(long double ang)
     { return arcmin(ang); }
+    /** user-defined literal for arcsecond. */
     const angle operator"" asec(long double ang)
     { return arcsec(ang); }
   }
@@ -680,9 +624,11 @@ namespace gcxmlib {
     const timestamp_t t; /** timestamp of the measurement. */
     const angle s;       /** uncertainty of the position. */
 
+    /** `equiality` operator between `footprint` instances. */
     friend bool
     operator==(const footprint& lhs, const footprint& rhs)
-    { return true; }
+    { return lhs.match(rhs, lhs.s+rhs.s, sec_t(1.0)); }
+
   private:
     const timestamp_t now() const
     { return (default_clock::now()); }
@@ -1320,14 +1266,57 @@ namespace gcxmlib {
 
   class matrix3 {
   public:
+    /**
+     * @brief construct the identity matrix
+     */
     matrix3()
       : arr({1,0,0,0,1,0,0,0,1})
     {}
 
+    /**
+     * @brief contruct a `matrix3` instance from an array.
+     * @param _arr: an array contains 9 double elements.
+     */
     matrix3(const std::array<double,9> _arr)
       : arr(_arr)
     {}
 
+    /**
+     * @brief access to the i-th element of the matrix.
+     * @note The alignment of the elements is as follows:
+     *
+     *       A =  | A[0] A[1] A[2] |
+     *            | A[3] A[4] A[5] |
+     *            | A[6] A[7] A[8] |
+     */
+    const double
+    operator[] (const size_t i) const
+    { return arr[i]; }
+
+    /**
+     * @brief access to the (i,j)-th element of the matrix.
+     * @note The alignment of the elements is as follows:
+     *
+     *       A =  | A(0,0) A(0,1) A(0,2) |
+     *            | A(1,0) A(1,1) A(1,2) |
+     *            | A(2,0) A(2,1) A(2,2) |
+     */
+    const double
+    operator() (const size_t i, const size_t j) const
+    { return arr[3*i+j]; }
+
+
+    /**
+     * @brief returns a transpose of the `matrix3` instance.
+     */
+    const matrix3
+    T() const
+    {
+      return matrix3
+        ({arr[0],arr[3],arr[6],arr[1],arr[4],arr[7],arr[2],arr[5],arr[8]});
+    }
+
+    /** `product` operator with `vector3` and `direction_cosine` */
     template<typename positional>
     const positional
     operator* (const positional& v) const
@@ -1337,7 +1326,7 @@ namespace gcxmlib {
       const double&& z = arr[6]*v.x+arr[7]*v.y+arr[8]*v.z;
       return positional(x,y,z);
     }
-
+    /** `product` operator with `footprint`. */
     const footprint
     operator* (const footprint& p) const
     {
@@ -1347,6 +1336,30 @@ namespace gcxmlib {
       return footprint(x,y,z,p.t,p.s);
     }
 
+    /** `unary minus` operator. */
+    const matrix3
+    operator- () const
+    {
+      return matrix3({-arr[0],-arr[1],-arr[2],-arr[3],-arr[4],
+            -arr[5],-arr[6],-arr[7],-arr[8]});
+    }
+    /** `add` operator with a `matrix3` instance. */
+    const matrix3
+    operator+ (const matrix3& m) const
+    {
+      return matrix3({arr[0]+m[0],arr[1]+m[1],arr[2]+m[2],
+            arr[3]+m[3],arr[4]+m[4],arr[5]+m[5],arr[6]+m[6],
+            arr[7]+m[7],arr[8]+m[8]});
+    }
+    /** `minus` operator with a `matrix3` instance. */
+    const matrix3
+    operator- (const matrix3& m) const
+    {
+      return matrix3({arr[0]-m[0],arr[1]-m[1],arr[2]-m[2],
+            arr[3]-m[3],arr[4]-m[4],arr[5]-m[5],arr[6]-m[6],
+            arr[7]-m[7],arr[8]-m[8]});
+    }
+    /** `product` operator with a `matrix3` instance. */
     const matrix3
     operator* (const matrix3& m) const
     {
@@ -1362,6 +1375,66 @@ namespace gcxmlib {
       return matrix3({a00,a01,a02,a10,a11,a12,a20,a21,a22});
     }
 
+    /** `add` operation with a floting point value. */
+    friend const matrix3
+    operator+ (const matrix3& m, const double x)
+    {
+      return matrix3({m.arr[0]+x,m.arr[1]+x,m.arr[2]+x,
+            m.arr[3]+x,m.arr[4]+x,m.arr[5]+x,
+            m.arr[6]+x,m.arr[7]+x,m.arr[8]+x});
+    }
+    /** `add` operation with a floting point value. */
+    friend const matrix3
+    operator+ (const double x, const matrix3& m)
+    {
+      return matrix3({x+m.arr[0],x+m.arr[1],x+m.arr[2],
+            x+m.arr[3],x+m.arr[4],x+m.arr[5],
+            x+m.arr[6],x+m.arr[7],x+m.arr[8]});
+    }
+    /** `subtract` operation with a floting point value. */
+    friend const matrix3
+    operator- (const matrix3& m, const double x)
+    {
+      return matrix3({m.arr[0]-x,m.arr[1]-x,m.arr[2]-x,
+            m.arr[3]-x,m.arr[4]-x,m.arr[5]-x,
+            m.arr[6]-x,m.arr[7]-x,m.arr[8]-x});
+    }
+    /** `subtract` operation with a floting point value. */
+    friend const matrix3
+    operator- (const double x, const matrix3& m)
+    {
+      return matrix3({x-m.arr[0],x-m.arr[1],x-m.arr[2],
+            x-m.arr[3],x-m.arr[4],x-m.arr[5],
+            x-m.arr[6],x-m.arr[7],x-m.arr[8]});
+    }
+    /** `product` operation with a floting point value. */
+    friend const matrix3
+    operator* (const matrix3& m, const double x)
+    {
+      return matrix3({m.arr[0]*x,m.arr[1]*x,m.arr[2]*x,
+            m.arr[3]*x,m.arr[4]*x,m.arr[5]*x,
+            m.arr[6]*x,m.arr[7]*x,m.arr[8]*x});
+    }
+    /** `product` operation with a floting point value. */
+    friend const matrix3
+    operator* (const double x, const matrix3& m)
+    {
+      return matrix3({x*m.arr[0],x*m.arr[1],x*m.arr[2],
+            x*m.arr[3],x*m.arr[4],x*m.arr[5],
+            x*m.arr[6],x*m.arr[7],x*m.arr[8]});
+    }
+    /** `divide` operation with a floting point value. */
+    friend const matrix3
+    operator/ (const matrix3& m, const double x)
+    {
+      return matrix3({m.arr[0]/x,m.arr[1]/x,m.arr[2]/x,
+            m.arr[3]/x,m.arr[4]/x,m.arr[5]/x,
+            m.arr[6]/x,m.arr[7]/x,m.arr[8]/x});
+    }
+
+    /**
+     * @brief dump matrix elements in the standard output.
+     */
     void
     dump() const
     {
@@ -1371,26 +1444,67 @@ namespace gcxmlib {
     }
 
   private:
-    const std::array<double,9> arr;
+    const std::array<double,9> arr; /** elements of `matrix3` */
   };
 
+  /**
+   * @brief construct an rotation matrix around the x-axis.
+   * @param t: a rotation angle.
+   */
   const matrix3
   rotation_matrix_x(const angle& t)
   { return matrix3
       ({1,0,0,0,std::cos(t),-std::sin(t),0,std::sin(t),std::cos(t)}); }
+  /**
+   * @brief construct an rotation matrix around the y-axis.
+   * @param t: a rotation angle.
+   */
   const matrix3
   rotation_matrix_y(const angle& t)
   { return matrix3
       ({std::cos(t),0,std::sin(t),0,1,0,-std::sin(t),0,std::cos(t)}); }
+  /**
+   * @brief construct an rotation matrix around the z-axis.
+   * @param t: a rotation angle.
+   */
   const matrix3
   rotation_matrix_z(const angle& t)
   { return matrix3
       ({std::cos(t),-std::sin(t),0,std::sin(t),std::cos(t),0,0,0,1}); }
 
   namespace matrix {
-    const auto& Rx = rotation_matrix_x;
-    const auto& Ry = rotation_matrix_y;
-    const auto& Rz = rotation_matrix_z;
+    const auto& Rx = rotation_matrix_x; /** alias to `rotation_matrix_x` */
+    const auto& Ry = rotation_matrix_y; /** alias to `rotation_matrix_y` */
+    const auto& Rz = rotation_matrix_z; /** alias to `rotation_matrix_z` */
+  }
+
+  /**
+   * @brief solve `Ax=b` using the cholesky decomposition.
+   * @param A: a positive definite `matrix3` instance.
+   * @param b: a coefficient vector.
+   * @note returns a wrong result if `A` is not positive definite.
+   */
+  const vector3
+  solve_chol3(const matrix3& A, const vector3& b)
+  {
+    std::array<double,3> D;
+    std::array<double,3> L;
+    D[0] = A(0,0);
+    L[0] = A(1,0)/D[0];
+    D[1] = A(1,1)-L[0]*L[0]*D[0];
+    L[1] = A(2,0)/D[0];
+    L[2] = (A(2,1)-L[0]*L[1]*D[0])/D[1];
+    D[2] = A(2,2)-L[1]*L[1]*D[0]-L[2]*L[2]*D[1];
+    const double&  z0 = b.x;
+    const double&& z1 = b.y -z0*L[0];
+    const double&& z2 = b.z -z0*L[1] -z1*L[2];
+    const double&& y0 = z0/D[0];
+    const double&& y1 = z1/D[1];
+    const double&& y2 = z2/D[2];
+    const double&  x2 = y2;
+    const double&& x1 = y1 -x2*L[2];
+    const double&& x0 = y0 -x1*L[0] -x2*L[1];
+    return {x0,x1,x2};
   }
 }
 

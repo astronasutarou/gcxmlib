@@ -14,6 +14,8 @@ EXAMPLE := test/example_angle \
            test/example_vector3 \
            test/example_vector3_outer_product \
            test/example_matrix3 \
+           test/example_matrix3_operator \
+           test/example_matrix3_chol \
            test/example_dcos \
            test/example_dcos_extend_to \
            test/example_footprint \
