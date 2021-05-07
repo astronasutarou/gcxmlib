@@ -20,6 +20,8 @@
 #include <array>
 #include <set>
 #include <stdexcept>
+#include <initializer_list>
+#include <memory>
 
 
 namespace gcxmlib {
@@ -270,6 +272,10 @@ namespace gcxmlib {
   public:
     /** disable the constructor without arguments. */
     vector3() = delete;
+
+    /** copy constructor */
+    vector3(const vector3& copy)
+      : vector3(copy.x,copy.y,copy.z) {}
 
     /**
      * @brief construct a `vector3` instance with (x,y,z).
@@ -525,6 +531,10 @@ namespace gcxmlib {
     /** disable the constructor without arguments. */
     footprint() = delete;
 
+    /** copy constractor */
+    footprint(const footprint& copy)
+      : footprint(copy.l,copy.l,copy.m,copy.t,copy.s) {}
+
     /**
      * @brief construct a `footprint` instance with (x,y,z)
      * @note set `t` and `s` the system time and 1 arcsec, respectivly.
@@ -624,10 +634,22 @@ namespace gcxmlib {
     const timestamp_t t; /** timestamp of the measurement. */
     const angle s;       /** uncertainty of the position. */
 
-    /** `equiality` operator between `footprint` instances. */
+    /** `less` operator only takes the timestamp. */
     friend bool
-    operator==(const footprint& lhs, const footprint& rhs)
-    { return lhs.match(rhs, lhs.s+rhs.s, sec_t(1.0)); }
+    operator<(const footprint& lhs, const footprint& rhs)
+    { return lhs.t < rhs.t; }
+    /** `less-or-equal` operator only takes the timestamp. */
+    friend bool
+    operator<=(const footprint& lhs, const footprint& rhs)
+    { return lhs.t <= rhs.t; }
+    /** `greater` operator only takes the timestamp. */
+    friend bool
+    operator>(const footprint& lhs, const footprint& rhs)
+    { return lhs.t > rhs.t; }
+    /** `greater-or-equal` operator only takes the timestamp. */
+    friend bool
+    operator>=(const footprint& lhs, const footprint& rhs)
+    { return lhs.t >= rhs.t; }
 
   private:
     const timestamp_t now() const
@@ -877,6 +899,10 @@ namespace gcxmlib {
   public:
     /** disable the constructor without arguments. */
     trail() = delete;
+
+    /** copy constructor */
+    trail(const trail& copy)
+      : trail(copy.s, copy.e) {}
 
     /**
      * @brief construct a `minor_arc` instance from `s` to `e`.
