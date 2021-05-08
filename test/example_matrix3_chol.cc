@@ -82,11 +82,22 @@ main(int argn, char** argv)
     printf("# Ax = \n");
     (A*w).dump();
     printf("\n");
+
+    printf("# Eigen vector of _A_.\n");
+    vector3 a = eigen_pow(A);
+    vector3 b = A*a;
+    vector3 c = A*b;
+    printf("# eig(A) = \n  ");     a.dump();
+    printf("# A*eig(A) = \n  ");   b.dump();
+    printf("# A*A*eig(A) = \n  "); c.dump();
+
+    printf("\n");
+    printf("# Eigen value: %lf\n", b.d);
   }
 
   auto e = std::chrono::system_clock::now();
   std::chrono::duration<double> dt = e-s;
-  printf("# elapsed time:: %.8lf ms\n", dt.count()*1e3);
+  printf("\n# elapsed time:: %.8lf ms\n", dt.count()*1e3);
 
   return 0;
 }

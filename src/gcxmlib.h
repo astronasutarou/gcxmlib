@@ -1532,6 +1532,17 @@ namespace gcxmlib {
     const double&& x0 = y0 -x1*L[0] -x2*L[1];
     return {x0,x1,x2};
   }
+
+  const vector3
+  eigen_pow(const matrix3& A,
+            const vector3& v0 = {1,0,0},
+            const size_t N_iter=10)
+  {
+    std::unique_ptr<vector3> vp = std::make_unique<vector3>(A*v0);
+    for (size_t i=0; i<N_iter; i++)
+      vp.reset(new vector3(vp->x/vp->d,vp->y/vp->d,vp->z/vp->d));
+    return *vp;
+  }
 }
 
 #endif  // __GCXMLIB_H_INCLUDE
