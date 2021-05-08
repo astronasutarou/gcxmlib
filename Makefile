@@ -34,7 +34,8 @@ EXAMPLE := test/example_angle \
            test/example_trail_colinear_with_gc \
            test/example_trail_colinear_with_arc \
            test/example_trail_propagate \
-           test/example_trail_match
+           test/example_trail_match \
+           test/example_trajectory
 
 .PHONY: clean build test build_pypi upload_test upload_pypi
 

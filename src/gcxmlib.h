@@ -1598,6 +1598,151 @@ namespace gcxmlib {
       vp.reset(new vector3(vp->x/vp->d,vp->y/vp->d,vp->z/vp->d));
     return *vp;
   }
+
+
+  class trajectory {
+  public:
+    trajectory(const trail& t)
+    {
+      tracklets.push_back(t);
+      update();
+    };
+
+    trajectory(std::initializer_list<trail> list)
+    {
+      for (const auto& t: list) tracklets.push_back(t);
+      update();
+    }
+
+    trajectory(std::vector<trail> list)
+    {
+      for (const auto& t: list) tracklets.push_back(t);
+      update();
+    }
+
+    void
+    append(const trail& t)
+    {
+      tracklets.push_back(t);
+      update();
+    }
+
+
+    const double
+    separation_cosine(const great_circle& gc) const
+    { return ptr_arc->separation_cosine(gc); }
+
+    const angle
+    separation(const great_circle& gc) const
+    { return ptr_arc->separation(gc); }
+
+    const double
+    separation_cosine(const direction_cosine& p) const
+    { return ptr_arc->separation_cosine(p); }
+
+    const angle
+    separation(const direction_cosine& p) const
+    { return ptr_arc->separation(p); }
+
+    const double
+    distance_cosine(const direction_cosine& p) const
+    { return ptr_arc->distance_cosine(p); }
+
+    const angle
+    distance(const direction_cosine& p) const
+    { return ptr_arc->distance(p); }
+
+    const direction_cosine
+    extrapolate(const double f) const
+    { return ptr_s->extend_to(*ptr_e, f); }
+
+    const footprint
+    propagate(const sec_t& dT) const
+    { return ptr_arc->propagate(dT); }
+
+    const footprint
+    propagate(const timestamp_t& T) const
+    { return ptr_arc->propagate(T); }
+
+    const bool
+    intersect_with(const direction_cosine& p) const
+    { return ptr_arc->intersect_with(p); }
+
+    const bool
+    intersect_with(const minor_arc& arc) const
+    { return ptr_arc->intersect_with(arc); }
+
+    const bool
+    intersect_with(const trail& arc) const
+    { return ptr_arc->intersect_with(arc); }
+
+    const bool
+    colinear_with(const great_circle& gc,
+                  const angle& tol = degree(5.0)) const
+    { return ptr_arc->colinear_with(gc, tol); }
+
+    const bool
+    colinear_with(const minor_arc& arc,
+                  const angle& tol = degree(5.0)) const
+    { return ptr_arc->colinear_with(arc, tol); }
+
+    const bool
+    colinear_with(const trail& arc,
+                  const angle& tol = degree(5.0)) const
+    { return ptr_arc->colinear_with(arc, tol); }
+
+    const bool
+    match(const trail& arc,
+          const angle& dtol = degree(5.0),
+          const angle& rtol = arcmin(5.0),
+          const double margin = 1.0) const
+    { return ptr_arc->match(arc, dtol, rtol, margin); }
+
+    const angle
+    error_at(const direction_cosine& q, const bool skip=true) const
+    { return ptr_arc->error_at(q, skip); }
+
+    void
+    dump(const size_t N=64) const
+    { ptr_arc->dump(N); }
+
+    void
+    dump_arc(const size_t N=64) const
+    { ptr_arc->dump_arc(N); }
+
+    void
+    dump_error(const size_t N=64) const
+    { ptr_arc->dump_error(N); }
+
+  private:
+    void
+    update()
+    {
+      double ll(0), lm(0), ln(0), mm(0), mn(0), nn(0);
+      ptr_s.reset(new footprint(tracklets[0].s));
+      ptr_e.reset(new footprint(tracklets[0].e));
+      for (const auto& t: tracklets) {
+        ll += t.pole.l*t.pole.l; lm += t.pole.l*t.pole.m;
+        ln += t.pole.n*t.pole.l; mm += t.pole.m*t.pole.m;
+        mn += t.pole.m*t.pole.n; nn += t.pole.n*t.pole.n;
+        if (*ptr_s>t.s) ptr_s.reset(new footprint(t.s));
+        if (*ptr_e<t.e) ptr_e.reset(new footprint(t.e));
+      }
+      const matrix3 A({ll,lm,ln,lm,mm,mn,ln,mn,nn});
+      const vector3 pole(eigen_pow(A));
+      const great_circle gc(pole);
+      const direction_cosine tmps = gc.foot_of(*ptr_s);
+      const direction_cosine tmpe = gc.foot_of(*ptr_e);
+      ptr_s.reset(new footprint(tmps.l,tmps.m,tmps.n,ptr_s->t,ptr_s->s));
+      ptr_e.reset(new footprint(tmpe.l,tmpe.m,tmpe.n,ptr_e->t,ptr_e->s));
+      ptr_arc.reset(new trail(*ptr_s,*ptr_e));
+    }
+
+    std::unique_ptr<trail> ptr_arc;
+    std::unique_ptr<footprint> ptr_s;
+    std::unique_ptr<footprint> ptr_e;
+    std::vector<trail> tracklets;
+  };
 }
 
 #endif  // __GCXMLIB_H_INCLUDE
