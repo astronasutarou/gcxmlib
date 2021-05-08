@@ -473,14 +473,6 @@ namespace gcxmlib {
       const double&& cosf2 = std::cos(f2.radian);
       const double&& cosfp = std::cos((f1+f2).radian);
       const double&& cosfm = std::cos((f1-f2).radian);
-      if (__debug__) {
-        printf("# pivot_helper:\n");
-        printf("#   cosd  :%+g\n", cosd);
-        printf("#   cosf1 :%+g\n", cosf1);
-        printf("#   cosf2 :%+g\n", cosf2);
-        printf("#   cosfp :%+g\n", cosfp);
-        printf("#   cosfm :%+g\n", cosfm);
-      }
       return __pivot_helper(q,cosd,cosf1,cosf2,cosfp,cosfm);
     }
 
@@ -603,7 +595,7 @@ namespace gcxmlib {
 
     /** copy constractor */
     footprint(const footprint& copy)
-      : footprint(copy.l,copy.l,copy.m,copy.t,copy.s) {}
+      : footprint(copy.l,copy.m,copy.n,copy.t,copy.s) {}
 
     /**
      * @brief construct a `footprint` instance with (x,y,z)
@@ -1333,9 +1325,9 @@ namespace gcxmlib {
         printf("#   from  : "); from.dump();
         printf("#   to    : "); to.dump();
         printf("#   parity: %s\n",(parity?"true":"false"));
-        printf("#   theta : %+lf\n", theta.radian);
-        printf("#   delta : %+lf\n", delta.radian);
-        printf("#   phi   : %+lf\n", phi.radian);
+        printf("#   theta : %+lf\n", theta.degree);
+        printf("#   delta : %+lf\n", delta.degree);
+        printf("#   phi   : %+lf\n", phi.degree);
       }
       if (delta > theta)
         throw std::invalid_argument("too large uncertainty.");
