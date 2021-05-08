@@ -41,11 +41,81 @@ namespace gcxmlib {
   using default_clock = std::chrono::system_clock;
   using timestamp_t = std::chrono::time_point<default_clock>;
 
+
   /**
    * @brief return the current time using `default_clock`.
    */
-  const auto
+  const timestamp_t
   now() { return default_clock::now(); }
+
+
+  /**
+   * @brief generate a `timestamp_t` instance with microsecond resolution.
+   * @param year: calender year
+   * @param month: calender month
+   * @param day: calender day
+   * @param hour: hour
+   * @param minute: minute
+   * @param second: second
+   * @param microsecond: microsecond
+   * @note local timezone settings are ignored.
+   */
+  const timestamp_t
+  generate_timestamp
+  (const int32_t year, const int32_t month, const int32_t day,
+   const int32_t hour, const int32_t minute, const int32_t second,
+   const int32_t microsecond)
+  {
+    // check the ranges.
+    if (month<0 || month>13)
+      throw std::range_error("month range exceeds.");
+    if (day<0 || day>31)
+      throw std::range_error("day range exceeds.");
+    if (hour<0 || hour>23)
+      throw std::range_error("hour range exceeds.");
+    if (minute<0 || minute>60)
+      throw std::range_error("minute range exceeds.");
+    if (second<0 || second>60)
+      throw std::range_error("second range exceeds.");
+    if (microsecond<0 || microsecond > 1000000)
+      throw std::range_error("microsecond range exceeds.");
+    // store the current timezone settings.
+    char* tz = getenv("TZ");
+    struct tm ts = {
+      .tm_sec   = second,      // [0..60]
+      .tm_min   = minute,      // [0..59]
+      .tm_hour  = hour,        // [0..23]
+      .tm_mday  = day,         // [1..31]
+      .tm_mon   = month - 1,   // [0..11]
+      .tm_year  = year - 1900  // year since 1990
+    };
+    // clear the timezone settings.
+    setenv("TZ","",1); tzset();
+    timestamp_t t0 = default_clock::from_time_t(std::mktime(&ts));
+    // restore the timezone settings.
+    (tz)?setenv("TZ",tz,1):unsetenv("TZ"); tzset();
+    return t0+std::chrono::microseconds(microsecond);
+  }
+
+  /**
+   * @brief convert a `timestamp_t` instance into std::string.
+   * @param ts: a `timestamp_t` instance.
+   */
+  const std::string
+  timestamp_to_string(const timestamp_t& ts)
+  {
+    std::stringstream ss;
+    const auto duration  = ts.time_since_epoch();
+    // modification term for datetime before 1990
+    const auto mod = duration.count()>0?0:1;
+    const auto subsecond =
+      (std::chrono::duration_cast<std::chrono::microseconds>(duration)
+       % std::chrono::seconds{1}) + std::chrono::seconds{mod};
+    const std::time_t ti = std::chrono::system_clock::to_time_t(ts)-mod;
+    ss << std::put_time(std::gmtime(&ti), "%FT%T") << "."
+       << std::setfill('0') << std::setw(6) << subsecond.count();
+    return ss.str();
+  }
 
   /**
    * @brief a helper function to advance the timestamp by `dt`.
@@ -53,7 +123,7 @@ namespace gcxmlib {
    * @param dt: the `chrono::duration` instance.
    */
   template<typename duration_t>
-  const auto
+  const timestamp_t
   advance_timestamp(const timestamp_t& t0, const duration_t& dt)
   {
     return t0 + std::chrono::duration_cast<default_clock::duration>(dt);
@@ -619,16 +689,9 @@ namespace gcxmlib {
      */
     void dump() const
     {
-      const std::time_t tm = std::chrono::system_clock::to_time_t(t);
-      const auto dur = t.time_since_epoch();
-      const auto sub =
-        std::chrono::duration_cast<std::chrono::microseconds>(dur)
-        % std::chrono::seconds{1};
-      std::stringstream ss;
-      ss << std::put_time(std::gmtime(&tm), "%FT%T") << "."
-         << std::setfill('0') << std::setw(6) << sub.count();
+      const std::string& ss = timestamp_to_string(t);
       printf("%+.5lf %+.5lf %+.5lf %+.5lf %s\n",
-             x, y, z, s.arcsec, ss.str().c_str());
+             x, y, z, s.arcsec, ss.c_str());
     }
 
     const timestamp_t t; /** timestamp of the measurement. */
