@@ -33,8 +33,8 @@ main(int argn, char** argv)
   arc.dump_arc();
   printf("\n\n");
 
-  for (size_t i=0; i<12; i++) {
-    const double f = 1.5*i/13.0;
+  for (size_t i=0; i<13; i++) {
+    const double f = (2.0*(double)i)/12.0;
     const auto p = p0.extend_to(p1,f);
     p.dump();
   }

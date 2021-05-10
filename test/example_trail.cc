@@ -30,10 +30,13 @@ main(int argn, char** argv)
     printf("# s : "); arc.s.dump();
     printf("# e : "); arc.e.dump();
     printf("# dt: %lf ms\n", (double)arc.dt.count()*1e3);
+    printf("# great circle\n");
     arc.dump();
     printf("\n\n");
+    printf("# error region\n");
     arc.dump_error();
     printf("\n\n");
+    printf("# arc\n");
     arc.dump_arc();
   }
 
@@ -47,10 +50,13 @@ main(int argn, char** argv)
     printf("# s : "); arc.s.dump();
     printf("# e : "); arc.e.dump();
     printf("# dt: %lf ms\n", (double)arc.dt.count()*1e3);
+    printf("# great circle\n");
     arc.dump();
     printf("\n\n");
+    printf("# error region\n");
     arc.dump_error();
     printf("\n\n");
+    printf("# arc\n");
     arc.dump_arc();
   }
 

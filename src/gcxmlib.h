@@ -574,7 +574,7 @@ namespace gcxmlib {
         throw std::invalid_argument("p1 and p2 are almost identical.");
       if (w2 < -__epsilon__)
         throw std::range_error("cannot find the solution.");
-      const double w = ((cosd-cosfp)>0?1.0:-1.0)*std::sqrt(std::max(w2,0.));
+      const double w = ((cosd-cosfm)>0?1.0:-1.0)*std::sqrt(std::max(w2,0.));
       const double&& pl =
         (l-q.l*cosd)*cosf1+(q.l-l*cosd)*cosf2+(m*q.n-n*q.m)*w;
       const double&& pm =
@@ -1269,6 +1269,7 @@ namespace gcxmlib {
         const direction_cosine p = s.extend_to(e,f);
         p.dump();
       }
+      printf("\n");
     }
 
     /**
@@ -1277,17 +1278,28 @@ namespace gcxmlib {
      */
     void dump_error(const size_t N=64) const
     {
-      const auto s1 = list_around_pole(p_s1, s, N);
-      const auto s2 = list_around_pole(p_s2, s, N);
-      const auto e1 = list_around_pole(p_e1, e, N);
-      const auto e2 = list_around_pole(p_e2, e, N);
-      for (size_t i=1; i<N; i++) s1[i].dump();
-      printf("\n");
-      for (size_t i=1; i<N; i++) s2[i].dump();
-      printf("\n\n");
-      for (size_t i=1; i<N; i++) e1[i].dump();
-      printf("\n");
-      for (size_t i=1; i<N; i++) e2[i].dump();
+      const auto plist = list_around_pole(pole, s, N);
+      const auto gc_s1 = great_circle(p_s1);
+      const auto gc_s2 = great_circle(p_s2);
+      const auto gc_e1 = great_circle(p_e1);
+      const auto gc_e2 = great_circle(p_e2);
+      for (const auto p: plist) {
+        const auto f_s1 = gc_s1.foot_of(p);
+        const auto f_s2 = gc_s2.foot_of(p);
+        const auto f_e1 = gc_e1.foot_of(p);
+        const auto f_e2 = gc_e2.foot_of(p);
+        const auto df_s1 = p.separation_cosine(f_s1);
+        const auto df_s2 = p.separation_cosine(f_s2);
+        const auto df_e1 = p.separation_cosine(f_e1);
+        const auto df_e2 = p.separation_cosine(f_e2);
+        const auto tmp_1 = (df_s1<df_e2)?f_s1:f_e2;
+        const auto tmp_2 = (df_s2<df_e1)?f_s2:f_e1;
+        const auto d1 = tmp_1.separation_cosine(pole);
+        const auto d2 = tmp_2.separation_cosine(pole);
+        (d1<d2)?tmp_1.dump():tmp_2.dump();
+        (d1<d2)?tmp_2.dump():tmp_1.dump();
+        printf("\n");
+      }
     }
 
     const footprint s; /** the starting point of the arc. */

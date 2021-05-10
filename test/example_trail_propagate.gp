@@ -5,7 +5,7 @@ set view equal xyz
 set xr [-1:1]
 set yr [-1:1]
 set zr [-1:1]
-set style fill transparent solid 0.2
+set style fill transparent solid 0.4
 data="< ./example_trail_propagate"
 asec2z(t) = atan(t/180./3600.*pi)
 getsec(n) = substr(strcol(n),18,99)
