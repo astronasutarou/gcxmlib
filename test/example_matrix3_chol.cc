@@ -87,12 +87,17 @@ main(int argn, char** argv)
     vector3 a = eigen_pow(A);
     vector3 b = A*a;
     vector3 c = A*b;
+    vector3 d = A*c;
     printf("# eig(A) = \n  ");     a.dump();
     printf("# A*eig(A) = \n  ");   b.dump();
     printf("# A*A*eig(A) = \n  "); c.dump();
+    printf("# A*A*A*eig(A) = \n  "); d.dump();
 
     printf("\n");
-    printf("# Eigen value: %lf\n", b.d);
+    printf("# Vector lengths:\n"
+           "  %lf %lf %lf %lf\n", a.d, b.d, c.d, d.d);
+    printf("# Ratios:\n"
+           "  %lf %lf %lf\n", b.d/a.d, c.d/b.d, d.d/c.d);
   }
 
   auto e = std::chrono::system_clock::now();

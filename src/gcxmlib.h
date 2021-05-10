@@ -1335,6 +1335,7 @@ namespace gcxmlib {
     }
   };
 
+
   const footprint
   footprint::extend_to(const footprint& q, const double f) const
   {
@@ -1588,14 +1589,24 @@ namespace gcxmlib {
     return {x0,x1,x2};
   }
 
+  /**
+   * @brief obtain the eigen vector using the power method.
+   * @param A: a `matrix3` instance.
+   * @param v0: an initial guess (optional).
+   * @param N: the number of iterations.
+   */
   const vector3
   eigen_pow(const matrix3& A,
             const vector3& v0 = {1,0,0},
-            const size_t N_iter=10)
+            const size_t   N = 50)
   {
     std::unique_ptr<vector3> vp = std::make_unique<vector3>(A*v0);
-    for (size_t i=0; i<N_iter; i++)
-      vp.reset(new vector3(vp->x/vp->d,vp->y/vp->d,vp->z/vp->d));
+    for (size_t i=0; i<N; i++) {
+      const auto vm = A*(*vp);
+      vp.reset(new vector3(vm.x/vm.d,vm.y/vm.d,vm.z/vm.d));
+      if (__debug__)
+        printf("# iter%02ld: ",i);
+    }
     return *vp;
   }
 
