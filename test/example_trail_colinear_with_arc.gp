@@ -22,5 +22,3 @@ splot data i 0 u 1:2:3 w l lc 1 t sprintf("trail #_%d",1), \
       w lp pt var lc 3 t "matched arc", \
       for [n=1:100] $arc ev ::(2*n)::(2*n+1) u 1:2:3:(6+int($0)%2) \
       w lp pt var lc 3 not
-
-pause 3

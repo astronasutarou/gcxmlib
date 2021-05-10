@@ -9,5 +9,3 @@ data="< ./example_footprint_neighbor_to"
 
 splot data i 0 u 2:3:4 w d lc 1 not, \
       data i 0 u 2:3:($1>0?$4:-1) w p pt 6 lc 2 t "nearby footprints"
-
-pause 3

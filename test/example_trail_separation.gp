@@ -19,5 +19,3 @@ splot data i 0 u 1:2:3 w l lc 1 t sprintf("great circle #_%d",1), \
       data i 4 u 2:3:($1==0?$4:1/0) w p pt 7 ps 1 lc 2 not, \
       data i 4 u 2:3:4:(sprintf("%.1f{\260}",$1)) \
       w labels font ',8' left offset 0.5,0.0 not
-
-pause 3

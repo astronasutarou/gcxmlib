@@ -26,5 +26,3 @@ splot data i 0 u 1:2:3 w l lc 1 t sprintf("great circle #_%d",1), \
       u ($1==0?$2:1/0):3:4:(6+int($0)%2) w lp pt var ps 1 lc 3 not, \
       for [m=0:100] $arc ev ::(2*m)::(2*m+1) \
       u ($1==1?$2:1/0):3:4:(6+int($0)%2) w lp pt var ps 1 lc 2 not
-
-pause 3

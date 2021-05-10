@@ -21,5 +21,3 @@ splot data i 0 u 1:2:3 w l lc 1 t sprintf("great circle #_%d",1), \
       data i 4 u 1:2:3:(getsec(5)) w labels font ",10" \
       left rotate by 90 offset 0,2 not,\
       data i 4 u 1:2:3:(asec2z($4)) w zerror lc 2 lw 0 not
-
-pause 3

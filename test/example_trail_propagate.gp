@@ -24,5 +24,3 @@ splot data i 0 u 1:2:3 w l lc 1 t "great circle #_1", \
       data i 7 ev 2 u 1:2:3:(getsec(5)) w labels font ",10" \
       left rotate by 90 offset 0,2 not,\
       data i 6 u 1:2:3:($0+6) w p pt var ps 1 lc 1 not
-
-pause 3

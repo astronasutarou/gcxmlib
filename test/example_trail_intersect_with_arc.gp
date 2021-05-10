@@ -24,5 +24,3 @@ splot data i 0 u 1:2:3 w l lc 1 t sprintf("great circle #_%d",1), \
       ev ::(2*n)::(2*n+1) w lp pt 6 lc 3 not, \
       for [n=0:300] $arc u 3:4:($1==1?$5:1/0) \
       ev ::(2*n)::(2*n+1) w lp pt 5 lc 7 not
-
-pause 3

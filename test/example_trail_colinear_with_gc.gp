@@ -22,5 +22,3 @@ splot data i 0 u 1:2:3 w l lc 1 t sprintf("great circle #_%d",1), \
       w lp ps 0.5 pt 2 lc 3 t "matched circle", \
       for [n=0:100] $circle ev ::(64*n)::(64*n+63) u 1:2:3 \
       w lp ps 0.2 lc 3 not
-
-pause 3

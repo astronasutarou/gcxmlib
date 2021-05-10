@@ -17,5 +17,3 @@ splot for [n=0:1] data i 4*n u 1:2:3 w l lc n+1 \
       for [n=0:1] data i 4*n+2 u 1:2:3 w pm3d not, \
       for [n=0:1] data i 4*n+3 u 1:2:3 w l lw 6 lc n+7 \
       t sprintf("trail #_%d",n+1)
-
-pause 3

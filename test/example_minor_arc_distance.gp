@@ -13,5 +13,3 @@ splot data i 0 u 1:2:3 w l lc 1 t sprintf("great circle #_%d",1), \
       data i 3 u 3:4:5 w p pt 6 lc 3 not, \
       data i 3 u 3:4:5:6:7:8 w vec lc 3 not, \
       data i 3 u 3:4:5:(sprintf("%.1f\n%.1f",$1,$2)) w labels font ',8' not
-
-pause 3
