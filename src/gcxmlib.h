@@ -144,7 +144,7 @@ namespace gcxmlib {
     base_angle() = delete;
 
     /**
-     * @brief construct an `base_angle` instance.
+     * @brief construct a `base_angle` instance.
      * @param _r: angle value in radian.
      *
      * The behavior of this constructor change with `angle_range`.
@@ -158,7 +158,7 @@ namespace gcxmlib {
         arcmin(to_arcmin()),arcsec(to_arcsec()) {}
 
     /**
-     * @brief construct an `base_angle` instance from another `base_angle`.
+     * @brief construct a `base_angle` instance from another `base_angle`.
      * @param ang: a `base_angle` instance.
      */
     template<angle_range __range>
@@ -1613,24 +1613,43 @@ namespace gcxmlib {
 
   class trajectory {
   public:
+    /** disable the constructor without an argument. */
+    trajectory() = delete;
+
+    /**
+     * @brief construct a `trajectory` instance with a single trail.
+     * @param t: a `trail` instance.
+     */
     trajectory(const trail& t)
     {
       tracklets.push_back(t);
       update();
     };
 
-    trajectory(std::initializer_list<trail> list)
+    /**
+     * @brief construc a `trajectory` instance with multiple trails.
+     * @param list: a list of trails.
+     */
+    trajectory(const std::initializer_list<trail> list)
     {
       for (const auto& t: list) tracklets.push_back(t);
       update();
     }
 
-    trajectory(std::vector<trail> list)
+    /**
+     * @brief construc a `trajectory` instance with multiple trails.
+     * @param list: a list of trails.
+     */
+    trajectory(const std::vector<trail> list)
     {
       for (const auto& t: list) tracklets.push_back(t);
       update();
     }
 
+    /**
+     * @brief uppend a trail and update the trajectory.
+     * @param t: a `trail` instance.
+     */
     void
     append(const trail& t)
     {
@@ -1638,70 +1657,169 @@ namespace gcxmlib {
       update();
     }
 
+    /**
+     * @brief uppend a trail and update the trajectory.
+     * @param t: a list of trails.
+     */
+    void
+    append(const std::initializer_list<trail> list)
+    {
+      for (const auto& t: list) tracklets.push_back(t);
+      update();
+    }
 
+    /**
+     * @brief uppend a trail and update the trajectory.
+     * @param t: a list of trails.
+     */
+    void
+    append(const std::vector<trail> list)
+    {
+      for (const auto& t: list) tracklets.push_back(t);
+      update();
+    }
+
+    /**
+     * @brief obtain `cos(d)` to another `great_circle`.
+     * @param gc: a `great_circle` instance.
+     */
     const double
     separation_cosine(const great_circle& gc) const
     { return ptr_arc->separation_cosine(gc); }
 
+    /**
+     * @brief obtain the separation angle to another `great_circle`.
+     * @param gc: a `great_circle` instance.
+     */
     const angle
     separation(const great_circle& gc) const
     { return ptr_arc->separation(gc); }
 
+    /**
+     * @brief obtain `cos(d)` to `direction_cosine`.
+     * @param p: a `direction_cosine` instance.
+     */
     const double
     separation_cosine(const direction_cosine& p) const
     { return ptr_arc->separation_cosine(p); }
 
+    /**
+     * @brief obtain the separation angle to `direction_cosine`.
+     * @param p: a `direction_cosine` instance.
+     */
     const angle
     separation(const direction_cosine& p) const
     { return ptr_arc->separation(p); }
 
+    /**
+     * @brief calculate the distance to the arc.
+     * @param s: the starting point of the arc.
+     * @param e: the end point of the arc.
+     * @param p: the distance from thie point is measured.
+     */
     const double
     distance_cosine(const direction_cosine& p) const
     { return ptr_arc->distance_cosine(p); }
 
+    /**
+     * @brief calculate the distance to the arc.
+     * @param s: the starting point of the arc.
+     * @param e: the end point of the arc.
+     * @param p: the distance from thie point is measured.
+     */
     const angle
     distance(const direction_cosine& p) const
     { return ptr_arc->distance(p); }
 
+    /**
+     * @brief return an extrapolated point of the arc.
+     * @param f: fraction of the extrapolation. the end point of the arc
+     *           is obtained for f = 1.
+     */
     const direction_cosine
     extrapolate(const double f) const
     { return ptr_s->extend_to(*ptr_e, f); }
 
+    /**
+     * @brief obtain the point after `dT` from `e`.
+     * @param dT: duration in second.
+     */
     const footprint
     propagate(const sec_t& dT) const
     { return ptr_arc->propagate(dT); }
 
+    /**
+     * @brief obtain the point at `T`.
+     * @param T: timestamp instance.
+     */
     const footprint
     propagate(const timestamp_t& T) const
     { return ptr_arc->propagate(T); }
 
+    /**
+     * @brief check if the arc intersects with the position `p` taking
+     *        into account the uncertainties of the end points.
+     * @param p: a `direction_cosine` instance.
+     */
     const bool
     intersect_with(const direction_cosine& p) const
     { return ptr_arc->intersect_with(p); }
 
+    /**
+     * @brief check if the arc intersects with the arc `arc` taking
+     *        into account the uncertainties of the end points.
+     * @param arc: a `minor_arc` instance.
+     */
     const bool
     intersect_with(const minor_arc& arc) const
     { return ptr_arc->intersect_with(arc); }
 
+    /**
+     * @brief check if the arc intersects with the arc `arc` taking
+     *        into account the uncertainties of the end points.
+     * @param arc: a `trail` instance.
+     */
     const bool
     intersect_with(const trail& arc) const
     { return ptr_arc->intersect_with(arc); }
 
+    /**
+     * @brief check if the arc is colinear with a `great_circle` taking
+     *        into account the uncertainties of the end points.
+     * @param gc: a `great_circle` instance.
+     */
     const bool
     colinear_with(const great_circle& gc,
                   const angle& tol = degree(5.0)) const
     { return ptr_arc->colinear_with(gc, tol); }
 
+    /**
+     * @brief check if the arc is colinear with a `great_circle` taking
+     *        into account the uncertainties of the end points.
+     * @param arc: a `minor_arc` instance.
+     */
     const bool
     colinear_with(const minor_arc& arc,
                   const angle& tol = degree(5.0)) const
     { return ptr_arc->colinear_with(arc, tol); }
 
+    /**
+     * @brief check if the arc is colinear with a `great_circle` taking
+     *        into account the uncertainties of the end points.
+     * @param arc: a `trail` instance.
+     */
     const bool
     colinear_with(const trail& arc,
                   const angle& tol = degree(5.0)) const
     { return ptr_arc->colinear_with(arc, tol); }
 
+    /**
+     * @brief check if the two trails are consistent or not.
+     * @param arc: another arc.
+     * @param dtol: a torelance in direction.
+     * @param rtol: a torelance in range.
+     * @param margin: an uncertainty multiplication factor.
+     */
     const bool
     match(const trail& arc,
           const angle& dtol = degree(5.0),
@@ -1709,23 +1827,43 @@ namespace gcxmlib {
           const double margin = 1.0) const
     { return ptr_arc->match(arc, dtol, rtol, margin); }
 
+    /**
+     * @brief return the uncertainty at the foot of `q`.
+     * @param q: a `direction_cosine` instance.
+     * @param skip: skip execution of `foot_of` if true.
+     */
     const angle
     error_at(const direction_cosine& q, const bool skip=true) const
     { return ptr_arc->error_at(q, skip); }
 
+    /**
+     * @brief dump (x,y,z)-coordinates of the great circle.
+     * @param N: the number of points (default: 64).
+     */
     void
     dump(const size_t N=64) const
     { ptr_arc->dump(N); }
 
+    /**
+     * @brief dump (x,y,z)-coordinates of the arc.
+     * @param N: the number of points (default: 64).
+     */
     void
     dump_arc(const size_t N=64) const
     { ptr_arc->dump_arc(N); }
 
+    /**
+     * @brief dump (x,y,z)-coordinates on the uncertainty circles.
+     * @param N: the number of points (default: 64).
+     */
     void
     dump_error(const size_t N=64) const
     { ptr_arc->dump_error(N); }
 
   private:
+    /**
+     * @brief update the trajectory instance.
+     */
     void
     update()
     {
@@ -1749,10 +1887,10 @@ namespace gcxmlib {
       ptr_arc.reset(new trail(*ptr_s,*ptr_e));
     }
 
-    std::unique_ptr<trail> ptr_arc;
-    std::unique_ptr<footprint> ptr_s;
-    std::unique_ptr<footprint> ptr_e;
-    std::vector<trail> tracklets;
+    std::unique_ptr<trail> ptr_arc;   /** the trajectory arc. */
+    std::unique_ptr<footprint> ptr_s; /** the starting point of the arc. */
+    std::unique_ptr<footprint> ptr_e; /** the end point of the arc. */
+    std::vector<trail> tracklets;     /** tracklets of trajectory. */
   };
 }
 
