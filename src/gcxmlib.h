@@ -1666,6 +1666,15 @@ namespace gcxmlib {
       update();
     }
 
+    /** reference to the current arc. */
+    const trail& arc() const { return *ptr_arc; }
+    /** reference to the current starting point. */
+    const footprint& s() const { return *ptr_s; }
+    /** reference to the current end point. */
+    const footprint& e() const { return *ptr_e; }
+    /** reference to the current trail list. */
+    const std::vector<trail>& list() const { return tracklets; }
+
     /**
      * @brief uppend a trail and update the trajectory.
      * @param t: a `trail` instance.
@@ -1762,11 +1771,27 @@ namespace gcxmlib {
 
     /**
      * @brief obtain the point after `dT` from `e`.
-     * @param dT: duration in second.
+     * @param dT: duration since the end point.
+     * @param R: a regularization term.
      */
     const footprint
-    propagate(const sec_t& dT) const
-    { return ptr_arc->propagate(dT); }
+    propagate(const sec_t& dT, const double R = 100.0) const
+    {
+      const sec_t dt = dT - ptr_arc->dt;
+      const double f = 1.0+(double)(dT/ptr_arc->dt);
+      const auto&& T = advance_timestamp(ptr_e->t, dT);
+      const direction_cosine q = extrapolate(f+fac(T,R));
+      const angle&& qs = error_at(q);
+      if (__debug__) {
+        printf("# trajectory::propagate\n");
+        printf("#   f  : %+lf\n", f);
+        printf("#   dT : %+lf\n", dT.count());
+        printf("#   fac: %+lf\n", fac(T,R));
+        printf("#   q  : "); q.dump();
+        printf("#   s  : %+lf\n", qs.arcsec);
+      }
+      return footprint(q.l,q.m,q.n,T,qs);
+    }
 
     /**
      * @brief obtain the point at `T`.
@@ -1774,7 +1799,7 @@ namespace gcxmlib {
      */
     const footprint
     propagate(const timestamp_t& T) const
-    { return ptr_arc->propagate(T); }
+    { return propagate(T-ptr_e->t); }
 
     /**
      * @brief check if the arc intersects with the position `p` taking
@@ -1905,12 +1930,126 @@ namespace gcxmlib {
       ptr_s.reset(new footprint(tmps.l,tmps.m,tmps.n,ptr_s->t,ptr_s->s));
       ptr_e.reset(new footprint(tmpe.l,tmpe.m,tmpe.n,ptr_e->t,ptr_e->s));
       ptr_arc.reset(new trail(*ptr_s,*ptr_e));
+
+      if (__debug__) {
+        printf("# trajectory::update\n");
+        printf("#   pole: "); ptr_arc->pole.dump();
+        printf("#   s   : "); ptr_s->dump();
+        printf("#   e   : "); ptr_e->dump();
+      }
+      acc_xd = 0.0; acc_xx = 0.0;
+      for (const auto& t: tracklets) {
+        const sec_t te = ptr_e->t - ptr_s->t;
+        {
+          const double dts = ((sec_t)(t.s.t - ptr_s->t)).count();
+          const double dte = ((sec_t)(t.s.t - ptr_e->t)).count();
+          const double di = deviation_term(t.s);
+          acc_xd += di*(dts*dte); acc_xx += (dts*dte)*(dts*dte);
+        }
+        {
+          const double dts = ((sec_t)(t.e.t - ptr_s->t)).count();
+          const double dte = ((sec_t)(t.e.t - ptr_e->t)).count();
+          const double di = deviation_term(t.e);
+          acc_xd += di*(dts*dte); acc_xx += (dts*dte)*(dts*dte);
+        }
+      }
+      if (__debug__) {
+        printf("#   xd : %lf\n", acc_xd);
+        printf("#   xx : %lf\n", acc_xx);
+        printf("\n\n");
+      }
     }
+
+    /**
+     * @brief obtain the separation angle to the foot of the given point.
+     * @param p: a `direction_cosine` instance.
+     */
+    const angle
+    separation_to_foot_of(const direction_cosine& p) const
+    {
+      const direction_cosine&& f = ptr_arc->foot_of(p);
+      return ptr_s->separation(f);
+    }
+
+    /**
+     * @brief obtain the separation angle to the extrapolated point.
+     * @param T: a `timestamp_t` instance.
+     */
+    const angle
+    separation_to_propagated(const timestamp_t& T) const
+    {
+      const footprint&& p = ptr_arc->propagate(T);
+      return ptr_s->separation(p);
+    }
+
+    /**
+     * @brief deviation from the linear propagation.
+     * @param p: a `footprint` instance.
+     * @note negative deviation indicates acceleration, while positive
+     *       deviation indicates deceleration.
+     */
+    const double
+    deviation_term(const footprint& p) const
+    {
+      const angle&& df = separation_to_foot_of(p);
+      const angle&& dp = separation_to_propagated(p.t);
+      if (__debug__) {
+        printf("# trajectory::deviation_term\n");
+        printf("#   df  : %lf\n", df.radian);
+        printf("#   dp  : %lf\n", dp.radian);
+        printf("#   diff: %lf\n", df.radian-dp.radian);
+      }
+      return df.radian-dp.radian;
+    }
+
+    /**
+     * @brief return a modification term for a giveNtime.
+     * @param dT: a duration since the starting point.
+     * @param R: a regularization term.
+     * @note the time origin is different from footprint::propagate().
+     */
+    const double
+    acceleration_term(const timestamp_t& T, const double R) const
+    {
+      const sec_t& dTs = T - ptr_s->t;
+      const sec_t& dTe = T - ptr_e->t;
+      return acc_xd*dTs.count()*dTe.count()/(acc_xx+R);
+    }
+
+    /**
+     * @brief return a modification term for a giveNtime.
+     * @param T: a `timestamp_t` instance.
+     * @param R: a regularization term.
+     */
+    const double
+    fac(const timestamp_t& T, const double R = 100.0) const
+    {
+      const sec_t& dT = ptr_arc->dt;
+      return acceleration_term(T, R)/dT.count();
+    }
+
+    /**
+     * @brief check if the two trails are consistent or not.
+     * @param arc: another arc.
+     * @param dtol: a torelance in direction.
+     * @param rtol: a torelance in range.
+     * @param margin: an uncertainty multiplication factor.
+     * @note acceleration/deceleration are not taken into account.
+     */
+    const bool
+    simple_match(const trail& arc,
+                 const angle& dtol = degree(5.0),
+                 const angle& rtol = arcmin(5.0),
+                 const double margin = 1.0) const
+    { return ptr_arc->match(arc, dtol, rtol, margin); }
+
 
     std::unique_ptr<trail> ptr_arc;   /** the trajectory arc. */
     std::unique_ptr<footprint> ptr_s; /** the starting point of the arc. */
     std::unique_ptr<footprint> ptr_e; /** the end point of the arc. */
     std::vector<trail> tracklets;     /** tracklets of trajectory. */
+    double acc_xd = 0.0;              /** acceleration coefficient xd. */
+    double acc_xx = 0.0;              /** acceleration coefficient xx. */
   };
 }
 
