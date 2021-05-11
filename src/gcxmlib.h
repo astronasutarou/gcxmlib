@@ -43,6 +43,15 @@ namespace gcxmlib {
 
 
   /**
+   * @brief arccosine with a clip function.
+   * @param arg: an argument of std::acos.
+   */
+  template<typename T>
+  const double _acos(const T& arg)
+  { return std::acos(std::max(-1.0,std::min((double)arg,1.0))); }
+
+
+  /**
    * @brief return the current time using `default_clock`.
    */
   const timestamp_t
@@ -392,7 +401,7 @@ namespace gcxmlib {
      */
     const angle
     separation(const vector3& p) const
-    { return std::acos(separation_cosine(p)); }
+    { return _acos(separation_cosine(p)); }
 
     /**
      * @brief dump all the elements to stdout.
@@ -562,7 +571,7 @@ namespace gcxmlib {
     {
       const double w2 = (cosd-cosfp)*(cosfm-cosd);
       if (__debug__) {
-        printf("# pivot_helper:\n");
+        printf("# direction_cosine::pivot_helper\n");
         printf("#   w2    :%+g\n", w2);
         printf("#   cosd  :%+g\n", cosd);
         printf("#   cosf1 :%+g\n", cosf1);
@@ -775,7 +784,7 @@ namespace gcxmlib {
      */
     const angle
     separation(const direction_cosine& p) const
-    { return std::acos(separation_cosine(p)); }
+    { return _acos(separation_cosine(p)); }
 
 
     /**
@@ -916,7 +925,7 @@ namespace gcxmlib {
     const angle
     distance(const direction_cosine& p) const
     {
-      return std::acos(distance_cosine(p));
+      return _acos(distance_cosine(p));
     }
 
     /**
@@ -981,7 +990,7 @@ namespace gcxmlib {
         throw std::invalid_argument
           ("no time difference bwteen two positions.");
       if (__debug__) {
-        printf("# trail:\n");
+        printf("# trail::trail\n");
         printf("#   s   : "); s.dump();
         printf("#   e   : "); e.dump();
         printf("#   dt  : %+lf s\n", dt.count());
@@ -1016,7 +1025,7 @@ namespace gcxmlib {
     const angle
     separation(const great_circle& gc) const
     {
-      return std::acos(separation_cosine(gc));
+      return _acos(separation_cosine(gc));
     }
 
     /**
@@ -1044,7 +1053,7 @@ namespace gcxmlib {
     const angle
     separation(const direction_cosine& p) const
     {
-      return std::acos(separation_cosine(p));
+      return _acos(separation_cosine(p));
     }
 
     /**
@@ -1064,7 +1073,7 @@ namespace gcxmlib {
     const angle
     distance(const direction_cosine& p) const
     {
-      return std::acos(distance_cosine(p));
+      return _acos(distance_cosine(p));
     }
 
     /**
@@ -1090,7 +1099,7 @@ namespace gcxmlib {
       const direction_cosine q = extrapolate(f);
       const angle&& qs = error_at(q);
       if (__debug__) {
-        printf("# footprint.propagate()\n");
+        printf("# footprint::propagate\n");
         printf("#   f: %+lf\n", f);
         printf("#   q: "); q.dump();
         printf("#   s: %+lf\n", qs.arcsec);
@@ -1227,12 +1236,13 @@ namespace gcxmlib {
       const angle&& dist_s = pred_s.separation(arc.s);
       const angle&& dist_e = pred_e.separation(arc.e);
       if (__debug__) {
-        printf("# pred_s : %+g\n", (double)pred_s.s);
-        printf("#        : %+g\n", (double)(pred_s.s*margin+rtol));
-        printf("# dist_s : %+g\n", (double)dist_s);
-        printf("# pred_e : %+g\n", (double)pred_e.s);
-        printf("#        : %+g\n", (double)(pred_e.s*margin+rtol));
-        printf("# dist_e : %+g\n", (double)dist_e);
+        printf("# footprint::match");
+        printf("#   pred_s : %+g\n", (double)pred_s.s);
+        printf("#          : %+g\n", (double)(pred_s.s*margin+rtol));
+        printf("#   dist_s : %+g\n", (double)dist_s);
+        printf("#   pred_e : %+g\n", (double)pred_e.s);
+        printf("#          : %+g\n", (double)(pred_e.s*margin+rtol));
+        printf("#   dist_e : %+g\n", (double)dist_e);
       }
       return (pred_s.s*margin+rtol>dist_s)&&(pred_e.s*margin+rtol>dist_e);
     }
@@ -1254,7 +1264,7 @@ namespace gcxmlib {
       const double&& d_s2 = std::sqrt(1-s2*s2);
       const double&& d_e1 = std::sqrt(1-e1*e1);
       const double&& d_e2 = std::sqrt(1-e2*e2);
-      return std::acos(std::min({d_s1,d_s2,d_e1,d_e2}));
+      return _acos(std::min({d_s1,d_s2,d_e1,d_e2}));
     }
 
     /**
@@ -1333,7 +1343,7 @@ namespace gcxmlib {
       const angle&& b = theta.radian*theta.radian-delta.radian*delta.radian;
       const angle phi = radian(std::sqrt(b.radian));
       if (__debug__) {
-        printf("# make_helper:\n");
+        printf("# trail::make_helper\n");
         printf("#   from  : "); from.dump();
         printf("#   to    : "); to.dump();
         printf("#   parity: %s\n",(parity?"true":"false"));
@@ -1616,8 +1626,6 @@ namespace gcxmlib {
     for (size_t i=0; i<N; i++) {
       const auto vm = A*(*vp);
       vp.reset(new vector3(vm.x/vm.d,vm.y/vm.d,vm.z/vm.d));
-      if (__debug__)
-        printf("# iter%02ld: ",i);
     }
     return *vp;
   }
