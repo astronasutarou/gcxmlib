@@ -1870,7 +1870,23 @@ namespace gcxmlib {
           const angle& dtol = degree(5.0),
           const angle& rtol = arcmin(5.0),
           const double margin = 1.0) const
-    { return ptr_arc->match(arc, dtol, rtol, margin); }
+    {
+      if (!colinear_with(arc)) return false;
+      const auto pred_s = propagate(arc.s.t);
+      const auto pred_e = propagate(arc.e.t);
+      const angle&& dist_s = pred_s.separation(arc.s);
+      const angle&& dist_e = pred_e.separation(arc.e);
+      if (__debug__) {
+        printf("# trajectory::match");
+        printf("#   pred_s : %+g\n", (double)pred_s.s);
+        printf("#          : %+g\n", (double)(pred_s.s*margin+rtol));
+        printf("#   dist_s : %+g\n", (double)dist_s);
+        printf("#   pred_e : %+g\n", (double)pred_e.s);
+        printf("#          : %+g\n", (double)(pred_e.s*margin+rtol));
+        printf("#   dist_e : %+g\n", (double)dist_e);
+      }
+      return (pred_s.s*margin+rtol>dist_s)&&(pred_e.s*margin+rtol>dist_e);
+    }
 
     /**
      * @brief return the uncertainty at the foot of `q`.
