@@ -486,9 +486,9 @@ namespace gcxmlib {
     }
 
     /**
-     * @brief obtain the point extended toward `q` by fraction `f`.
+     * @brief obtain the point extended toward `q` by separation `d`.
      * @param q: the anchor point.
-     * @param d: the separation angle from thi point.
+     * @param d: the separation angle from this point.
      */
     const direction_cosine
     extend_to(const direction_cosine& q, const angle& d) const
@@ -671,6 +671,16 @@ namespace gcxmlib {
     // this method is defined later since it depends on `trail`.
 
     /**
+     * @brief obtain the footprint extended toward `q` by separation `d`.
+     * @param q: the anchor point.
+     * @param d: the separation angle from this point.
+     * @note interpolation for `f` between [0,1], otherwise extrapolation.
+     */
+    const footprint
+    extend_to(const footprint& q, const angle& d) const;
+    // this method is defined later.
+
+    /**
      * @brief return `true` if another point is inside the range.
      * @param p: another positional instance.
      * @param range: an `angle` instance.
@@ -755,7 +765,7 @@ namespace gcxmlib {
      * @brief obtain `cos(d)` to another `great_circle`.
      * @param gc: a `great_circle` instance.
      */
-    const angle
+    const double
     separation_cosine(const great_circle& gc) const
     { return pole.separation_cosine(gc.pole); }
 
@@ -1365,6 +1375,12 @@ namespace gcxmlib {
     const direction_cosine& ep = direction_cosine::extend_to(q,f);
     const double&& es = trail(*this, q).error_at(ep);
     return footprint(ep.l,ep.m,ep.n,eT,es);
+  }
+
+  const footprint
+  footprint::extend_to(const footprint& q, const angle& d) const
+  {
+    return extend_to(q, d.radian/separation(q).radian);
   }
 
 
