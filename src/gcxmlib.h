@@ -902,11 +902,8 @@ namespace gcxmlib {
 
   class minor_arc : public great_circle {
   public:
-    /**
-     * @brief construct a `minor_arc` instance from (1,0,0) to (0,1,0).
-     */
-    minor_arc()
-      : minor_arc(dcos{1,0,0},dcos{0,1,0}) {}
+    /** disable the constructor without an argument */
+    minor_arc() = delete;
 
     /**
      * @brief construct a `minor_arc` instance from `s` to `e`.
