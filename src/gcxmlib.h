@@ -368,11 +368,11 @@ namespace gcxmlib {
 
     /**
      * @brief return an inner product with a `vector3` instance `p`.
-     * @param p: an instance of `vector3` class.
+     * @param v: an instance of `vector3` class.
      */
     const double
-    inner_product(const vector3& p) const
-    { return p.x*x + p.y*y + p.z*z; }
+    inner_product(const vector3& v) const
+    { return v.x*x + v.y*y + v.z*z; }
 
     /**
      * @brief calculate the outer product against `v`.
@@ -389,19 +389,19 @@ namespace gcxmlib {
 
     /**
      * @brief return `cos(d)` where `d` is the angular separation.
-     * @param p: an instance of `vector3` class.
+     * @param v: an instance of `vector3` class.
      */
     const double
-    separation_cosine(const vector3& p) const
-    { return inner_product(p)/p.d/d; }
+    separation_cosine(const vector3& v) const
+    { return inner_product(v)/v.d/d; }
 
     /**
      * @brief return the separation angle from `p` in radian.
-     * @param p: an instance of `vector3` class.
+     * @param v: an instance of `vector3` class.
      */
     const angle
-    separation(const vector3& p) const
-    { return _acos(separation_cosine(p)); }
+    separation(const vector3& v) const
+    { return _acos(separation_cosine(v)); }
 
     /**
      * @brief dump all the elements to stdout.
@@ -438,10 +438,10 @@ namespace gcxmlib {
 
     /**
      * @brief construct a `direction_cosine` instance with `vector3`.
-     * @parma p: an instance of `vector3` class.
+     * @param v: an instance of `vector3` class.
      */
-    direction_cosine(const vector3& p)
-      : direction_cosine(p.x, p.y, p.z)
+    direction_cosine(const vector3& v)
+      : direction_cosine(v.x, v.y, v.z)
     {}
 
     /**
@@ -607,19 +607,19 @@ namespace gcxmlib {
       : footprint(copy.l,copy.m,copy.n,copy.t,copy.s) {}
 
     /**
-     * @brief construct a `footprint` instance with (x,y,z)
+     * @brief construct a `footprint` instance with (l,m,n)
      * @note set `t` and `s` the system time and 1 arcsec, respectivly.
      */
-    footprint(const double _x, const double _y, const double _z)
-      : direction_cosine(_x, _y, _z), t(now()), s(arcsec(1.0)) {}
+    footprint(const double _l, const double _m, const double _n)
+      : direction_cosine(_l, _m, _n), t(now()), s(arcsec(1.0)) {}
 
     /**
-     * @brief construct a `footprint` instance with (x,y,z,t)
+     * @brief construct a `footprint` instance with (l,m,n,t)
      * @note set `s` 1 arcsec if not assigned.
      */
-    footprint(const double _x, const double _y, const double _z,
+    footprint(const double _l, const double _m, const double _n,
            const timestamp_t& _t, const angle& _s = arcsec(1.0))
-      : direction_cosine(_x, _y, _z), t(_t), s(_s) {}
+      : direction_cosine(_l, _m, _n), t(_t), s(_s) {}
 
     /**
      * @brief construct a `footprint` instance with (lon,lat,t)
@@ -631,24 +631,24 @@ namespace gcxmlib {
 
     /**
      * @brief return `true` if another point is inside the range.
-     * @param p: another positional instance.
+     * @param v: another positional instance.
      * @param range: an `angle` instance.
      */
     const bool
-    neighbor_to(const vector3& p, const angle& range) const
+    neighbor_to(const vector3& v, const angle& range) const
     {
       const double cosine = std::cos(range.radian);
-      const double sepcos = separation_cosine(p);
+      const double sepcos = separation_cosine(v);
       return sepcos >= cosine;
     }
 
     /**
      * @brief return `true` if another point is inside the uncertainty.
-     * @param p: another positional instance.
+     * @param v: another positional instance.
      */
     const bool
-    neighbor_to(const vector3& p) const
-    { return neighbor_to(p, s.radian); }
+    neighbor_to(const vector3& v) const
+    { return neighbor_to(v, s.radian); }
 
     /**
      * @brief return `true` if another point is inside the uncertainty.
