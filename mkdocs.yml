@@ -5,7 +5,8 @@ site_description: >-
   A cross-matching library with great circle.
 
 repo_name: ryou_ohsawa/gcxmlib
-repo_url: https:://bitbucket.org/ryou_ohsawa/gcxmlib/src/master/
+repo_url: https://bitbucket.org/ryou_ohsawa/gcxmlib/src/master/
+edit_uri: ""
 
 copyright: Copyright &copy; 2021&ndash; Ryou Ohsawa
 
@@ -21,9 +22,17 @@ theme:
   features:
     - navigation.indexes
     - header.autohide
+
+extra_css:
+  - css/local.css
+extra_javascript:
+  - js/config_mathjax.js
+  - https://polyfill.io/v3/polyfill.min.js?features=es6
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+
 markdown_extensions:
   - toc:
-      toc_depth: 2
+      toc_depth: 3
   - extra
   - admonition
   - smarty
