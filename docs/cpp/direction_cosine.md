@@ -1,0 +1,1 @@
+# `direction_cosine` class

@@ -1,17 +1,46 @@
-# Welcome to MkDocs
+# gcxmlib
 
-For full documentation visit [mkdocs.org](https://www.mkdocs.org).
+This library provides some classes and functions to cross-match tracklets on a sphere.
 
-## Commands
 
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs -h` - Print help message and exit.
+## Dependences
+The library is developed along with the C++14 standard. Test programs are compiled and checked with `g++-5.4.0`.
 
-## Project layout
 
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
+## Installation
+### C++
+The C++ library is provided as a single header file. Copy to your developing directory and add the include line as follows. Do not forget to add `-I` option in compiling a program.
+
+``` c++
+include "gcxmlib.h"
+```
+
+### Python
+The python package `gcxmlib` is available on PyPI (*not available yet*). Otherwise, you can install a latest version via the git repository on bitbucket.org (*not available yet*).
+
+``` sh
+pip install gcxmlib
+pip install git+https:://bitbucket.org/ryou_ohsawa/gcxmlib/src/master/
+```
+
+In case that the installation via `pip` fails, you can download the whole code from bitbucket.org and install the module manually.
+
+``` sh
+cd /your/favorite/directory
+git clone https://ryou_ohsawa@bitbucket.org/ryou_ohsawa/gcxmlib.git
+cd gcxmlib
+python ./setup.py install
+```
+
+After the installation, you can import the library as usual.
+
+``` python
+import gcxmlib
+```
+
+
+## References
+The usage of the C++ library and Python package are described below.
+
+- [C++ reference](./cpp)
+- [Python reference](./python) (*not available yet*)

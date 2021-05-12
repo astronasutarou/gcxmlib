@@ -1,6 +1,14 @@
 site_name: gcxmlib
-nav:
-  - index.md
+site_url:
+site_author: Ryou Ohsawa
+site_description: >-
+  A cross-matching library with great circle.
+
+repo_name: ryou_ohsawa/gcxmlib
+repo_url: https:://bitbucket.org/ryou_ohsawa/gcxmlib/src/master/
+
+copyright: Copyright &copy; 2021&ndash; Ryou Ohsawa
+
 theme:
   name: 'material'
   icon:
@@ -11,7 +19,7 @@ theme:
     primary: blue grey
     accent: deep orange
   features:
-    - navigation.tabs
+    - navigation.indexes
     - header.autohide
 markdown_extensions:
   - toc:
@@ -30,3 +38,30 @@ markdown_extensions:
       check_paths: True
   - pymdownx.arithmatex:
       generic: true
+
+nav:
+  - Top Page: index.md
+  - C++ Reference:
+    - Getting Started: cpp/index.md
+    - constants: cpp/constants.md
+    - angle: cpp/angle.md
+    - vector3: cpp/vector3.md
+    - matrix3: cpp/matrix3.md
+    - direction_cosine: cpp/direction_cosine.md
+    - footprint: cpp/footprint.md
+    - great_circle: cpp/great_circle.md
+    - minor_arc: cpp/minor_arc.md
+    - trail: cpp/trail.md
+    - trajectory: cpp/trajectory.md
+    - functions: cpp/functions.md
+    - Index: cpp/index_table.md
+    - Source code: cpp/source.md
+  - Python Reference:
+    - Getting Started: python/index.md
+    - direction_cosine: python/direction_cosine.md
+    - footprint: python/footprint.md
+    - trail: python/trail.md
+    - trajectory: python/trajectory.md
+    - Index: python/index_table.md
+  - bitbucket: https:://bitbucket.org/ryou_ohsawa/gcxmlib/src/master/
+  - PyPi: https://pypi.org/project/gcxmlib/
