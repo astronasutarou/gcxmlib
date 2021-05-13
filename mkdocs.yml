@@ -50,6 +50,13 @@ markdown_extensions:
 
 nav:
   - Top Page: index.md
+  - Python Reference:
+    - Getting Started: python/index.md
+    - direction_cosine: python/direction_cosine.md
+    - footprint: python/footprint.md
+    - trail: python/trail.md
+    - trajectory: python/trajectory.md
+    - Index: python/index_table.md
   - C++ Reference:
     - Getting Started: cpp/index.md
     - constants: cpp/constants.md
@@ -65,12 +72,5 @@ nav:
     - functions: cpp/functions.md
     - Index: cpp/index_table.md
     - Source code: cpp/source.md
-  - Python Reference:
-    - Getting Started: python/index.md
-    - direction_cosine: python/direction_cosine.md
-    - footprint: python/footprint.md
-    - trail: python/trail.md
-    - trajectory: python/trajectory.md
-    - Index: python/index_table.md
   - bitbucket: https:://bitbucket.org/ryou_ohsawa/gcxmlib/src/master/
   - PyPi: https://pypi.org/project/gcxmlib/
