@@ -1784,8 +1784,8 @@ namespace gcxmlib {
 
     /**
      * @brief obtain the point after `dT` from `e`.
-     * @param dT: duration since the end point.
-     * @param R: a regularization term.
+     * @param dT: a duration since the end point.
+     * @param R: a regularization parameter.
      */
     const footprint
     propagate(const sec_t& dT, const double R = 100.0) const
@@ -1808,11 +1808,12 @@ namespace gcxmlib {
 
     /**
      * @brief obtain the point at `T`.
-     * @param T: timestamp instance.
+     * @param T: a timestamp instance.
+     * @param R: a regularization parameter.
      */
     const footprint
-    propagate(const timestamp_t& T) const
-    { return propagate(T-ptr_e->t); }
+    propagate(const timestamp_t& T, const double R = 100.0) const
+    { return propagate(T-ptr_e->t, R); }
 
     /**
      * @brief check if the arc intersects with the position `p` taking
@@ -1842,6 +1843,15 @@ namespace gcxmlib {
     { return ptr_arc->intersect_with(arc); }
 
     /**
+     * @brief check if the arc intersects with the trajectory instance taking
+     *        into account the uncertainties of the end points.
+     * @param trj: a `trajectory` instance.
+     */
+    const bool
+    intersect_with(const trajectory& trj) const
+    { return ptr_arc->intersect_with(*trj.ptr_arc); }
+
+    /**
      * @brief check if the arc is colinear with a `great_circle` taking
      *        into account the uncertainties of the end points.
      * @param gc: a `great_circle` instance.
@@ -1852,7 +1862,7 @@ namespace gcxmlib {
     { return ptr_arc->colinear_with(gc, tol); }
 
     /**
-     * @brief check if the arc is colinear with a `great_circle` taking
+     * @brief check if the arc is colinear with a `minor_arc` instance taking
      *        into account the uncertainties of the end points.
      * @param arc: a `minor_arc` instance.
      */
@@ -1862,7 +1872,7 @@ namespace gcxmlib {
     { return ptr_arc->colinear_with(arc, tol); }
 
     /**
-     * @brief check if the arc is colinear with a `great_circle` taking
+     * @brief check if the arc is colinear with a `trail` instance taking
      *        into account the uncertainties of the end points.
      * @param arc: a `trail` instance.
      */
@@ -1870,6 +1880,16 @@ namespace gcxmlib {
     colinear_with(const trail& arc,
                   const angle& tol = degree(5.0)) const
     { return ptr_arc->colinear_with(arc, tol); }
+
+    /**
+     * @brief check if the arc is colinear with a `trajectory` instance taking
+     *        into account the uncertainties of the end points.
+     * @param trj: a `trajectory` instance.
+     */
+    const bool
+    colinear_with(const trajectory& trj,
+                  const angle& tol = degree(5.0)) const
+    { return ptr_arc->colinear_with(*trj.ptr_arc, tol); }
 
     /**
      * @brief check if the two trails are consistent or not.
@@ -1900,6 +1920,20 @@ namespace gcxmlib {
       }
       return (pred_s.s*margin+rtol>dist_s)&&(pred_e.s*margin+rtol>dist_e);
     }
+
+    /**
+     * @brief check if the two trails are consistent or not.
+     * @param trj: another trajectory.
+     * @param dtol: a torelance in direction.
+     * @param rtol: a torelance in range.
+     * @param margin: an uncertainty multiplication factor.
+     */
+    const bool
+    match(const trajectory& trj,
+          const angle& dtol = degree(5.0),
+          const angle& rtol = arcmin(5.0),
+          const double margin = 1.0) const
+    { return match(*trj.ptr_arc, dtol, rtol, margin); }
 
     /**
      * @brief return the uncertainty at the foot of `q`.
