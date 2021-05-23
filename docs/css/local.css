@@ -17,7 +17,7 @@
 /** definition list settings */
 .md-typeset dl {
   display: grid;
-  grid-template-columns: 4rem auto;
+  grid-template-columns: 5.5rem auto;
   margin: 0.5em 0 0.5em 1em;
 }
 .md-typeset dt {

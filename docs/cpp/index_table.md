@@ -39,16 +39,16 @@
 
 ## Functions
 
-- [`radian()`](/cpp/functions/#):
-- [`degree()`](/cpp/functions/#):
-- [`arcmin()`](/cpp/functions/#):
-- [`arcsec()`](/cpp/functions/#):
-- [`now()`](/cpp/functions/#):
-- [`generate_timestamp()`](/cpp/functions/#):
-- [`timestamp_to_string()`](/cpp/functions/#):
-- [`advance_timestamp()`](/cpp/functions/#):
-- [`rotation_matrix_x()`](/cpp/functions/#):
-- [`rotation_matrix_y()`](/cpp/functions/#):
-- [`rotation_matrix_z()`](/cpp/functions/#):
-- [`solve_chol3()`](/cpp/functions/#):
-- [`eigen_pow()`](/cpp/functions/#):
+- [`now()`](/cpp/functions/#functions-associated-with-timestamp):
+- [`generate_timestamp()`](/cpp/functions/#functions-associated-with-timestamp):
+- [`timestamp_to_string()`](/cpp/functions/#functions-associated-with-timestamp):
+- [`advance_timestamp()`](/cpp/functions/#functions-associated-with-timestamp):
+- [`radian()`](/cpp/functions/#functions-associated-with-angle):
+- [`degree()`](/cpp/functions/#functions-associated-with-angle):
+- [`arcmin()`](/cpp/functions/#functions-associated-with-angle):
+- [`arcsec()`](/cpp/functions/#functions-associated-with-angle):
+- [`rotation_matrix_x()`](/cpp/functions/#functions-associated-with-matrix):
+- [`rotation_matrix_y()`](/cpp/functions/#functions-associated-with-matrix):
+- [`rotation_matrix_z()`](/cpp/functions/#functions-associated-with-matrix):
+- [`solve_chol3()`](/cpp/functions/#functions-associated-with-matrix):
+- [`eigen_pow()`](/cpp/functions/#functions-associated-with-matrix):
