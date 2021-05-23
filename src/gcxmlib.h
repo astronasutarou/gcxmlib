@@ -60,13 +60,13 @@ namespace gcxmlib {
 
   /**
    * @brief generate a `timestamp_t` instance with microsecond resolution.
-   * @param year: calender year
-   * @param month: calender month
-   * @param day: calender day
-   * @param hour: hour
-   * @param minute: minute
-   * @param second: second
-   * @param microsecond: microsecond
+   * @param year: calendar year.
+   * @param month: calendar month.
+   * @param day: calendar day.
+   * @param hour: hour.
+   * @param minute: minute.
+   * @param second: second.
+   * @param microsecond: microsecond.
    * @note local timezone settings are ignored.
    */
   const timestamp_t
