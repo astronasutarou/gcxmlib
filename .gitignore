@@ -9,4 +9,4 @@ site/
 *.pyc
 *.png
 
-/spchord.c*
+/gcxmlib.c*
