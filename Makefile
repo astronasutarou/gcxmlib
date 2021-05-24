@@ -38,7 +38,7 @@ EXAMPLE := test/example_angle \
            test/example_trajectory \
            test/example_trajectory_propagate
 
-.PHONY: clean build test build_pypi upload_test upload_pypi
+.PHONY: clean build example test build_pypi upload_test upload_pypi
 
 all: $(EXAMPLE)
 
@@ -51,9 +51,9 @@ test/example_%: test/example_%.cc $(OBJECT) $(HEADER)
 build:
 	python setup.py build_ext --inplace
 
-test: $(EXAMPLE)
+example: $(EXAMPLE)
 # test: build
-# 	python -c 'import minimalKNN as m; m.simple_demo_box()'
+# 	python -c 'import gcxmlib as g; g.simple_demo()'
 
 build_pypi: build
 	python setup.py sdist bdist_wheel -p manylinux1_x86_64
