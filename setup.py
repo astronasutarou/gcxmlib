@@ -47,7 +47,7 @@ if __name__ == '__main__':
   depends      = glob(os.path.join('src', '*.h'))
   libraries    = ['m',]
   include_dirs = [numpy.get_include(), 'src']
-  compile_args = ['-std=c++11','-O2']
+  compile_args = ['-std=c++14','-O2']
   extensions   = [
     Extension('gcxmlib',
               language='c++',
