@@ -72,5 +72,5 @@ nav:
     - functions: cpp/functions.md
     - Index: cpp/index_table.md
     - Source code: cpp/source.md
-  - bitbucket: https:://bitbucket.org/ryou_ohsawa/gcxmlib/src/master/
+  - bitbucket: https://bitbucket.org/ryou_ohsawa/gcxmlib/src/master/
   - PyPi: https://pypi.org/project/gcxmlib/
