@@ -45,7 +45,7 @@ const angle one_degree = 1.0deg;
 
 ## Constants related to time
 
-The `gcxmlib` depends on `std::chrono`. Aliases of frequently used names are provided as follows. Note that the `duration` of `default_clock` is different from `sec_t`. Thus, calculations between `timestamp_t` and `sec_t` is not defined. To advance/roll back the timestamp instance, use [`advance_timestamp()`](./functions/#advance_timestamp).
+The `gcxmlib` depends on `std::chrono`. Aliases of frequently used names are provided as follows. Note that the `duration` of `default_clock` is different from `sec_t`. Thus, calculations between `timestamp_t` and `sec_t` is not defined. To advance/roll back the timestamp instance, use [`advance_timestamp()`](../functions/#advance_timestamp).
 
 ``` c++
 using sec_t = std::chrono::duration<double>;
