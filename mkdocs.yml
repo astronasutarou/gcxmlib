@@ -1,7 +1,7 @@
 site_name: gcxmlib
 site_url:
 site_author: Ryou Ohsawa
-site_description: >-
+site_description:
   A cross-matching library with great circle.
 
 repo_name: ryou_ohsawa/gcxmlib
@@ -20,7 +20,8 @@ theme:
     primary: blue grey
     accent: deep orange
   features:
-    - navigation.indexes
+    - navigation.expand
+    - navigation.tabs
     - header.autohide
 
 extra_css:
@@ -49,28 +50,31 @@ markdown_extensions:
       generic: true
 
 nav:
-  - Top Page: index.md
-  - Python Reference:
-    - Getting Started: python/index.md
-    - direction_cosine: python/direction_cosine.md
-    - footprint: python/footprint.md
-    - trail: python/trail.md
-    - trajectory: python/trajectory.md
-    - Index: python/index_table.md
-  - C++ Reference:
-    - Getting Started: cpp/index.md
-    - constants: cpp/constants.md
-    - angle: cpp/angle.md
-    - vector3: cpp/vector3.md
-    - matrix3: cpp/matrix3.md
-    - direction_cosine: cpp/direction_cosine.md
-    - footprint: cpp/footprint.md
-    - great_circle: cpp/great_circle.md
-    - minor_arc: cpp/minor_arc.md
-    - trail: cpp/trail.md
-    - trajectory: cpp/trajectory.md
-    - functions: cpp/functions.md
-    - Index: cpp/index_table.md
-    - Source code: cpp/source.md
-  - bitbucket: https://bitbucket.org/ryou_ohsawa/gcxmlib/src/master/
-  - PyPi: https://pypi.org/project/gcxmlib/
+  - Front Page:
+    - Top Page: index.md
+    - bitbucket: https://bitbucket.org/ryou_ohsawa/gcxmlib/src/master/
+    - PyPi: https://pypi.org/project/gcxmlib/
+  - Reference:
+    - reference/index.md
+    - Python:
+      - Getting Started: reference/python/index.md
+      - direction_cosine: reference/python/direction_cosine.md
+      - footprint: reference/python/footprint.md
+      - trail: reference/python/trail.md
+      - trajectory: reference/python/trajectory.md
+      - Index: reference/python/index_table.md
+    - C++:
+      - Getting Started: reference/cpp/index.md
+      - constants: reference/cpp/constants.md
+      - angle: reference/cpp/angle.md
+      - vector3: reference/cpp/vector3.md
+      - matrix3: reference/cpp/matrix3.md
+      - direction_cosine: reference/cpp/direction_cosine.md
+      - footprint: reference/cpp/footprint.md
+      - great_circle: reference/cpp/great_circle.md
+      - minor_arc: reference/cpp/minor_arc.md
+      - trail: reference/cpp/trail.md
+      - trajectory: reference/cpp/trajectory.md
+      - functions: reference/cpp/functions.md
+      - Index: reference/cpp/index_table.md
+      - Source code: reference/cpp/source.md
