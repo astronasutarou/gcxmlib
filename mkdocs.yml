@@ -55,7 +55,7 @@ nav:
     - bitbucket: https://bitbucket.org/ryou_ohsawa/gcxmlib/src/master/
     - PyPi: https://pypi.org/project/gcxmlib/
   - Reference:
-    - reference/index.md
+    - Index: reference/index.md
     - Python:
       - Getting Started: reference/python/index.md
       - direction_cosine: reference/python/direction_cosine.md

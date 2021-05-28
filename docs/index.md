@@ -7,6 +7,9 @@ This library provides some classes and functions to cross-match tracklets on a s
 The library is developed along with the C++14 standard. Test programs are compiled and checked with `g++-5.4.0`.
 
 
+## Installation
+
+
 ### Python
 The python package `gcxmlib` is available on PyPI (*not available yet*). Otherwise, you can install a latest version via the git repository on bitbucket.org (*not available yet*).
 
@@ -31,17 +34,9 @@ import gcxmlib
 ```
 
 
-## Installation
 ### C++
 The C++ library is provided as a single header file. Copy to your developing directory and add the include line as follows. Do not forget to add `-I` option in compiling a program.
 
 ``` c++
 include "gcxmlib.h"
 ```
-
-
-## References
-The usage of the C++ library and Python package are described below.
-
-- [C++ reference](./cpp)
-- [Python reference](./python) (*not available yet*)
