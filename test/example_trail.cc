@@ -27,37 +27,37 @@ main(int argn, char** argv)
     const footprint p0(1,0,0,now(),degree(0.5));
     const footprint p1(0,1,0,now(),degree(3.0));
     const trail arc(p0,p1);
-    printf("# s : "); arc.s.dump();
-    printf("# e : "); arc.e.dump();
+    printf("# s : "); arc.s.print();
+    printf("# e : "); arc.e.print();
     printf("# dt: %lf ms\n", (double)arc.dt.count()*1e3);
     printf("# great circle\n");
-    arc.dump();
+    arc.print();
     printf("\n\n");
     printf("# error region\n");
-    arc.dump_error();
+    arc.print_error();
     printf("\n\n");
     printf("# arc\n");
-    arc.dump_arc();
+    arc.print_arc();
   }
 
-   printf("\n\n");
+  printf("\n\n");
 
   {
     printf("# case 2: two random points.\n");
     const footprint p0(unif(gen),unif(gen),unif(gen),now(),degree(5.0));
     const footprint p1(unif(gen),unif(gen),unif(gen),now(),degree(1.0));
     const trail arc(p0,p1);
-    printf("# s : "); arc.s.dump();
-    printf("# e : "); arc.e.dump();
+    printf("# s : "); arc.s.print();
+    printf("# e : "); arc.e.print();
     printf("# dt: %lf ms\n", (double)arc.dt.count()*1e3);
     printf("# great circle\n");
-    arc.dump();
+    arc.print();
     printf("\n\n");
     printf("# error region\n");
-    arc.dump_error();
+    arc.print_error();
     printf("\n\n");
     printf("# arc\n");
-    arc.dump_arc();
+    arc.print_arc();
   }
 
   auto e = std::chrono::system_clock::now();

@@ -25,11 +25,11 @@ main(int argn, char** argv)
     printf("# outer_product() for `vector3` class.\n");
     vector3 p(unif(gen), unif(gen), unif(gen));
     vector3 q(unif(gen), unif(gen), unif(gen));
-    p.dump();
-    q.dump();
+    p.print();
+    q.print();
 
     auto r = p.outer_product(q);
-    r.dump();
+    r.print();
   }
 
   printf("\n\n");
@@ -38,13 +38,13 @@ main(int argn, char** argv)
     printf("# outer_product() for `direction_cosine` class.\n");
     dcos p(unif(gen), unif(gen), unif(gen));
     dcos q(unif(gen), unif(gen), unif(gen));
-    p.dump();
-    q.dump();
+    p.print();
+    q.print();
 
     auto r = p.outer_product(q);
-    r.dump();
+    r.print();
     auto n = p.get_pole(q);
-    n.dump();
+    n.print();
   }
 
   printf("\n\n");
@@ -53,13 +53,13 @@ main(int argn, char** argv)
     printf("# outer_product() for `footprint` class.\n");
     footprint p(unif(gen), unif(gen), unif(gen));
     footprint q(unif(gen), unif(gen), unif(gen));
-    p.dump();
-    q.dump();
+    p.print();
+    q.print();
 
     auto r = p.outer_product(q);
-    r.dump();
+    r.print();
     auto n = p.get_pole(q);
-    n.dump();
+    n.print();
   }
 
   printf("\n\n");
@@ -68,13 +68,13 @@ main(int argn, char** argv)
     printf("# outer_product() between `direction_cosine` and `vector3`.\n");
     dcos p(unif(gen), unif(gen), unif(gen));
     vector3 q(unif(gen), unif(gen), unif(gen));
-    p.dump();
-    q.dump();
+    p.print();
+    q.print();
 
     auto r = p.outer_product(q);
-    r.dump();
+    r.print();
     auto n = p.get_pole(q);
-    n.dump();
+    n.print();
   }
 
   printf("\n\n");
@@ -83,13 +83,13 @@ main(int argn, char** argv)
     printf("# outer_product() between `footprint` and `vector3`.\n");
     footprint p(unif(gen), unif(gen), unif(gen));
     vector3 q(unif(gen), unif(gen), unif(gen));
-    p.dump();
-    q.dump();
+    p.print();
+    q.print();
 
     auto r = p.outer_product(q);
-    r.dump();
+    r.print();
     auto n = p.get_pole(q);
-    n.dump();
+    n.print();
   }
 
   auto e = std::chrono::system_clock::now();

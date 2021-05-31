@@ -113,7 +113,7 @@ q
 f
 : a separation factor.
 
-#### void<br>dump() const
+#### void<br>print() const
 
 Write down the (*l*,*m*,*n*) coordinate in `stdout`.
 

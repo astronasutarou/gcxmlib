@@ -23,7 +23,7 @@ main(int argn, char** argv)
   printf("# Define `vector3` _p_ without argument.\n"
          "# The elements of _p_ should be [%.5lf %.5lf %.5lf].\n",
          1.0, 0.0, 0.0);
-  p.dump();
+  p.print();
 
   printf("\n"
          "# the distance to _p_ should be [%.5lf].\n"
@@ -32,7 +32,7 @@ main(int argn, char** argv)
   printf("\n"
          "# Define `vector3` _q_ with random arguments.\n"
          "# The elements of _q_ should be [%.5lf %.5lf %.5lf].\n", x, y, z);
-  q.dump();
+  q.print();
 
   printf("\n"
          "# the distance to _q_ should be [%.5lf].\n"

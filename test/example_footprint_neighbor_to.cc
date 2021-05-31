@@ -32,7 +32,7 @@ main(int argn, char** argv)
       } else {
         printf("0 ");
       }
-      p.dump();
+      p.print();
     }
   }
 

@@ -29,7 +29,7 @@ main(int argn, char** argv)
   printf("# Define `direction_cosine` _p_ without argument.\n"
          "# The elements of _p_ should be\n"
          "#     [%.5lf %.5lf %.5lf].\n", 1.0, 0.0, 0.0);
-  p.dump();
+  p.print();
 
   printf("\n"
          "# the distance to _p_ should be [%.5lf].\n"
@@ -39,7 +39,7 @@ main(int argn, char** argv)
          "# Define `direction_cosine` _q_ with random arguments.\n"
          "# The elements of _q_ should be\n"
          "#     [%.5lf %.5lf %.5lf].\n", x/d, y/d, z/d);
-  q.dump();
+  q.print();
 
   printf("\n"
          "# the distance to _q_ should be [%.5lf].\n"
@@ -55,7 +55,7 @@ main(int argn, char** argv)
          std::cos(lon.radian)*std::cos(lat.radian),
          std::sin(lon.radian)*std::cos(lat.radian),
          std::sin(lat.radian));
-  r.dump();
+  r.print();
 
   printf("\n"
          "# the distance to _r_ should be [%.5lf].\n"

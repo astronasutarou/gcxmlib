@@ -34,15 +34,15 @@ main(int argn, char** argv)
     const footprint p0(1.0,-0.1, 0.0, t0, degree(0.50));
     const footprint p1(1.0, 0.1, 0.0, t1, degree(5.00));
     const trail arc(p0,p1);
-    printf("# s : "); arc.s.dump();
-    printf("# e : "); arc.e.dump();
+    printf("# s : "); arc.s.print();
+    printf("# e : "); arc.e.print();
     printf("# dt: %lf ms\n", (double)arc.dt.count()*1e3);
-    arc.dump();
+    arc.print();
     printf("\n\n");
-    arc.dump_error();
+    arc.print_error();
     printf("\n\n");
-    arc.s.dump();
-    arc.e.dump();
+    arc.s.print();
+    arc.e.print();
     printf("\n\n");
     size_t count(0);
     for (size_t i=0; i<50000; i++) {
@@ -51,7 +51,7 @@ main(int argn, char** argv)
       const dcos p0(x,y,z), p1(x+dx,y+dy,z+dz);
       const minor_arc m(p0,p1);
       if (arc.colinear_with(m, degree(1.0))) {
-        m.s.dump(); m.e.dump();
+        m.s.print(); m.e.print();
         printf("\n");
         count++;
       }

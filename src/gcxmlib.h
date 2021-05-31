@@ -40,6 +40,7 @@ namespace gcxmlib {
   using sec_t = std::chrono::duration<double>;
   using default_clock = std::chrono::system_clock;
   using timestamp_t = std::chrono::time_point<default_clock>;
+  using dump_array = std::vector<std::vector<double>>;
 
 
   /**
@@ -404,9 +405,9 @@ namespace gcxmlib {
     { return _acos(separation_cosine(v)); }
 
     /**
-     * @brief dump all the elements to stdout.
+     * @brief print all the elements to stdout.
      */
-    void dump() const
+    void print() const
     { printf("%+.5lf %+.5lf %+.5lf\n", x, y, z); }
 
     const double x; /** x-coordinate. */
@@ -696,9 +697,9 @@ namespace gcxmlib {
     }
 
     /**
-     * @brief dump all the elements to stdout.
+     * @brief print all the elements to stdout.
      */
-    void dump() const
+    void print() const
     {
       const std::string& ss = timestamp_to_string(t);
       printf("%+.5lf %+.5lf %+.5lf %+.5lf %s\n",
@@ -822,12 +823,25 @@ namespace gcxmlib {
     }
 
     /**
+     * @brief print (x,y,z)-coordinates on the circle.
+     * @param N: the number of points (default: 64).
+     */
+    void print(const size_t N=64) const
+    {
+      for (const auto& v: list_around_pole(pole, N)) v.print();
+    }
+
+    /**
      * @brief dump (x,y,z)-coordinates on the circle.
      * @param N: the number of points (default: 64).
      */
-    void dump(const size_t N=64) const
+    const dump_array
+    dump(const size_t N=64) const
     {
-      for (const auto& v: list_around_pole(pole, N)) v.dump();
+      dump_array arr;
+      for (const auto& v: list_around_pole(pole, N))
+        arr.push_back({v.l, v.m, v.n});
+      return std::move(arr);
     }
 
     const direction_cosine pole; /** the pole of the great circle. */
@@ -947,17 +961,34 @@ namespace gcxmlib {
     }
 
     /**
-     * @brief dump (x,y,z)-coordinates of the arc.
+     * @brief print (x,y,z)-coordinates of the arc.
      * @param N: the number of points (default: 64).
      */
     void
-    dump_arc(const size_t N=64) const
+    print_arc(const size_t N=64) const
     {
       for (size_t i=0; i<N; i++) {
         const double&& f=1.0/(N-1)*i;
         const direction_cosine p = s.extend_to(e,f);
-        p.dump();
+        p.print();
       }
+      printf("\n");
+    }
+
+    /**
+     * @brief dump (x,y,z)-coordinates on the arc.
+     * @param N: the number of points (default: 64).
+     */
+    const dump_array
+    dump_arc(const size_t N=64) const
+    {
+      dump_array arr;
+      for (size_t i=0; i<N; i++) {
+        const double&& f=1.0/(N-1)*i;
+        const direction_cosine p = s.extend_to(e,f);
+        arr.push_back({p.l, p.m, p.n});
+      }
+      return std::move(arr);
     }
 
     const direction_cosine s; /** the starting point of the arc. */
@@ -998,17 +1029,17 @@ namespace gcxmlib {
           ("no time difference bwteen two positions.");
       if (__debug__) {
         printf("# trail::trail\n");
-        printf("#   s   : "); s.dump();
-        printf("#   e   : "); e.dump();
+        printf("#   s   : "); s.print();
+        printf("#   e   : "); e.print();
         printf("#   dt  : %+lf s\n", dt.count());
-        printf("#   h_s1: "); h_s1.dump();
-        printf("#   h_s2: "); h_s2.dump();
-        printf("#   h_e1: "); h_e1.dump();
-        printf("#   h_e2: "); h_e2.dump();
-        printf("#   p_s1: "); p_s1.dump();
-        printf("#   p_s2: "); p_s2.dump();
-        printf("#   p_e1: "); p_e1.dump();
-        printf("#   p_e2: "); p_e2.dump();
+        printf("#   h_s1: "); h_s1.print();
+        printf("#   h_s2: "); h_s2.print();
+        printf("#   h_e1: "); h_e1.print();
+        printf("#   h_e2: "); h_e2.print();
+        printf("#   p_s1: "); p_s1.print();
+        printf("#   p_s2: "); p_s2.print();
+        printf("#   p_e1: "); p_e1.print();
+        printf("#   p_e2: "); p_e2.print();
       }
     }
 
@@ -1108,7 +1139,7 @@ namespace gcxmlib {
       if (__debug__) {
         printf("# footprint::propagate\n");
         printf("#   f: %+lf\n", f);
-        printf("#   q: "); q.dump();
+        printf("#   q: "); q.print();
         printf("#   s: %+lf\n", qs.arcsec);
       }
       return footprint(q.l,q.m,q.n,T,qs);
@@ -1275,25 +1306,25 @@ namespace gcxmlib {
     }
 
     /**
-     * @brief dump (x,y,z)-coordinates of the arc.
+     * @brief print (x,y,z)-coordinates of the arc.
      * @param N: the number of points (default: 64).
      */
     void
-    dump_arc(const size_t N=64) const
+    print_arc(const size_t N=64) const
     {
       for (size_t i=0; i<N; i++) {
         const double&& f=1.0/(N-1)*i;
         const direction_cosine p = s.extend_to(e,f);
-        p.dump();
+        p.print();
       }
       printf("\n");
     }
 
     /**
-     * @brief dump (x,y,z)-coordinates on the uncertainty circles.
+     * @brief print (x,y,z)-coordinates on the uncertainty circles.
      * @param N: the number of points (default: 64).
      */
-    void dump_error(const size_t N=64) const
+    void print_error(const size_t N=64) const
     {
       const auto plist = list_around_pole(pole, s, N);
       const auto gc_s1 = great_circle(p_s1);
@@ -1313,10 +1344,61 @@ namespace gcxmlib {
         const auto tmp_2 = (df_s2<df_e1)?f_s2:f_e1;
         const auto d1 = tmp_1.separation_cosine(pole);
         const auto d2 = tmp_2.separation_cosine(pole);
-        (d1<d2)?tmp_1.dump():tmp_2.dump();
-        (d1<d2)?tmp_2.dump():tmp_1.dump();
+        (d1<d2)?tmp_1.print():tmp_2.print();
+        (d1<d2)?tmp_2.print():tmp_1.print();
         printf("\n");
       }
+      printf("\n");
+    }
+
+    /**
+     * @brief dump (x,y,z) coordinates on the arc.
+     * @param N: the number of points (default: 64).
+     */
+    const dump_array
+    dump_arc(const size_t N=64) const
+    {
+      dump_array arr;
+      for (size_t i=0; i<N; i++) {
+        const double&& f=1.0/(N-1)*i;
+        const direction_cosine p = s.extend_to(e,f);
+        arr.push_back({p.l, p.m, p.n});
+      }
+      return std::move(arr);
+    }
+
+    /**
+     * @brief dump (x,y,z) coordinates on the error region.
+     * @param N: the number of points (default: 64).
+     */
+    const dump_array
+    dump_error(const size_t N=64) const
+    {
+      dump_array arr;
+      const auto plist = list_around_pole(pole, s, N);
+      const auto gc_s1 = great_circle(p_s1);
+      const auto gc_s2 = great_circle(p_s2);
+      const auto gc_e1 = great_circle(p_e1);
+      const auto gc_e2 = great_circle(p_e2);
+      for (const auto p: plist) {
+        const auto f_s1 = gc_s1.foot_of(p);
+        const auto f_s2 = gc_s2.foot_of(p);
+        const auto f_e1 = gc_e1.foot_of(p);
+        const auto f_e2 = gc_e2.foot_of(p);
+        const auto df_s1 = p.separation_cosine(f_s1);
+        const auto df_s2 = p.separation_cosine(f_s2);
+        const auto df_e1 = p.separation_cosine(f_e1);
+        const auto df_e2 = p.separation_cosine(f_e2);
+        const auto tmp_1 = (df_s1<df_e2)?f_s1:f_e2;
+        const auto tmp_2 = (df_s2<df_e1)?f_s2:f_e1;
+        const auto d1 = tmp_1.separation_cosine(pole);
+        const auto d2 = tmp_2.separation_cosine(pole);
+        const auto& err1 = (d1<d2)?tmp_1:tmp_2;
+        const auto& err2 = (d1<d2)?tmp_2:tmp_1;
+        arr.push_back({err1.l, err1.m, err1.n});
+        arr.push_back({err2.l, err2.m, err2.n});
+      }
+      return std::move(arr);
     }
 
     const footprint s; /** the starting point of the arc. */
@@ -1351,8 +1433,8 @@ namespace gcxmlib {
       const angle phi = radian(std::sqrt(b.radian));
       if (__debug__) {
         printf("# trail::make_helper\n");
-        printf("#   from  : "); from.dump();
-        printf("#   to    : "); to.dump();
+        printf("#   from  : "); from.print();
+        printf("#   to    : "); to.print();
         printf("#   parity: %s\n",(parity?"true":"false"));
         printf("#   theta : %+lf\n", theta.degree);
         printf("#   delta : %+lf\n", delta.degree);
@@ -1550,10 +1632,10 @@ namespace gcxmlib {
     }
 
     /**
-     * @brief dump matrix elements in the standard output.
+     * @brief print matrix elements in the standard output.
      */
     void
-    dump() const
+    print() const
     {
       printf("  | %+.2f %+.2f %+.2f |\n", arr[0],arr[1],arr[2]);
       printf("  | %+.2f %+.2f %+.2f |\n", arr[3],arr[4],arr[5]);
@@ -1800,7 +1882,7 @@ namespace gcxmlib {
         printf("#   f  : %+lf\n", f);
         printf("#   dT : %+lf\n", dT.count());
         printf("#   fac: %+lf\n", fac(T,R));
-        printf("#   q  : "); q.dump();
+        printf("#   q  : "); q.print();
         printf("#   s  : %+lf\n", qs.arcsec);
       }
       return footprint(q.l,q.m,q.n,T,qs);
@@ -1945,28 +2027,52 @@ namespace gcxmlib {
     { return ptr_arc->error_at(q, skip); }
 
     /**
-     * @brief dump (x,y,z)-coordinates of the great circle.
+     * @brief print (x,y,z)-coordinates of the great circle.
      * @param N: the number of points (default: 64).
      */
     void
+    print(const size_t N=64) const
+    { ptr_arc->print(N); }
+
+    /**
+     * @brief print (x,y,z)-coordinates of the arc.
+     * @param N: the number of points (default: 64).
+     */
+    void
+    print_arc(const size_t N=64) const
+    { ptr_arc->print_arc(N); }
+
+    /**
+     * @brief print (x,y,z)-coordinates on the uncertainty circles.
+     * @param N: the number of points (default: 64).
+     */
+    void
+    print_error(const size_t N=64) const
+    { ptr_arc->print_error(N); }
+
+    /**
+     * @brief dump (x,y,z)-coordinates of the great circle.
+     * @param N: the number of points (default: 64).
+     */
+    const dump_array
     dump(const size_t N=64) const
-    { ptr_arc->dump(N); }
+    { return ptr_arc->dump(N); }
 
     /**
      * @brief dump (x,y,z)-coordinates of the arc.
      * @param N: the number of points (default: 64).
      */
-    void
+    const dump_array
     dump_arc(const size_t N=64) const
-    { ptr_arc->dump_arc(N); }
+    { return ptr_arc->dump_arc(N); }
 
     /**
      * @brief dump (x,y,z)-coordinates on the uncertainty circles.
      * @param N: the number of points (default: 64).
      */
-    void
+    const dump_array
     dump_error(const size_t N=64) const
-    { ptr_arc->dump_error(N); }
+    { return ptr_arc->dump_error(N); }
 
   private:
     /**
@@ -1996,9 +2102,9 @@ namespace gcxmlib {
 
       if (__debug__) {
         printf("# trajectory::update\n");
-        printf("#   pole: "); ptr_arc->pole.dump();
-        printf("#   s   : "); ptr_s->dump();
-        printf("#   e   : "); ptr_e->dump();
+        printf("#   pole: "); ptr_arc->pole.print();
+        printf("#   s   : "); ptr_s->print();
+        printf("#   e   : "); ptr_e->print();
       }
       acc_xd = 0.0; acc_xx = 0.0;
       for (const auto& t: tracklets) {

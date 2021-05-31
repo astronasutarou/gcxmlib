@@ -29,13 +29,13 @@ main(int argn, char** argv)
   printf("# Define `vector3` _p_ without argument.\n"
          "# The elements of _p_ should be [%.5lf %.5lf %.5lf].\n",
          1.0, 0.0, 0.0);
-  p.dump();
+  p.print();
 
   printf("\n");
 
   printf("# Define `vector3` _q_ with random arguments.\n"
          "# The elements of _q_ should be [%.5lf %.5lf %.5lf].\n", x, y, z);
-  q.dump();
+  q.print();
 
   printf("\n");
 
@@ -43,14 +43,14 @@ main(int argn, char** argv)
     printf("# Define the identity matrix.\n");
     const matrix3 I;
     printf("# I = \n");
-    I.dump();
+    I.print();
 
     printf("# Solve Ix = p:\n  x = ");
-    solve_chol3(I,p).dump();
+    solve_chol3(I,p).print();
     printf("\n");
 
     printf("# Solve Ix = q:\n  x = ");
-    solve_chol3(I,q).dump();
+    solve_chol3(I,q).print();
     printf("\n");
   }
 
@@ -61,26 +61,26 @@ main(int argn, char** argv)
     const matrix3 tmp(arr);
     const matrix3 A(tmp*tmp.T());
     printf("# A = \n");
-    A.dump();
+    A.print();
     printf("\n");
 
     printf("# Solve Ax = p:\n  x = ");
     const auto v = solve_chol3(A,p);
-    v.dump();
+    v.print();
     printf("\n");
 
     printf("# Ax = \n");
-    (A*v).dump();
+    (A*v).print();
     printf("\n");
 
 
     printf("# Solve Ax = q:\n  x = ");
     const auto w = solve_chol3(A,q);
-    w.dump();
+    w.print();
     printf("\n");
 
     printf("# Ax = \n");
-    (A*w).dump();
+    (A*w).print();
     printf("\n");
 
     printf("# Eigen vector of _A_.\n");
@@ -88,10 +88,10 @@ main(int argn, char** argv)
     vector3 b = A*a;
     vector3 c = A*b;
     vector3 d = A*c;
-    printf("# eig(A) = \n  ");     a.dump();
-    printf("# A*eig(A) = \n  ");   b.dump();
-    printf("# A*A*eig(A) = \n  "); c.dump();
-    printf("# A*A*A*eig(A) = \n  "); d.dump();
+    printf("# eig(A) = \n  ");     a.print();
+    printf("# A*eig(A) = \n  ");   b.print();
+    printf("# A*A*eig(A) = \n  "); c.print();
+    printf("# A*A*A*eig(A) = \n  "); d.print();
 
     printf("\n");
     printf("# Vector lengths:\n"

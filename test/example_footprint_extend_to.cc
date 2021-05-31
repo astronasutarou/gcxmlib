@@ -26,17 +26,17 @@ main(int argn, char** argv)
   footprint p1(0,1,0,t0+seconds(5),degree(10.0));
   trail arc(p0,p1);
 
-  arc.dump();
+  arc.print();
   printf("\n\n");
-  arc.dump_error();
+  arc.print_error();
   printf("\n\n");
-  arc.dump_arc();
+  arc.print_arc();
   printf("\n\n");
 
   for (size_t i=0; i<13; i++) {
     const double f = (2.0*(double)i)/12.0;
     const auto p = p0.extend_to(p1,f);
-    p.dump();
+    p.print();
   }
 
   auto e = std::chrono::system_clock::now();

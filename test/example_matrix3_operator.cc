@@ -34,52 +34,52 @@ main(int argn, char** argv)
   printf("\n");
 
   printf("A = \n");
-  A.dump();
+  A.print();
   printf("\n");
 
   printf("B = \n");
-  B.dump();
+  B.print();
   printf("\n");
 
   printf("(A+1) = \n");
-  (A+1.).dump();
+  (A+1.).print();
   printf("\n");
   printf("(3+A) = \n");
-  (3.+A).dump();
+  (3.+A).print();
   printf("\n");
 
   printf("(A-1) = \n");
-  (A-1.).dump();
+  (A-1.).print();
   printf("\n");
   printf("(3-A) = \n");
-  (3.-A).dump();
+  (3.-A).print();
   printf("\n");
 
   printf("(A*1) = \n");
-  (A*2.).dump();
+  (A*2.).print();
   printf("\n");
   printf("(3*A) = \n");
-  (3.*A).dump();
+  (3.*A).print();
   printf("\n");
 
   printf("(A/3) = \n");
-  (A/3.).dump();
+  (A/3.).print();
   printf("\n");
 
   printf("-A = \n");
-  (-A).dump();
+  (-A).print();
   printf("\n");
 
   printf("(A+B) = \n");
-  (A+B).dump();
+  (A+B).print();
   printf("\n");
 
   printf("(A-B) = \n");
-  (A-B).dump();
+  (A-B).print();
   printf("\n");
 
   printf("(A*B) = \n");
-  (A*B).dump();
+  (A*B).print();
   printf("\n");
 
   auto e = std::chrono::system_clock::now();

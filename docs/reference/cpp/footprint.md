@@ -162,7 +162,7 @@ p
 range
 : a search radius.
 
-#### void<br>dump() const
+#### void<br>print() const
 
 Write down the (*l*,*m*,*n*) coordinate in `stdout` as well as the uncertainty in arcsecond and the timestamp in the ISO format.
 

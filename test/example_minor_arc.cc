@@ -25,11 +25,11 @@ main(int argn, char** argv)
     printf("# case 1: p0=(1,0,0) and p1=(0,1,0).\n");
     const footprint p0(1,0,0), p1(0,1,0);
     const minor_arc arc(p0,p1);
-    printf("# s : "); arc.s.dump();
-    printf("# e : "); arc.e.dump();
-    arc.dump();
+    printf("# s : "); arc.s.print();
+    printf("# e : "); arc.e.print();
+    arc.print();
     printf("\n\n");
-    arc.dump_arc();
+    arc.print_arc();
   }
 
    printf("\n\n");
@@ -39,11 +39,11 @@ main(int argn, char** argv)
     const footprint p0(unif(gen),unif(gen),unif(gen));
     const footprint p1(unif(gen),unif(gen),unif(gen));
     const minor_arc arc(p0,p1);
-    printf("# s : "); arc.s.dump();
-    printf("# e : "); arc.e.dump();
-    arc.dump();
+    printf("# s : "); arc.s.print();
+    printf("# e : "); arc.e.print();
+    arc.print();
     printf("\n\n");
-    arc.dump_arc();
+    arc.print_arc();
   }
 
   auto e = std::chrono::system_clock::now();

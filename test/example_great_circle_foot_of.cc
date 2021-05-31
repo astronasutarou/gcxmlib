@@ -28,7 +28,7 @@ main(int argn, char** argv)
   {
     printf("# create `great_circle` with the pole of (0,0,1)\n");
     great_circle gc(0,0,1);
-    gc.dump();
+    gc.print();
     printf("\n\n");
     for (size_t i=0; i<50; i++) {
       const double x(pos(gen)), y(pos(gen)), z(pos(gen));
@@ -46,7 +46,7 @@ main(int argn, char** argv)
     printf("# create `great_circle` with the pole of (%lf deg,%lf deg)\n",
            lon.degree, lat.degree);
     great_circle gc(lon,lat);
-    gc.dump();
+    gc.print();
     printf("\n\n");
     for (size_t i=0; i<50; i++) {
       const double x(pos(gen)), y(pos(gen)), z(pos(gen));

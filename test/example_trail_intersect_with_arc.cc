@@ -33,15 +33,15 @@ main(int argn, char** argv)
     const footprint p0(1.0,-0.1, 0.0, t0, degree(0.50));
     const footprint p1(1.0, 0.1, 0.0, t1, degree(1.50));
     const trail arc(p0,p1);
-    printf("# s : "); arc.s.dump();
-    printf("# e : "); arc.e.dump();
+    printf("# s : "); arc.s.print();
+    printf("# e : "); arc.e.print();
     printf("# dt: %lf ms\n", (double)arc.dt.count()*1e3);
-    arc.dump();
+    arc.print();
     printf("\n\n");
-    arc.dump_error();
+    arc.print_error();
     printf("\n\n");
-    arc.s.dump();
-    arc.e.dump();
+    arc.s.print();
+    arc.e.print();
     printf("\n\n");
     for (size_t i=0; i<300; i++) {
       const double x(pos(gen)), y(pos(gen)), z(pos(gen));
@@ -51,11 +51,11 @@ main(int argn, char** argv)
       printf("%d %d ",
              (int32_t)(arc.intersect_with(r)),
              (int32_t)(arc.intersect_with(r.s)));
-      r.s.dump();
+      r.s.print();
       printf("%d %d ",
              (int32_t)(arc.intersect_with(r)),
              (int32_t)(arc.intersect_with(r.e)));
-      r.e.dump();
+      r.e.print();
       printf("\n");
     }
   }

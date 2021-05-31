@@ -1,6 +1,6 @@
 /**
- * @file example_great_circle_dump.cc
- * @brief test of the great_circle.dump() function.
+ * @file example_great_circle_print.cc
+ * @brief test of the great_circle.print() function.
  * @author Ryou Ohsawa
  * @year 2021
  */
@@ -26,9 +26,9 @@ main(int argn, char** argv)
     printf("# create `great_circle` with (l,m,n)-components.\n");
     double l(unif(gen)),m(unif(gen)),n(unif(gen));
     great_circle gc(l,m,n);
-    gc.pole.dump();
+    gc.pole.print();
     printf("\n\n");
-    gc.dump();
+    gc.print();
   }
 
   printf("\n\n");
@@ -37,9 +37,9 @@ main(int argn, char** argv)
     printf("# create `great_circle` with a `direction_cosine`.\n");
     dcos pole(unif(gen),unif(gen),unif(gen));
     great_circle gc(pole);
-    gc.pole.dump();
+    gc.pole.print();
     printf("\n\n");
-    gc.dump();
+    gc.print();
   }
 
   printf("\n\n");
@@ -51,9 +51,9 @@ main(int argn, char** argv)
     printf("%lf %lf\n", (double)lon, (double)lat);
     great_circle gc(lon,lat);
     printf("%lf\n", (double)gc.pole.lon);
-    gc.pole.dump();
+    gc.pole.print();
     printf("\n\n");
-    gc.dump();
+    gc.print();
   }
 
   auto e = std::chrono::system_clock::now();

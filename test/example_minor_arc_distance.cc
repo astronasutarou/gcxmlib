@@ -27,14 +27,14 @@ main(int argn, char** argv)
     const dcos p0(1,1,0);
     const dcos p1(1,-1,0);
     const minor_arc arc(p0,p1);
-    printf("# s : "); arc.s.dump();
-    printf("# e : "); arc.e.dump();
-    arc.dump();
+    printf("# s : "); arc.s.print();
+    printf("# e : "); arc.e.print();
+    arc.print();
     printf("\n\n");
-    arc.dump_arc();
+    arc.print_arc();
     printf("\n\n");
-    arc.s.dump();
-    arc.e.dump();
+    arc.s.print();
+    arc.e.print();
     printf("\n\n");
     for (size_t i=0; i<100; i++) {
       const double x(pos(gen)), y(pos(gen)), z(pos(gen)/5.0);

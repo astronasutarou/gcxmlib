@@ -43,10 +43,10 @@ main(int argn, char** argv)
     const footprint q1 = R*p1;
     const trail trail1(q0,q1);
     printf("# great circle\n");
-    trail1.dump();
+    trail1.print();
     printf("\n\n");
     printf("# trail arc\n");
-    trail1.dump_arc();
+    trail1.print_arc();
     printf("\n\n");
     tlist.push_back(trail1);
 
@@ -57,19 +57,19 @@ main(int argn, char** argv)
       const footprint Q1 = trail1.propagate(T1);
       const trail traili(Q0,Q1);
       printf("# propagated trail arc %ld\n", i+1);
-      traili.dump_arc();
+      traili.print_arc();
       printf("\n\n");
       tlist.push_back(traili);
     }
 
     const trajectory trj(tlist);
-    trj.dump_arc(32);
+    trj.print_arc(32);
     printf("\n\n");
 
     for (size_t i=0; i<11; i++) {
       const timestamp_t T = advance_timestamp(t0,seconds(5*i));
       const footprint q = trj.propagate(T);
-      q.dump();
+      q.print();
     }
     printf("\n\n");
   }
@@ -82,10 +82,10 @@ main(int argn, char** argv)
     const footprint q1 = R*p1;
     const trail trail1(q0,q1);
     printf("# great circle\n");
-    trail1.dump();
+    trail1.print();
     printf("\n\n");
     printf("# trail arc\n");
-    trail1.dump_arc();
+    trail1.print_arc();
     printf("\n\n");
     trajectory trj(trail1);
 
@@ -101,11 +101,11 @@ main(int argn, char** argv)
       const trail traili(R0,R1);
       printf("# propagated trail arc %ld\n", i+1);
       trj.append(traili);
-      traili.dump_arc();
+      traili.print_arc();
       printf("\n\n");
     }
 
-    trj.dump_arc(32);
+    trj.print_arc(32);
     printf("\n\n");
 
     { // propagate to T with acceleration
@@ -113,7 +113,7 @@ main(int argn, char** argv)
       for (size_t i=0; i<11; i++) {
         const timestamp_t T = advance_timestamp(t0,seconds(5*i)+msec(dt));
         const footprint q = trj.propagate(T);
-        q.dump();
+        q.print();
         dt -= 100*i;
       }
     }
@@ -124,7 +124,7 @@ main(int argn, char** argv)
       for (size_t i=0; i<11; i++) {
         const timestamp_t T = advance_timestamp(t0,seconds(5*i)+msec(dt));
         const footprint r = trail1.propagate(T);
-        r.dump();
+        r.print();
         dt -= 100*i;
       }
     }

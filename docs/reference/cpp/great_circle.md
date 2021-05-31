@@ -79,7 +79,7 @@ p
 !!! caution
     When *p* is identical to the pole, the foot cannot be specified. This function, however, does not throw an exception. Instead, it returns the foot from either (1,0,0) or (0,1,0).
 
-#### void<br>dump(const size_t N=64) const
+#### void<br>print(const size_t N=64) const
 
 List the points on the circle in `stdout`.
 

@@ -25,18 +25,18 @@ main(int argn, char** argv)
     printf("# case 1: p0=(1,0,0) and p1=(0,1,0).\n");
     const dcos p0(1,0,0), p1(0,1,0);
     const minor_arc arc(p0,p1);
-    arc.dump();
+    arc.print();
     printf("\n\n");
     for (size_t i=0; i<12; i++) {
        const double f = i/11.;
        const auto p = p0.extend_to(p1,f);
-       p.dump();
+       p.print();
     }
     printf("\n\n");
     for (size_t i=0; i<12; i++) {
        const double f = 2.5*i/11.-1.0;
        const auto p = p0.extend_to(p1,f);
-       p.dump();
+       p.print();
     }
   }
 
@@ -47,18 +47,18 @@ main(int argn, char** argv)
     const dcos p0(unif(gen),unif(gen),unif(gen));
     const dcos p1(unif(gen),unif(gen),unif(gen));
     const minor_arc arc(p0,p1);
-    arc.dump();
+    arc.print();
     printf("\n\n");
     for (size_t i=0; i<12; i++) {
       const double f = i/11.;
       const auto p = p0.extend_to(p1,f);
-      p.dump();
+      p.print();
     }
     printf("\n\n");
     for (size_t i=0; i<12; i++) {
       const double f = 2.5*i/11.-1.0;
       const auto p = p0.extend_to(p1,f);
-      p.dump();
+      p.print();
     }
   }
 

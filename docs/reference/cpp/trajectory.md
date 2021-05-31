@@ -239,21 +239,21 @@ q
 skip
 : set true if `q` is certainly on the great circle of this instance.
 
-#### void<br>dump(const size_t N=64) const
+#### void<br>print(const size_t N=64) const
 
 List the points on the circle in `stdout`.
 
 N
 : the number of vertices to be listed.
 
-#### void<br>dump_arc(const size_t N=64) const
+#### void<br>print_arc(const size_t N=64) const
 
 List the points on the arc in `stdout`.
 
 N
 : the number of vertices to be listed.
 
-#### void<br>dump_error(const size_t N=64) const
+#### void<br>print_error(const size_t N=64) const
 
 List the uncertainty region in `stdout`. This function outputs *N* pairs of `footprint` instances which define the boundary of the uncertainty region. The output format is optimized for the `splot` grid of `gnuplot`.
 

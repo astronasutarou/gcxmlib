@@ -52,7 +52,7 @@ Calculate &theta;, where &theta; is the separation angle between another `vector
 v
 : a `vector3` instance.
 
-#### void<br>dump() const
+#### void<br>print() const
 
 Write down the (*x*,*y*,*z*) coordinate in `stdout`.
 

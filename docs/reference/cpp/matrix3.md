@@ -21,7 +21,7 @@ arr
 
 Returns the transposed `matrix3` instance.
 
-#### void<br>dump() const
+#### void<br>print() const
 
 Display all the elements in `stdout`.
 

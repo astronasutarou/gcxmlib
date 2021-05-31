@@ -80,14 +80,14 @@ Calculate the extrapolated direction along the arc. This function returns the st
 f
 : an extrapolation factor.
 
-#### void<br>dump(const size_t N=64) const
+#### void<br>print(const size_t N=64) const
 
 List the points on the circle in `stdout`. Inherited from `great_circle`.
 
 N
 : the number of vertices to be listed.
 
-#### void<br>dump_arc(const size_t N=64) const
+#### void<br>print_arc(const size_t N=64) const
 
 List the points on the arc in `stdout`.
 
