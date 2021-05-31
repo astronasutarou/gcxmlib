@@ -48,12 +48,13 @@ test/example_%: test/example_%.cc $(OBJECT) $(HEADER)
 .cc.o: $(HEADER)
 	$(CXX) -o $@ -c $<
 
-build:
+build: gcxmlib.pyx
 	python setup.py build_ext --inplace
 
+demo: build
+	python -c 'import gcxmlib; gcxmlib.simple_demo()'
+
 example: $(EXAMPLE)
-# test: build
-# 	python -c 'import gcxmlib as g; g.simple_demo()'
 
 build_pypi: build
 	python setup.py sdist bdist_wheel -p manylinux1_x86_64
