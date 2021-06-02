@@ -10,7 +10,7 @@ from libcpp.memory cimport unique_ptr, make_unique
 from libcpp.memory cimport shared_ptr, make_shared
 from numpy cimport ndarray
 from astropy.time import Time, TimeDelta
-from astropy.coordinates import Longitude, Latitude, Angle
+from astropy.coordinates import Longitude, Latitude, Angle, SkyCoord
 from dataclasses import dataclass
 import numpy as np
 
@@ -18,6 +18,7 @@ import numpy as np
 cdef extern from '<initializer_list>' namespace 'std':
   cdef cppclass initializer_list[T]:
     pass
+
 
 cdef extern from '<chrono>' namespace 'std::chrono':
   ## import system_clock
@@ -33,6 +34,7 @@ cdef extern from '<chrono>' namespace 'std::chrono':
     Rep2 duration[Rep2](const Rep2&) except +
     rep count() except +
 
+
 cdef extern from 'gcxmlib.h' namespace 'gcxmlib':
   ## define an alias to duration[double]
   ctypedef duration[double] sec_t
@@ -40,6 +42,8 @@ cdef extern from 'gcxmlib.h' namespace 'gcxmlib':
   ctypedef system_clock default_clock
   ## define an alias to time_point[default_clock]
   ctypedef time_point[default_clock] timestamp_t
+  ## define an alias to vec[vec[double]]
+  ctypedef vec[vec[double]] dump_array
 
   ## convert timestamp to std::string
   cdef const cstring timestamp_to_string(const timestamp_t ts)
@@ -77,7 +81,7 @@ cdef extern from 'gcxmlib.h' namespace 'gcxmlib':
     const latitude lat
     const timestamp_t t
     const angle s
-    void dump()
+    void print(const int N) const
 
   cdef cppclass trail:
     trail(const footprint& s, const footprint& e)
@@ -89,22 +93,33 @@ cdef extern from 'gcxmlib.h' namespace 'gcxmlib':
                      const double margin = 1.0) const
     const footprint s, e
     const sec_t dt
-    void dump()
-    void dump_arc()
-    void dump_error()
+    void print(const int N) const
+    void print_arc(const int N) const
+    void print_error(const int N) const
+    const dump_array dump(const int N) const
+    const dump_array dump_arc(const int N) const
+    const dump_array dump_error(const int N) const
 
   cdef cppclass trajectory:
     trajectory(const trail& arc)
     trajectory(const initializer_list[trail] arcs)
     trajectory(const vec[trail] arcs)
+    void print(const int N=64) const
+    void print_arc(const int N) const
+    void print_error(const int N) const
+    const dump_array dump(const int N) const
+    const dump_array dump_arc(const int N) const
+    const dump_array dump_error(const int N) const
 
   cdef const timestamp_t generate_timestamp(
     const int year, const int month, const int day,
     const int hour, const int minute, const int second,
     const int microsecond)
 
+
 cdef extern from *:
   pass
+
 
 ctypedef shared_ptr[longitude] lon_ptr
 ctypedef shared_ptr[latitude]  lat_ptr
@@ -112,27 +127,33 @@ ctypedef shared_ptr[footprint] footprint_ptr
 ctypedef shared_ptr[trail] trail_ptr
 ctypedef shared_ptr[trajectory] trajectory_ptr
 
+
 cdef lon_ptr wrap_longitude(lon: Longitude):
   cdef double radian = lon.radian
   return make_shared[longitude](radian)
 
+
 cdef lat_ptr wrap_latitude(lon: Latitude):
   cdef double radian = lon.radian
   return make_shared[latitude](radian)
+
 
 cdef footprint_ptr generate_footprint(fp: Footprint):
   return make_shared[footprint](
     deref(wrap_longitude(fp.lon)), deref(wrap_latitude(fp.lat)),
     get_timestamp(fp.ts), radian(fp.sig.radian))
 
+
 cdef timestamp_t get_timestamp(t: Time):
   y,m,d,H,M,S = t.ymdhms
   uS,S = [int(np.round(s*x)) for s,x in zip(np.modf(S),(1e6,1))]
   return generate_timestamp(y,m,d,H,M,S,uS)
 
+
 cdef dump_timestamp(const timestamp_t T):
   cdef cstring timestr = timestamp_to_string(T)
   return Time(timestr)
+
 
 cdef dump_footprint(const footprint& fp):
   lon = Longitude(fp.lon.degree, unit='degree')
@@ -164,6 +185,12 @@ class Footprint:
   __annotations__ = {
     'lon': Longitude, 'lat': Latitude, 'ts': Time, 'sig': Angle}
 
+  @staticmethod
+  def from_xyz(x: float, y: float, z: float, ts: Time, sig: Angle):
+    pos = SkyCoord(x=x,y=y,z=z,
+            representation_type='cartesian').represent_as('spherical')
+    return Footprint(pos.lon,pos.lat,ts,sig)
+
 
 cdef class Trail:
   cdef trail_ptr tp
@@ -179,22 +206,32 @@ cdef class Trail:
   def end(self):
     return dump_footprint(deref(self.tp).e)
 
-  def dump(self):
-    deref(self.tp).dump_arc()
-    deref(self.tp).dump_error()
-    dump_timestamp(deref(self.tp).s.t)
+  def propagate(self, T: Time):
+    return dump_footprint(deref(self.tp).propagate(get_timestamp(T)))
+
+  def dump_circle(self, N: int=64):
+    return np.array(deref(self.tp).dump(N))
+
+  def dump_arc(self, N: int=64):
+    return np.array(deref(self.tp).dump_arc(N))
+
+  def dump_error(self, N: int=64):
+    return np.array(deref(self.tp).dump_error(N))
+
+  def dump_timestamp(self):
+    return dump_timestamp(deref(self.tp).s.t)
 
 
 @__benchmark__
 def simple_demo():
-  lon1 = Longitude(3.0, unit='degree')
-  lat1 = Latitude(4.5, unit='degree')
+  lon1 = Longitude(20.0, unit='degree')
+  lat1 = Latitude(-15.0, unit='degree')
   ts1  = Time.now()
   sig1 = Angle(1.0, unit='arcsec')
 
-  lon2 = Longitude(3.1, unit='degree')
-  lat2 = Latitude(4.6, unit='degree')
-  ts2  = ts1 + TimeDelta(5.0, format='sec')
+  lon2 = Longitude(180.0, unit='degree')
+  lat2 = Latitude(60.0, unit='degree')
+  ts2  = ts1 + TimeDelta(150.0, format='sec')
   sig2 = Angle(1.0, unit='arcsec')
 
   fp1 = Footprint(lon1, lat1, ts1, sig1)
@@ -203,7 +240,27 @@ def simple_demo():
   print(fp2)
 
   arc = Trail(fp1, fp2)
-  arc.dump()
+  print(arc)
 
-  print(arc.start)
-  print(arc.end)
+  import matplotlib.pyplot as plt
+  fig = plt.figure(figsize=(8,6))
+  ax = fig.add_subplot()
+  alon, alat = [], []
+  for v in arc.dump_arc(360):
+    f = Footprint.from_xyz(v[0],v[1],v[2],ts1,sig1)
+    alon.append(f.lon.degree)
+    alat.append(f.lat.degree)
+  ax.scatter(alon, alat, 1)
+  ax.scatter(fp1.lon.degree, fp1.lat.degree, 20)
+  ax.scatter(fp2.lon.degree, fp2.lat.degree, 20)
+
+  tsx = ts2
+  for i in range(5):
+    tsx = tsx + TimeDelta(10.0, format='sec')
+    p = arc.propagate(tsx)
+    ax.scatter(p.lon.degree, p.lat.degree, 30)
+
+  ax.set_xlim([0,360])
+  ax.set_ylim([-30,90])
+  ax.grid(True)
+  plt.show()
