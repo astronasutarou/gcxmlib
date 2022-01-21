@@ -20,7 +20,7 @@ theme:
     primary: blue grey
     accent: deep orange
   features:
-    - navigation.tabs
+    - navigation.sections
     - header.autohide
 
 extra_css:
@@ -49,12 +49,9 @@ markdown_extensions:
       generic: true
 
 nav:
-  - Front Page:
-    - Top Page: index.md
-    - bitbucket: https://bitbucket.org/ryou_ohsawa/gcxmlib/src/master/
-    - PyPi: https://pypi.org/project/gcxmlib/
+  - Top Page: index.md
   - Reference:
-    - Index: reference/index.md
+    - Overview: reference/index.md
     - Python:
       - Getting Started: reference/python/index.md
       - direction_cosine: reference/python/direction_cosine.md
@@ -77,3 +74,6 @@ nav:
       - functions: reference/cpp/functions.md
       - Index: reference/cpp/index_table.md
       - Source code: reference/cpp/source.md
+  - Links:
+    - bitbucket: https://bitbucket.org/ryou_ohsawa/gcxmlib/src/master/
+    - PyPi: https://pypi.org/project/gcxmlib/
