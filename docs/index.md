@@ -11,14 +11,17 @@ The library is developed along with the C++14 standard. Test programs are compil
 
 
 ### Python
-The python package `gcxmlib` is available on PyPI (*not available yet*). Otherwise, you can install a latest version via the git repository on bitbucket.org (*not available yet*).
+The python package `gcxmlib` is available on [PyPI][pypi]. Otherwise, install the latest version via the git repository on [bitbucket.org][bitbucket].
+
+[pypi]: https://pypi.org/project/gcxmlib/
+[bitbucket]: https://bitbucket.org/ryou_ohsawa/gcxmlib/src/master/
 
 ``` sh
 pip install gcxmlib
 pip install git+https:://bitbucket.org/ryou_ohsawa/gcxmlib/src/master/
 ```
 
-In case that the installation via `pip` fails, you can download the whole code from bitbucket.org and install the module manually.
+When the installation via `pip` fails, download the whole code from bitbucket.org and install the module manually.
 
 ``` sh
 cd /your/favorite/directory
@@ -35,7 +38,7 @@ import gcxmlib
 
 
 ### C++
-The C++ library is provided as a single header file. Copy to your developing directory and add the include line as follows. Do not forget to add `-I` option in compiling a program.
+The C++ library is provided as a single header file. Copy to your developing directory and add the include line as follows.
 
 ``` c++
 include "gcxmlib.h"

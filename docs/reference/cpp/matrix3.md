@@ -43,7 +43,7 @@ $$
 
 #### const double<br>operator() (const size_t i, const size_t j) const
 
-Access to the *i*-th element of the matrix.
+Access to the (*i,j*)-element of the matrix.
 
 $$
 A =
