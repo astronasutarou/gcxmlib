@@ -48,6 +48,9 @@ test/example_%: test/example_%.cc $(OBJECT) $(HEADER)
 .cc.o: $(HEADER)
 	$(CXX) -o $@ -c $<
 
+clean:
+	rm -r $(OBJECT)
+
 build: gcxmlib.pyx
 	python setup.py build_ext --inplace
 
@@ -65,5 +68,5 @@ upload_test: build_pypi
 upload_pypi: build_pypi
 	twine upload --skip-existing dist/*
 
-clean:
-	rm -r $(OBJECT)
+serve:
+	mkdocs serve
