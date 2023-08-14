@@ -48,6 +48,11 @@ markdown_extensions:
   - pymdownx.arithmatex:
       generic: true
 
+plugins:
+  - search
+  - git-revision-date-localized:
+      type: date
+
 nav:
   - Top Page: index.md
   - Reference:
