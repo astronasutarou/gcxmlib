@@ -40,6 +40,6 @@ import gcxmlib
 ### C++
 The C++ library is provided as a single header file. Copy to your developing directory and add the include line as follows.
 
-``` c++
+``` cpp
 include "gcxmlib.h"
 ```

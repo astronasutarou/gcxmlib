@@ -3,7 +3,7 @@
 ## `direction_cosine`
 The `direction_cosine` class is a descendant of the `vector3` class, with the vector length normalized to unity. The `dcos` is an alias to the `direction_cosine`.
 
-``` c++
+``` cpp
 using dcos = direction_cosine;
 ```
 

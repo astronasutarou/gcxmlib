@@ -5,7 +5,7 @@
 
 A template class `base_angle` provides functions to handle angles in different scales. The `base_angle` class requires the `angle_range` class as a template parameter, which defines the domain of the class. There are four `angle_range` options defined.
 
-``` c++
+``` cpp
 enum class angle_range
 {
   zero_to_twopi,       /** range [0, 2pi)      (w/wrap)   */
@@ -113,7 +113,7 @@ Some specializations of `base_angle` are defined as follows.
 
 ## `angle`
 
-``` c++
+``` cpp
 /** general purpose angle class. */
 using angle = base_angle<angle_range::zero_to_twopi>;
 ```
@@ -122,7 +122,7 @@ The `angle` is a general-purpose specialization of `base_angle`.  The domain of 
 
 ## `longitude`
 
-``` c++
+``` cpp
 /** `longitude` is an alias to `angle`. */
 using longitude = base_angle<angle_range::zero_to_twopi>;
 ```
@@ -131,7 +131,7 @@ The `longitude` is just an alias of `angle`. The domain of the `longitude` is 0 
 
 ## `latitude`
 
-``` c++
+``` cpp
 /** `latitude` is defined within [-pi/2,pi/2]. */
 using latitude = base_angle<angle_range::minus_pi_2_to_pi_2>;
 ```

@@ -1,5 +1,5 @@
 # `gcxmlib.h`
 
-``` c++
+``` cpp
 --8<-- "src/gcxmlib.h"
 ```

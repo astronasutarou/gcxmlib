@@ -106,7 +106,7 @@ t
 
 Aliases to the rotation matrix functions are defined in the namespace `gcxmlib::matrix`.
 
-``` c++
+``` cpp
 namespace matrix {
   const auto& Rx = rotation_matrix_x; /** alias to `rotation_matrix_x` */
   const auto& Ry = rotation_matrix_y; /** alias to `rotation_matrix_y` */
