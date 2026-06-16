@@ -5,3 +5,4 @@ mkdocs-material==8.1.4
 mkdocs-material-extensions==1.0.3
 mkdocs-git-revision-date-localized-plugin==1.2.0
 python-markdown-math==0.8
+pymdon-extensions==10.21.3
