@@ -1,0 +1,26 @@
+name: test_example
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test_example:
+    name: Build and run examples
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Build sample_box.cc
+        run: make example
+
+      - name: Run examples
+        run: |
+          cd test
+          for f in $(find . -executable);
+          do
+            echo $f
+            ./$f
+          done

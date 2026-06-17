@@ -1,5 +1,5 @@
-name: Build minimalKNN
-description: Build minimalKNN distributions, install the wheel, and verify import.
+name: Build gcxmlib
+description: Build gcxmlib distributions, install the wheel, and verify import.
 
 runs:
   using: composite
@@ -21,4 +21,4 @@ runs:
     - name: Check import
       shell: bash
       working-directory: /tmp
-      run: python -c "import minimalKNN; print(minimalKNN.__file__)"
+      run: python -c "import gcxmlib; print(gcxmlib.__file__)"
