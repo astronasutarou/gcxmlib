@@ -19,7 +19,7 @@ jobs:
       - name: Run examples
         run: |
           cd test
-          for f in $(find . -executable);
+          for f in $(find . -executable -name 'example_*');
           do
             echo $f
             ./$f
