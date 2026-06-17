@@ -1,12 +1,11 @@
-MANIFEST
-build/
-dist/
-site/
-*.egg-info/
+/build
+/dist
+/site
+/*.egg-info
 
 *.so
 *.o
 *.pyc
 *.png
 
-/gcxmlib.c*
+__pycache__
