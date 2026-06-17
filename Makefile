@@ -7,6 +7,11 @@ CXX    := $(CC) $(LIBS) $(CFLAGS)
 HEADER := src/gcxmlib.h
 SOURCE := $(wildcard src/*.cc)
 OBJECT := $(patsubst %.cc,%.o,$(SOURCE))
+EGG_INFO := gcxmlib.egg-info
+BUILD_DIR := build
+BUILD_LIB := $(BUILD_DIR)/lib
+BUILD_TEMP := $(BUILD_DIR)/temp
+DIST_DIR := $(BUILD_DIR)/dist
 
 EXAMPLE := test/example_angle \
            test/example_longitude \
@@ -38,35 +43,28 @@ EXAMPLE := test/example_angle \
            test/example_trajectory \
            test/example_trajectory_propagate
 
-.PHONY: clean build example test build_pypi upload_test upload_pypi
+.PHONY: clean build example test serve demo
 
 all: $(EXAMPLE)
 
 test/example_%: test/example_%.cc $(OBJECT) $(HEADER)
 	$(CXX) -o $@ $< $(OBJECT)
 
-.cc.o: $(HEADER)
+%.o: %.cc $(HEADER)
 	$(CXX) -o $@ -c $<
 
-clean:
-	rm -r $(OBJECT)
-
 build: gcxmlib.pyx
-	python setup.py build_ext --inplace
+	python setup.py build_ext \
+		--build-lib $(BUILD_LIB) --build-temp $(BUILD_TEMP)
+	python -m build --outdir $(DIST_DIR)
 
 demo: build
 	python -c 'import gcxmlib; gcxmlib.simple_demo()'
 
 example: $(EXAMPLE)
 
-build_pypi: build
-	python setup.py sdist bdist_wheel -p manylinux1_x86_64
-
-upload_test: build_pypi
-	twine upload --skip-existing $(TESTPY) dist/*
-
-upload_pypi: build_pypi
-	twine upload --skip-existing dist/*
+clean:
+	rm -rf $(BUILD_DIR) $(EGG_INFO) $(OBJECT) $(EXAMPLE)
 
 serve:
 	mkdocs serve
